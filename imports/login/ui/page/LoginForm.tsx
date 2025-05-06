@@ -1,0 +1,116 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+
+const LoginForm = () => {
+  const [email, setEmail] = useState("");
+  const [showOTP, setShowOTP] = useState(false);
+  const [otp, setOTP] = useState("");
+  const [otpError, setOtpError] = useState("");
+
+  const [emailError, setEmailError] = useState("");
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isValidEmail) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+
+    setEmailError("");
+    setShowOTP(true);
+  };
+  const handleOTPSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (otp.trim().length < 6) {
+      setOtpError("Please enter the 6-digit OTP.");
+      return;
+    }
+
+    setOtpError("");
+  };
+
+  return (
+    <div className="flex flex-col justify-center h-[100vh] items-center border ">
+      {!showOTP ? (
+        <div className="border border-2 shadow-md p-14 flex flex-col items-center rounded-lg ">
+          <h1 className="text-2xl font-bold ">Login</h1>
+          <form
+            onSubmit={handleEmailSubmit}
+            className="flex flex-col gap-5 py-5 items-center"
+          >
+            <div>
+              <Label className="text-lg pb-2">Email</Label>
+              <Input
+                type="email"
+                placeholder="Enter email"
+                className="w-100 "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {emailError && (
+                <p className="text-sm text-red-500 pt-2">{emailError}</p>
+              )}
+            </div>
+            <Button type="submit" className="w-[50%]">
+              Send OTP
+            </Button>
+          </form>
+        </div>
+      ) : (
+        <form
+          onSubmit={handleOTPSubmit}
+          className="space-y-4 border border-2 shadow-md p-14 flex flex-col items-center rounded-md"
+        >
+          <h1 className="text-2xl font-bold text-center">Verify</h1>
+
+          <p className="text-base text-center">
+            Your code was sent to you via Email
+          </p>
+
+          <InputOTP maxLength={6} value={otp} onChange={(val) => setOTP(val)}>
+            <InputOTPGroup className="gap-2">
+              {[...Array(6)].map((_, idx) => (
+                <InputOTPSlot
+                  key={idx}
+                  index={idx}
+                  className="h-14 w-14 border"
+                />
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
+
+          {otpError && (
+            <p className="text-sm text-red-500 text-center">{otpError}</p>
+          )}
+
+          <div className="text-center text-sm flex flex-col gap-4 items-center">
+            <Button type="submit" className="w-[50%]">
+              Verify
+            </Button>
+            <p>
+              Didn't receive code?{" "}
+              <span className="text-blue-600 underline underline-offset-2">
+                Request Again
+              </span>
+            </p>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+};
+
+export default LoginForm;
