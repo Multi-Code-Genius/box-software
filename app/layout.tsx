@@ -3,6 +3,7 @@ import { Providers } from "@/provider/Provider";
 import "./globals.css";
 
 import { Inter, Merriweather } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,7 +27,10 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${merriweather.variable}`}>
       <body className="font-sans">
         <Providers>
-          <div className="">{children}</div>
+          <div className="">
+            {children}
+            <Toaster position="top-right" expand={false} />
+          </div>
         </Providers>
       </body>
     </html>

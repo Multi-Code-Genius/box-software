@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useRequestOtp, useVerifyOtp } from "@/api/auth";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +18,9 @@ const LoginForm = () => {
   const [otpError, setOtpError] = useState("");
 
   const [emailError, setEmailError] = useState("");
+
+  const { mutate, isPending, isSuccess } = useRequestOtp();
+  const { mutate: VerifyMutate } = useVerifyOtp();
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,9 +32,10 @@ const LoginForm = () => {
       return;
     }
 
+    mutate({ email });
     setEmailError("");
-    setShowOTP(true);
   };
+
   const handleOTPSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -38,14 +43,20 @@ const LoginForm = () => {
       setOtpError("Please enter the 6-digit OTP.");
       return;
     }
-
+    VerifyMutate({ email, otp: otp });
     setOtpError("");
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setShowOTP(true);
+    }
+  }, [isSuccess, setShowOTP]);
 
   return (
     <div className="flex flex-col justify-center h-[100vh] items-center border ">
       {!showOTP ? (
-        <div className="border border-2 shadow-md p-14 flex flex-col items-center rounded-lg ">
+        <div className="border shadow-md p-14 flex flex-col items-center rounded-lg ">
           <h1 className="text-2xl font-bold ">Login</h1>
           <form
             onSubmit={handleEmailSubmit}
@@ -64,15 +75,30 @@ const LoginForm = () => {
                 <p className="text-sm text-red-500 pt-2">{emailError}</p>
               )}
             </div>
-            <Button type="submit" className="w-[50%]">
-              Send OTP
+            <Button
+              disabled={isPending}
+              type="submit"
+              className="w-[50%] flex justify-center items-center space-x-2"
+            >
+              {isPending ? (
+                <>
+                  <span
+                    className="loader spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <span>Send OTP</span>
+              )}
             </Button>
           </form>
         </div>
       ) : (
         <form
           onSubmit={handleOTPSubmit}
-          className="space-y-4 border border-2 shadow-md p-14 flex flex-col items-center rounded-md"
+          className="space-y-4 border  shadow-md p-14 flex flex-col items-center rounded-md"
         >
           <h1 className="text-2xl font-bold text-center">Verify</h1>
 
@@ -80,7 +106,16 @@ const LoginForm = () => {
             Your code was sent to you via Email
           </p>
 
-          <InputOTP maxLength={6} value={otp} onChange={(val) => setOTP(val)}>
+          <InputOTP
+            maxLength={6}
+            value={otp}
+            onChange={(val) => {
+              setOTP(val);
+              if (otp.length === 6) {
+                VerifyMutate({ email, otp: otp });
+              }
+            }}
+          >
             <InputOTPGroup className="gap-2">
               {[...Array(6)].map((_, idx) => (
                 <InputOTPSlot
@@ -101,7 +136,7 @@ const LoginForm = () => {
               Verify
             </Button>
             <p>
-              Didn't receive code?{" "}
+              Didn&apos;t receive code?
               <span className="text-blue-600 underline underline-offset-2">
                 Request Again
               </span>

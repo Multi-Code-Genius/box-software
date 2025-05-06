@@ -61,14 +61,10 @@ export interface ResetPasswordLinkResponse {
 }
 
 export type AuthState = {
-  isAuthenticated: boolean;
   token: string | null;
   logout: () => Promise<void>;
   saveToken: (token: string) => Promise<void>;
-  initializeAuth: () => Promise<void>;
-  removeToken: () => void;
-  fctToken: string | null;
-  setFctToken: (token: string) => void;
+  // removeToken: () => void;
 };
 
 export interface LikeType {
