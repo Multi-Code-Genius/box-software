@@ -1,3 +1,5 @@
+import { BASE_URL } from "@env";
+
 function getCookieByKey(key: string): string | undefined {
   const name = key + "=";
   const decodedCookie = decodeURIComponent(document.cookie);
@@ -61,10 +63,7 @@ export const api = async (
   };
 
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`,
-      requestConfig
-    );
+    const response = await fetch(`${BASE_URL}${endpoint}`, requestConfig);
 
     if (!response.ok) {
       if (response.status === 414) {
