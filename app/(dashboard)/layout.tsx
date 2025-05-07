@@ -1,18 +1,15 @@
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
+import Dashboard from "@/imports/dashboard/Dashboard";
 
-const layout = ({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      {children}
+      <Dashboard>{children}</Dashboard>
       <Footer />
     </div>
   );
 };
 
-export default layout;
+export default Layout;

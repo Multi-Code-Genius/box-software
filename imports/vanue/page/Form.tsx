@@ -1,21 +1,9 @@
 "use client";
-import {
-  User,
-  FileText,
-  MapPin,
-  Building2,
-  Home,
-  Layers,
-  Tag,
-  DollarSign,
-  Landmark,
-  Grid3X3,
-  ImageUp,
-  CircleAlert,
-} from "lucide-react";
+import { useAddGame } from "@/api/vanue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
 import {
   Select,
   SelectContent,
@@ -23,44 +11,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
-import { useState } from "react";
-
-interface FormData {
-  name: string;
-  description: string;
-  city: string;
-  area: string;
-  address: string;
-  capacity: string;
-  category: string;
-  hourlyPrice: string;
-  turfType: string;
-  surface: string;
-  net: string;
-  image: File | null;
-}
-
-interface Errors {
-  name?: string;
-  description?: string;
-  city?: string;
-  area?: string;
-  address?: string;
-  capacity?: string;
-  category?: string;
-  hourlyPrice?: string;
-  surface?: string;
-  net?: string;
-  image?: string;
-}
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { FormData as FormDataTypes } from "@/types/vanue";
+import {
+  Building2,
+  CircleAlert,
+  DollarSign,
+  FileText,
+  Grid3X3,
+  Home,
+  ImageUp,
+  Layers,
+  MapPin,
+  User,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Form: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormDataTypes>({
     name: "",
     description: "",
-    city: "",
-    area: "",
+    city: "Surat",
+    area: "Vesu",
     address: "",
     capacity: "",
     category: "",
@@ -71,7 +43,9 @@ const Form: React.FC = () => {
     image: null,
   });
 
-  const [errors, setErrors] = useState<Errors>({});
+  const { validate, errors } = useFormValidation(formData);
+
+  const { mutate, isSuccess } = useAddGame();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
@@ -95,50 +69,67 @@ const Form: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validate()) return;
-    console.log("Form Submitted:", formData);
-    setFormData({
-      name: "",
-      description: "",
-      city: "",
-      area: "",
-      address: "",
-      capacity: "",
-      category: "",
-      hourlyPrice: "",
-      turfType: "indoor",
-      surface: "",
-      net: "",
-      image: null,
-    });
+
+    const formdata = new FormData();
+    formdata.append("name", formData.name);
+    formdata.append("category", formData.category);
+    formdata.append("description", formData.description);
+    formdata.append("hourlyPrice", formData.hourlyPrice);
+    formdata.append("capacity", formData.capacity);
+    formdata.append("location[city]", formData.city);
+    formdata.append("location[area]", formData.area);
+    formdata.append("address", formData.address);
+    formdata.append("gameInfo[surface]", formData.surface);
+    formdata.append("location[city]", formData.city);
+    formdata.append("location[area]", formData.area);
+
+    formdata.append(
+      "gameInfo[indoor]",
+      formData.turfType === "indoor" ? "true" : "false"
+    );
+    formdata.append("gameInfo[equipment provided]", "true");
+    formdata.append("net", formData.net);
+
+    if (Array.isArray(formData.image)) {
+      formData.image.forEach((file: File) => {
+        formdata.append("game", file);
+      });
+    } else if (
+      formData.image &&
+      (formData.image as unknown as object) instanceof File
+    ) {
+      formdata.append("game", formData.image);
+    }
+    mutate(formdata);
   };
 
-  const validate = (): boolean => {
-    const newErrors: Errors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.description.trim())
-      newErrors.description = "Description is required";
-    if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.area.trim()) newErrors.area = "Area is required";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.capacity.trim() || isNaN(Number(formData.capacity)))
-      newErrors.capacity = "Capacity required and should be a number";
-    if (!formData.category) newErrors.category = "Category is required";
-    if (!formData.hourlyPrice.trim() || isNaN(Number(formData.hourlyPrice)))
-      newErrors.hourlyPrice = "Hourly price required and should be a number";
-    if (!formData.surface.trim()) newErrors.surface = "Surface is required";
-    if (!formData.net.trim()) newErrors.net = "Net info required";
-    if (!formData.image) newErrors.image = "Image  is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  useEffect(() => {
+    if (isSuccess) {
+      setFormData({
+        name: "",
+        description: "",
+        city: "Surat",
+        area: "Vesu",
+        address: "",
+        capacity: "",
+        category: "",
+        hourlyPrice: "",
+        turfType: "indoor",
+        surface: "",
+        net: "",
+        image: null,
+      });
+    }
+  }, [isSuccess]);
 
   return (
-    <div className="h-[100vh] flex justify-center items-center flex-col overflow-auto">
+    <div className="h-[calc(100vh-75px)]  w-full flex justify-center items-center m-auto">
       <form
-        className="w-[40%] flex flex-col gap-6 border px-14 py-10 shadow-lg rounded-lg "
+        className="w-[80%] flex flex-col gap-6 border px-14 py-10 shadow-lg rounded-lg "
         onSubmit={handleSubmit}
       >
         <div className="flex gap-5">
@@ -162,6 +153,7 @@ const Form: React.FC = () => {
               </div>
             )}
           </div>
+
           <div className="space-y-2 w-[90%]">
             <Label>Description</Label>
             <div className="flex items-center border rounded-md px-3">

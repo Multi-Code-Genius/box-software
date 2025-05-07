@@ -36,19 +36,22 @@ export const api = async (
   const socketId = localStorage.getItem("socketId");
 
   const isFormData = body instanceof FormData;
+  console.log("isFormData", isFormData);
 
-  // Define the headers object
   const headersObj: Record<string, string> = {
     Accept: "application/json, text/plain, */*",
     "Accept-Language": "en-GB,en;q=0.9",
-    ...(isFormData ? {} : { "Content-Type": "application/json" }), // Only set Content-Type for non-FormData
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     Authorization: `Bearer ${accessToken || ""}`,
     "Tenant-ID": localStorage.getItem("activeTenantId") || "",
     ...(socketId ? { "X-Socket-ID": socketId } : {}),
-    ...headers, // Spread any custom headers passed in
+    ...headers,
   };
 
-  // Clean headers (remove undefined values)
+  if (isFormData) {
+    delete headersObj["Content-Type"];
+  }
+
   Object.keys(headersObj).forEach((key) => {
     if (headersObj[key] === undefined) {
       delete headersObj[key];
@@ -58,15 +61,15 @@ export const api = async (
   const requestConfig: RequestInit = {
     method,
     headers: headersObj,
-    credentials: "include", // Ensures cookies are sent with the request
+    credentials: "include",
     body: isFormData
       ? body
       : typeof body === "string"
       ? body
       : body !== undefined
-      ? JSON.stringify(body) // Ensure body is stringified correctly
+      ? JSON.stringify(body)
       : undefined,
-    ...customConfig, // Include other custom configuration options
+    ...customConfig,
   };
 
   try {
@@ -75,9 +78,6 @@ export const api = async (
 
     const response = await fetch(`${api_url}${endpoint}`, requestConfig);
 
-    console.log("BASE_URL", BASE_URL);
-
-    // Handle different HTTP statuses
     if (!response.ok) {
       if (response.status === 414) {
         console.error("URI Too Long Error (414) detected - logging out user");
@@ -97,12 +97,10 @@ export const api = async (
       throw new Error(error.message || "Something went wrong");
     }
 
-    // Handle empty responses (204 No Content)
     if (response.status === 204) {
       return undefined;
     }
 
-    // Return JSON if response type is application/json
     return response.headers.get("Content-Type")?.includes("application/json")
       ? response.json()
       : response;

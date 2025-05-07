@@ -1,7 +1,8 @@
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import { VerifyOtpData, VerifyOtpResponse } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
@@ -54,27 +55,28 @@ export const verifyOtp = async (data: { email: string; otp: string }) => {
 };
 
 export const useVerifyOtp = () => {
-  return useMutation({
-    mutationFn: (data: { email: string; otp: string }) => verifyOtp(data),
-    onSuccess: async (data) => {
-      toast.success(data.message);
-      const typedData = data as { token: string };
-      if (!typedData?.token) return;
-      await useAuthStore
-        .getState()
-        .saveToken(typedData.token)
-        .then(() => {
-          redirect("/dashboard");
-        });
-    },
+  const router = useRouter();
 
-    onError: (error) => {
-      toast.error(error.message);
-      if (typeof error === "object" && error !== null && "message" in error) {
-        console.log("Login Failed", (error as { message: string }).message);
-      } else {
-        console.log("Login Failed", "Please try again.");
+  return useMutation<VerifyOtpResponse, Error, VerifyOtpData>({
+    mutationFn: async (data: VerifyOtpData) => {
+      const response = await verifyOtp(data);
+      return response;
+    },
+    onSuccess: async (data: VerifyOtpResponse) => {
+      toast.success(data.message);
+
+      if (data.token) {
+        await useAuthStore
+          .getState()
+          .saveToken(data.token)
+          .then(() => {
+            router.push("/dashboard");
+          });
       }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+      console.log("Login Failed", error.message);
     },
   });
 };

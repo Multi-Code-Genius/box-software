@@ -13,11 +13,11 @@ import { useRequestOtp, useVerifyOtp } from "@/api/auth";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
-  const [showOTP, setShowOTP] = useState(false);
   const [otp, setOTP] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [otpError, setOtpError] = useState("");
 
-  const [emailError, setEmailError] = useState("");
+  const [step, setStep] = useState(0);
 
   const { mutate, isPending, isSuccess } = useRequestOtp();
   const { mutate: VerifyMutate } = useVerifyOtp();
@@ -49,13 +49,13 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setShowOTP(true);
+      setStep(1);
     }
-  }, [isSuccess, setShowOTP]);
+  }, [isSuccess]);
 
   return (
     <div className="flex flex-col justify-center h-[100vh] items-center border ">
-      {!showOTP ? (
+      {step === 0 ? (
         <div className="border shadow-md p-14 flex flex-col items-center rounded-lg ">
           <h1 className="text-2xl font-bold ">Login</h1>
           <form
@@ -76,7 +76,6 @@ const LoginForm = () => {
               )}
             </div>
             <Button
-              disabled={isPending}
               type="submit"
               className="w-[50%] flex justify-center items-center space-x-2"
             >

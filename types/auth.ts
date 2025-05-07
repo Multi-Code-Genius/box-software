@@ -116,3 +116,13 @@ export interface UserState {
   selectedDate: string;
   setSelectedDate: (date: string) => void;
 }
+
+export interface VerifyOtpData {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyOtpResponse {
+  message: string;
+  token: string;
+}
