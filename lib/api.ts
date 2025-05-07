@@ -70,8 +70,8 @@ export const api = async (
   };
 
   try {
-    const api_url = "http://localhost:5001";
-    // const api_url = BASE_URL;
+    // const api_url = "http://localhost:5001";
+    const api_url = BASE_URL;
 
     const response = await fetch(`${api_url}${endpoint}`, requestConfig);
 

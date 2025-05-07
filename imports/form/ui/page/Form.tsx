@@ -1,0 +1,446 @@
+"use client";
+import {
+  User,
+  FileText,
+  MapPin,
+  Building2,
+  Home,
+  Layers,
+  Tag,
+  DollarSign,
+  Landmark,
+  Grid3X3,
+  ImageUp,
+  CircleAlert,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
+import { useState } from "react";
+
+interface FormData {
+  name: string;
+  description: string;
+  city: string;
+  area: string;
+  address: string;
+  capacity: string;
+  category: string;
+  hourlyPrice: string;
+  turfType: string;
+  surface: string;
+  net: string;
+  image: File | null;
+}
+
+interface Errors {
+  name?: string;
+  description?: string;
+  city?: string;
+  area?: string;
+  address?: string;
+  capacity?: string;
+  category?: string;
+  hourlyPrice?: string;
+  surface?: string;
+  net?: string;
+  image?: string;
+}
+
+const Form: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+    city: "",
+    area: "",
+    address: "",
+    capacity: "",
+    category: "",
+    hourlyPrice: "",
+    turfType: "indoor",
+    surface: "",
+    net: "",
+    image: null,
+  });
+
+  const [errors, setErrors] = useState<Errors>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "file" ? (files ? files[0] : null) : value,
+    }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: value,
+    }));
+  };
+
+  const handleTurfTypeChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      turfType: value,
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+    console.log("Form Submitted:", formData);
+    setFormData({
+      name: "",
+      description: "",
+      city: "",
+      area: "",
+      address: "",
+      capacity: "",
+      category: "",
+      hourlyPrice: "",
+      turfType: "indoor",
+      surface: "",
+      net: "",
+      image: null,
+    });
+  };
+
+  const validate = (): boolean => {
+    const newErrors: Errors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.description.trim())
+      newErrors.description = "Description is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
+    if (!formData.area.trim()) newErrors.area = "Area is required";
+    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.capacity.trim() || isNaN(Number(formData.capacity)))
+      newErrors.capacity = "Capacity required and should be a number";
+    if (!formData.category) newErrors.category = "Category is required";
+    if (!formData.hourlyPrice.trim() || isNaN(Number(formData.hourlyPrice)))
+      newErrors.hourlyPrice = "Hourly price required and should be a number";
+    if (!formData.surface.trim()) newErrors.surface = "Surface is required";
+    if (!formData.net.trim()) newErrors.net = "Net info required";
+    if (!formData.image) newErrors.image = "Image  is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  return (
+    <div className="h-[100vh] flex justify-center items-center flex-col overflow-auto">
+      <form
+        className="w-[40%] flex flex-col gap-6 border px-14 py-10 shadow-lg rounded-lg "
+        onSubmit={handleSubmit}
+      >
+        <div className="flex gap-5">
+          <div className="space-y-2 w-[90%]">
+            <Label>Name</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <User className="w-4 h-4 mr-2" />
+              <Input
+                name="name"
+                type="text"
+                placeholder="Please Enter Name"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.name}
+              />
+            </div>
+            {errors.name && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.name}</span>
+              </div>
+            )}
+          </div>
+          <div className="space-y-2 w-[90%]">
+            <Label>Description</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <FileText className="w-4 h-4 mr-2" />
+              <Input
+                name="description"
+                type="text"
+                placeholder="Please Enter Description"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.description}
+              />
+            </div>
+            {errors.description && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">
+                  {errors.description}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-5">
+          <div className="space-y-2 w-[90%]">
+            <Label>City</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <MapPin className="w-4 h-4 mr-2" />
+              <Input
+                name="city"
+                type="text"
+                placeholder="Please Enter City"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.city}
+              />
+            </div>
+            {errors.city && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.city}</span>
+              </div>
+            )}
+          </div>
+          <div className="space-y-2 w-[90%]">
+            <Label>Area</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <Building2 className="w-4 h-4 mr-2" />
+              <Input
+                name="area"
+                type="text"
+                placeholder="Please Enter Area"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.area}
+              />
+            </div>
+            {errors.area && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.area}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-5">
+          <div className="space-y-2 w-[90%]">
+            <Label>Address</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <Home className="w-4 h-4 mr-2" />
+              <Input
+                name="address"
+                type="text"
+                placeholder="Please Enter Address"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.address}
+              />
+            </div>
+            {errors.address && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.address}</span>
+              </div>
+            )}
+          </div>
+          <div className="space-y-2 w-[90%]">
+            <Label>Capacity</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <Layers className="w-4 h-4 mr-2" />
+              <Input
+                name="capacity"
+                type="number"
+                placeholder="Please Enter Capacity"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.capacity}
+              />
+            </div>
+            {errors.capacity && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.capacity}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-5">
+          <div className="space-y-2 w-[90%]">
+            <Label>Category</Label>
+            <Select
+              onValueChange={handleSelectChange}
+              value={formData.category}
+            >
+              <SelectTrigger className="w-full flex items-center justify-between">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">Football</SelectItem>
+                <SelectItem value="2">Cricket</SelectItem>
+                <SelectItem value="3">Basketball</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.category && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.category}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2 w-[90%]">
+            <Label>Hourly Price</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <DollarSign className="w-4 h-4 mr-2" />
+              <Input
+                name="hourlyPrice"
+                type="number"
+                placeholder="Please Enter Hourly Price"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.hourlyPrice}
+              />
+            </div>
+            {errors.hourlyPrice && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">
+                  {errors.hourlyPrice}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm">Turf Type</Label>
+          <RadioGroup
+            value={formData.turfType}
+            onValueChange={handleTurfTypeChange}
+            className="flex gap-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="indoor" id="indoor" className="sr-only" />
+              <label
+                htmlFor="indoor"
+                className={`cursor-pointer px-10 py-1 rounded-lg border text-gray-800 hover:bg-black hover:text-white ${
+                  formData.turfType === "indoor" ? "bg-black text-white" : ""
+                }`}
+              >
+                Indoor
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                value="outdoor"
+                id="outdoor"
+                className="sr-only"
+              />
+              <label
+                htmlFor="outdoor"
+                className={`cursor-pointer px-10 py-1 rounded-lg border text-gray-800 hover:bg-black hover:text-white ${
+                  formData.turfType === "outdoor" ? "bg-black text-white" : ""
+                }`}
+              >
+                Outdoor
+              </label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="roof" id="roof" className="sr-only" />
+              <label
+                htmlFor="roof"
+                className={`cursor-pointer px-10 py-1 rounded-lg border text-gray-800 hover:bg-black hover:text-white ${
+                  formData.turfType === "roof" ? "bg-black text-white" : ""
+                }`}
+              >
+                Roof
+              </label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div className="flex gap-5">
+          <div className="space-y-2 w-[90%]">
+            <Label>Surface</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <Grid3X3 className="w-4 h-4 mr-2" />
+              <Input
+                name="surface"
+                type="text"
+                placeholder="Please Enter Surface"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.surface}
+              />
+            </div>
+            {errors.surface && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.surface}</span>
+              </div>
+            )}
+          </div>
+          <div className="space-y-2 w-[90%]">
+            <Label>Net</Label>
+            <div className="flex items-center border rounded-md px-3">
+              <Layers className="w-4 h-4 mr-2" />
+              <Input
+                name="net"
+                type="text"
+                placeholder="Please Enter Net"
+                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                onChange={handleChange}
+                value={formData.net}
+              />
+            </div>
+            {errors.net && (
+              <div className="flex gap-2">
+                <CircleAlert className="text-red-600" size={18} />
+                <span className="text-red-500 text-sm">{errors.net}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <Label>Upload Image</Label>
+          <label className="flex items-center justify-center w-[10%]">
+            <div className="flex flex-col items-center justify-center w-full h-16 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <ImageUp />
+              </div>
+              <input
+                id="dropzone-file"
+                type="file"
+                className="hidden"
+                name="image"
+                onChange={handleChange}
+              />
+            </div>
+          </label>
+          {errors.image && (
+            <div className="flex gap-2">
+              <CircleAlert className="text-red-600" size={18} />
+              <span className="text-red-500 text-sm">{errors.image}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-center">
+          <Button type="submit" className="w-[50%]">
+            Submit
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default Form;
