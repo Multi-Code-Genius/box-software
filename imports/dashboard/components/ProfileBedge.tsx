@@ -97,7 +97,7 @@ const ProfileBedge: React.FC = () => {
         <div>
           <button
             type="button"
-            className="flex text-sm  rounded-full   relative z-[51]"
+            className="flex text-sm  rounded-full   relative cursor-pointer"
             aria-expanded="false"
             onClick={() => {
               setShow(!show);
@@ -105,29 +105,30 @@ const ProfileBedge: React.FC = () => {
             }}
           >
             <span className="sr-only">Open user menu</span>
-            {show ? (
-              <div className="h-8 w-8 bg-black rounded-full flex items-center justify-center">
-                <p className="text-lg font-bold text-white ">X</p>
-              </div>
-            ) : (
-              <img
-                className="w-10 h-10 rounded-full"
-                height={32}
-                width={32}
-                src={user?.profile_pic || "/images/profile.jpg"}
-                alt="profile"
-              />
-            )}
+
+            <img
+              className="w-10 h-10 rounded-full"
+              height={32}
+              width={32}
+              src={user?.profile_pic || "/images/profile.jpg"}
+              alt="profile"
+            />
           </button>
 
           <div
             ref={sidenavRef}
-            className={`absolute top-[20px] right-[-20px] z-50 w-[400px] h-[100vh] bg-white shadow-xl dark:bg-gray-700 overflow-hidden transform transition-transform duration-300 ease-in-out ${
+            className={`absolute top-[-12px] right-[-20px]  w-[400px] h-[100vh] bg-white shadow-xl dark:bg-gray-700 overflow-hidden transform transition-transform duration-300 ease-in-out ${
               show ? "translate-x-0" : "translate-x-full"
             }`}
           >
+            <div
+              className="absolute right-0 h-8 w-8 bg-black rounded-full flex items-center justify-center m-3  cursor-pointer"
+              onClick={() => setShow(false)}
+            >
+              <p className="text-lg font-bold text-white ">X</p>
+            </div>
             <div className="h-full flex flex-col items-center p-10">
-              <div className="w-full mb-6 rounded shadow p-4">
+              <div className="w-full mb-6 rounded shadow p-4 mt-5">
                 <div className="flex items-center justify-between mb-4">
                   <h1 className="text-xl font-semibold">Account</h1>
                   <Pencil

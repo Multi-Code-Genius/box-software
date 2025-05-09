@@ -15,7 +15,7 @@ const Edit = ({ setShowEditModal }: any) => {
   const { image, setUserImage } = useUserStore();
   const [localImage, setLocalImage] = useState(image);
   const [uploading, setUploading] = useState(false);
-  const [isFormVisible, setIsFormVisible] = useState(true);
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: user?.email || "",
@@ -91,7 +91,7 @@ const Edit = ({ setShowEditModal }: any) => {
       try {
         await UpdateUserData(updatedUser);
 
-        setIsFormVisible(false);
+        setShowEditModal(false);
       } catch (error) {
         console.error("Error updating user data:", error);
       } finally {
@@ -131,10 +131,6 @@ const Edit = ({ setShowEditModal }: any) => {
     }
   };
 
-  if (!isFormVisible) {
-    return null;
-  }
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-40" />
@@ -142,7 +138,7 @@ const Edit = ({ setShowEditModal }: any) => {
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full z-50">
         <button
           onClick={() => setShowEditModal(false)}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 p-5"
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 p-5  cursor-pointer"
         >
           <X />
         </button>
@@ -229,7 +225,11 @@ const Edit = ({ setShowEditModal }: any) => {
             </div>
 
             <div className="mx-auto px-5">
-              <Button type="submit" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className=" cursor-pointer"
+              >
                 {isLoading ? "Submitting..." : "Submit info"}
               </Button>
             </div>
