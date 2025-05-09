@@ -82,12 +82,8 @@ const ProfileBedge: React.FC = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleClick = (label: string) => {
-    if (label === "Logout") {
-      setShowLogoutModal(true);
-      logout();
-    } else {
-      console.log("Navigate to:", label);
-    }
+    if (label === "Logout") setShowLogoutModal(true);
+    logout();
   };
 
   const handleLogoutConfirm = () => {
@@ -119,14 +115,16 @@ const ProfileBedge: React.FC = () => {
                 height={32}
                 width={32}
                 src={user?.profile_pic || "/images/profile.jpg"}
-                alt="user photo"
+                alt="profile"
               />
             )}
           </button>
 
           <div
             ref={sidenavRef}
-            className="absolute top-[20px] right-[-20px] z-50 w-[400px] h-[100vh] bg-white shadow-xl dark:bg-gray-700 overflow-hidden transform transition-transform duration-300 ease-in-out"
+            className={`absolute top-[20px] right-[-20px] z-50 w-[400px] h-[100vh] bg-white shadow-xl dark:bg-gray-700 overflow-hidden transform transition-transform duration-300 ease-in-out ${
+              show ? "translate-x-0" : "translate-x-full"
+            }`}
           >
             <div className="h-full flex flex-col items-center p-10">
               <div className="w-full mb-6 rounded shadow p-4">
@@ -140,18 +138,20 @@ const ProfileBedge: React.FC = () => {
 
                 <div className="mb-6 space-y-1 flex items-center gap-4">
                   <img
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full text-[10px]"
                     height={32}
                     width={32}
-                    src={user?.profile_pic}
-                    alt="user photo"
+                    src={user?.profile_pic || "/images/profile.jpg"}
+                    alt="Profile"
                   />
                   <div>
                     <div className="text-gray-700 dark:text-gray-300 font-medium">
-                      {user?.name || "user"}
+                      {user?.name || "User"}
                     </div>
                     <div className="text-gray-500 dark:text-gray-400">
-                      {user?.mobileNumber}
+                      {!isNaN(Number(user?.mobileNumber))
+                        ? user?.mobileNumber
+                        : ""}
                     </div>
                   </div>
                 </div>
@@ -180,21 +180,7 @@ const ProfileBedge: React.FC = () => {
         />
       )}
 
-      {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-40" />
-
-          <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full z-50">
-            <button
-              onClick={() => setShowEditModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 p-5"
-            >
-              <X />
-            </button>
-            <Edit />
-          </div>
-        </div>
-      )}
+      {showEditModal && <Edit setShowEditModal={setShowEditModal} />}
     </div>
   );
 };
