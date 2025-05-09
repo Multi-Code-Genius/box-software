@@ -90,6 +90,15 @@ export interface VideoType {
   updatedAt: string;
 }
 
+export interface User {
+  user?: any;
+  // user(user: any)?: unknown;
+  name: string;
+  email: string;
+  mobileNumber: string;
+  profile_pic: string;
+}
+
 export interface UserType {
   id: string;
   email: string;
