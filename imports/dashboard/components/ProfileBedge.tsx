@@ -10,7 +10,7 @@ import {
   LogOut,
   X,
 } from "lucide-react";
-import Edit from "@/imports/account/page/Edit";
+import Edit from "@/imports/dashboard/components/Edit";
 import { useAuthStore } from "@/store/authStore";
 import { LogoutConfirmModal } from "./LogoutModel";
 import { fetchUserData } from "../api/api";
@@ -108,8 +108,6 @@ const ProfileBedge: React.FC = () => {
 
             <img
               className="w-10 h-10 rounded-full"
-              height={32}
-              width={32}
               src={user?.profile_pic || "/images/profile.jpg"}
               alt="profile"
             />
@@ -140,8 +138,6 @@ const ProfileBedge: React.FC = () => {
                 <div className="mb-6 space-y-1 flex items-center gap-4">
                   <img
                     className="w-10 h-10 rounded-full text-[10px]"
-                    height={32}
-                    width={32}
                     src={user?.profile_pic || "/images/profile.jpg"}
                     alt="Profile"
                   />

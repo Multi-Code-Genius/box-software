@@ -126,6 +126,34 @@ const Form: React.FC = () => {
     }
   }, [isSuccess]);
 
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, files } = e.target;
+
+    if (type === "file" && files && files[0]) {
+      const file = files[0];
+      setFormData((prev) => ({
+        ...prev,
+        [name]: file,
+      }));
+      setPreview(URL.createObjectURL(file));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
   return (
     <div className="h-[calc(100vh-75px)]  w-full flex justify-center items-center m-auto">
       <form
@@ -274,9 +302,9 @@ const Form: React.FC = () => {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Football</SelectItem>
-                <SelectItem value="2">Cricket</SelectItem>
-                <SelectItem value="3">Basketball</SelectItem>
+                <SelectItem value="Football">Football</SelectItem>
+                <SelectItem value="Cricket">Cricket</SelectItem>
+                <SelectItem value="Basketball">Basketball</SelectItem>
               </SelectContent>
             </Select>
             {errors.category && (
@@ -406,14 +434,23 @@ const Form: React.FC = () => {
           <label className="flex items-center justify-center w-[10%]">
             <div className="flex flex-col items-center justify-center w-full h-16 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <ImageUp />
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-12 h-12 object-cover rounded-md"
+                  />
+                ) : (
+                  <ImageUp />
+                )}
               </div>
               <input
                 id="dropzone-file"
                 type="file"
                 className="hidden"
                 name="image"
-                onChange={handleChange}
+                accept="image/*"
+                onChange={handleChanges}
               />
             </div>
           </label>
@@ -426,7 +463,7 @@ const Form: React.FC = () => {
         </div>
 
         <div className="flex justify-center">
-          <Button type="submit" className="w-[50%]">
+          <Button type="submit" className="w-[50%]" variant="default">
             Submit
           </Button>
         </div>

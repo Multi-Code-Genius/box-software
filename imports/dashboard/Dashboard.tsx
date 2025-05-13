@@ -66,13 +66,13 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
               <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
             </li>
 
-            <li
+            {/* <li
               onClick={() => router.push("/account")}
               className="flex items-center cursor-pointer  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <User className="h-5 w-5" />
               <span className="flex-1 ms-3 whitespace-nowrap">Account</span>
-            </li>
+            </li> */}
 
             <li
               onClick={() => useAuthStore.getState().logout()}

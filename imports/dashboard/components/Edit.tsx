@@ -190,6 +190,7 @@ const Edit = ({ setShowEditModal }: any) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="Enter Email"
               />
               {errors.email && (
                 <span className="text-red-500 text-xs">{errors.email}</span>
@@ -203,6 +204,7 @@ const Edit = ({ setShowEditModal }: any) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                placeholder="Enter Name"
               />
               {errors.name && (
                 <span className="text-red-500 text-xs">{errors.name}</span>
@@ -216,6 +218,7 @@ const Edit = ({ setShowEditModal }: any) => {
                 name="mobileNumber"
                 value={formData.mobileNumber}
                 onChange={handleChange}
+                placeholder="Enter Number"
               />
               {errors.mobileNumber && (
                 <span className="text-red-500 text-xs">

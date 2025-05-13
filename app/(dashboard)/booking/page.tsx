@@ -1,7 +1,12 @@
+import AllGames from "@/imports/Bookings/ui/components/AllGames";
 import React from "react";
 
 const page = () => {
-  return <div>Bookings</div>;
+  return (
+    <div>
+      <AllGames />
+    </div>
+  );
 };
 
 export default page;

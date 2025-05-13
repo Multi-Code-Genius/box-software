@@ -135,3 +135,39 @@ export interface VerifyOtpResponse {
   message: string;
   token: string;
 }
+
+export interface Game {
+  description: any;
+  bookings: any;
+  endDate: any;
+  startDate: any;
+  id: string;
+  name: string;
+  category: string;
+  address: string;
+  capacity: number;
+  hourlyPrice: number;
+  location: {
+    area: string[];
+    city: string[];
+  };
+}
+
+export interface Booking {
+  id: string;
+  date: string; // e.g., "2025-05-12T00:00:00.000Z"
+  startTime: string; // e.g., "2025-05-12T16:30:00.000Z"
+  endTime: string; // e.g., "2025-05-12T18:30:00.000Z"
+  status: string; // e.g., "PENDING", "CONFIRMED", etc.
+  totalAmount: number;
+  userMobile: string;
+  nets: number;
+  createdAt: string;
+  updatedAt: string;
+  gameId: string;
+  user: {
+    id: string;
+    name: string;
+    profile_pic: string | null;
+  };
+}
