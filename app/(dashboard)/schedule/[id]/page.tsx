@@ -6,17 +6,18 @@ import ScheduleCalendar from "@/imports/Bookings/ui/components/ScheduleCalendar"
 import { CirclePlus, Loader2 } from "lucide-react";
 import BookingForm from "@/imports/Bookings/ui/components/BookingForm";
 import { Label } from "@/components/ui/label";
+import { Game } from "@/types/auth";
 
 const SchedulePage = () => {
   const { id } = useParams();
-  const [game, setGame] = useState(null);
+  const [game, setGame] = useState<Game | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchGame = async () => {
       const result = await getAllGames();
       const foundGame = result.games.find((g) => g.id === id);
-      setGame(foundGame);
+      setGame(foundGame ?? null);
     };
 
     if (id) fetchGame();

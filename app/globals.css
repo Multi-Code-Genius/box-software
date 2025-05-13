@@ -145,7 +145,3 @@
 .rs-picker-popup {
   z-index: 9999 !important;
 }
-
-.sx-react-calendar-wrapper {
-  height: 70vh;
-}

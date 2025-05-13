@@ -171,3 +171,15 @@ export interface Booking {
     profile_pic: string | null;
   };
 }
+
+export interface FormData {
+  name: string;
+  phone: string;
+  amount: string; // or number if you want to change below
+  date: string;
+  startTime: string;
+  endTime: string;
+  nets: number;
+  gameId: string | null;
+  totalAmount: number;
+}

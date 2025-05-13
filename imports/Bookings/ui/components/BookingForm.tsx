@@ -50,7 +50,7 @@ const BookingForm = ({ setShowModal }: BookingFormProps) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     const gameId = localStorage.getItem("gameId");
 
@@ -77,7 +77,7 @@ const BookingForm = ({ setShowModal }: BookingFormProps) => {
     } catch (error) {
       console.error("Booking creation failed:", error);
     } finally {
-      setIsLoading(false); // Stop loading regardless of success or error
+      setIsLoading(false);
     }
   };
 
