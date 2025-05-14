@@ -128,7 +128,7 @@ const ProfileBedge: React.FC = () => {
             <div className="h-full flex flex-col items-center p-10">
               <div className="w-full mb-6 rounded shadow p-4 mt-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h1 className="text-xl font-semibold">Account</h1>
+                  <p className="text-xl font-semibold">Account</p>
                   <Pencil
                     className="w-5 h-5 cursor-pointer"
                     onClick={() => setShowEditModal(true)}

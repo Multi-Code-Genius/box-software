@@ -1,4 +1,4 @@
-import { Game } from "@/types/auth";
+import { BookingRequest, Game } from "@/types/auth";
 import Cookies from "js-cookie";
 
 const token = Cookies.get("accessToken");
@@ -69,16 +69,7 @@ export const getGameById = async (
   }
 };
 
-type FormData = {
-  name: string;
-  phone: string;
-  amount: string;
-  date: Date | null;
-  startTime: Date | null;
-  endTime: Date | null;
-};
-
-export const createBooking = async (data: FormData) => {
+export const createBooking = async (data: BookingRequest) => {
   if (!token) throw new Error("No auth token found");
 
   try {

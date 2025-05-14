@@ -3,10 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useNextCalendarApp, ScheduleXCalendar } from "@schedule-x/react";
 import { createViewWeek } from "@schedule-x/calendar";
 import { createEventsServicePlugin } from "@schedule-x/events-service";
-import "@schedule-x/theme-default/dist/index.css";
 import BookingForm from "./BookingForm";
 import { Game } from "@/types/auth";
 import { createEventModalPlugin } from "@schedule-x/event-modal";
+import { Label } from "@/components/ui/label";
+import { getGameById } from "../../api/api";
 
 type ScheduleCalendarProps = {
   game: Game;
@@ -66,6 +67,10 @@ const ScheduleCalendar = ({ game }: ScheduleCalendarProps) => {
     </div>
   );
 
+  useEffect(() => {
+    getGameById();
+  }, []);
+
   const calendar = useNextCalendarApp({
     views: [createViewWeek()],
     defaultView: "week",
@@ -88,7 +93,8 @@ const ScheduleCalendar = ({ game }: ScheduleCalendarProps) => {
   }, [events, calendar]);
 
   return (
-    <div className="mt-4 h-[100vh]">
+    <div className="space-y-5 h-[100vh]">
+      <Label className="pt-2 text-base">Bookings for : {game.name}</Label>
       <ScheduleXCalendar calendarApp={calendar} />
       {showModal && <BookingForm setShowModal={setShowModal} />}
     </div>

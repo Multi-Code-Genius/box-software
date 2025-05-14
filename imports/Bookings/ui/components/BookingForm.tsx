@@ -2,13 +2,15 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DatePicker } from "rsuite";
-import "rsuite/dist/rsuite.min.css";
+import { CustomProvider, DatePicker } from "rsuite";
+import "rsuite/dist/rsuite-no-reset.min.css";
 import { FaClock } from "react-icons/fa";
 import { CircleCheck, X } from "lucide-react";
 import { createBooking, getGameById } from "../../api/api";
 import { Button } from "@/components/ui/button";
 import moment from "moment";
+import { useTheme } from "next-themes";
+import { BookingFormData, BookingRequest } from "@/types/auth";
 
 type BookingFormProps = {
   setShowModal: (show: boolean) => void;
@@ -16,8 +18,9 @@ type BookingFormProps = {
 
 const BookingForm = ({ setShowModal }: BookingFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { theme } = useTheme();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BookingFormData>({
     name: "",
     phone: "",
     amount: "",
@@ -52,27 +55,26 @@ const BookingForm = ({ setShowModal }: BookingFormProps) => {
 
     setIsLoading(true);
 
-    const gameId = localStorage.getItem("gameId");
-
     try {
-      const selectedDate = formData.date!;
+      const gameId = localStorage.getItem("gameId");
 
-      const formatTime = (time: Date | null): string => {
-        return time ? moment(time).format("hh:mm A") : "";
-      };
-
-      const data = {
-        startTime: formatTime(formData.startTime),
-        endTime: formatTime(formData.endTime),
+      const bookingRequest: BookingRequest = {
+        name: formData.name,
+        number: formData.phone, // Maps to 'phone' in form but 'number' in API
+        amount: Number(formData.amount),
+        date: formData.date ? moment(formData.date).format("YYYY-MM-DD") : "",
+        startTime: formData.startTime
+          ? moment(formData.startTime).format("hh:mm A")
+          : "",
+        endTime: formData.endTime
+          ? moment(formData.endTime).format("hh:mm A")
+          : "",
         nets: 2,
         gameId,
         totalAmount: Number(formData.amount),
-        date: moment(selectedDate).format("YYYY-MM-DD"),
-        number: formData.phone,
-        name: formData.name,
       };
 
-      await createBooking(data);
+      await createBooking(bookingRequest);
       setShowModal(false);
     } catch (error) {
       console.error("Booking creation failed:", error);
@@ -100,7 +102,7 @@ const BookingForm = ({ setShowModal }: BookingFormProps) => {
           className="w-full px-14 py-14 rounded-lg flex flex-col gap-5"
           onSubmit={handleSubmit}
         >
-          <h3>Booking Info</h3>
+          <Label className="text-xl ">Booking Info</Label>
           <div className="space-y-2">
             <Label>Name</Label>
             <Input
@@ -140,53 +142,56 @@ const BookingForm = ({ setShowModal }: BookingFormProps) => {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label>Date</Label>
-            <DatePicker
-              placeholder="Select date"
-              className="w-full rounded-md "
-              format="dd-MM-yyyy"
-              cleanable
-              appearance="default"
-              style={{ width: "100%" }}
-              value={formData.date}
-              oneTap
-              onChange={(value) => handleChange("date", value)}
-            />
-            {errors.date && (
-              <p className="text-red-500 text-xs">{errors.date}</p>
-            )}
-          </div>
+          <CustomProvider
+            theme={theme as "light" | "dark" | "high-contrast" | undefined}
+          >
+            <div className="space-y-2">
+              <Label>Date</Label>
+              <DatePicker
+                placeholder="Select date"
+                className="w-full rounded-md   "
+                format="dd-MM-yyyy"
+                style={{ width: "100%" }}
+                value={formData.date}
+                appearance="default"
+                oneTap
+                onChange={(value) => handleChange("date", value)}
+              />
+              {errors.date && (
+                <p className="text-red-500 text-xs">{errors.date}</p>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <Label>Start Time</Label>
-            <DatePicker
-              caretAs={FaClock}
-              format="hh:mm a"
-              showMeridian
-              className="w-full"
-              value={formData.startTime}
-              onChange={(value) => handleChange("startTime", value)}
-            />
-            {errors.startTime && (
-              <p className="text-red-500 text-xs">{errors.startTime}</p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label>Start Time</Label>
+              <DatePicker
+                caretAs={FaClock}
+                format="hh:mm a"
+                showMeridian
+                className="w-full rounded-md   "
+                value={formData.startTime}
+                onChange={(value) => handleChange("startTime", value)}
+              />
+              {errors.startTime && (
+                <p className="text-red-500 text-xs">{errors.startTime}</p>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <Label>End Time</Label>
-            <DatePicker
-              caretAs={FaClock}
-              format="hh:mm a"
-              showMeridian
-              className="w-full"
-              value={formData.endTime}
-              onChange={(value) => handleChange("endTime", value)}
-            />
-            {errors.endTime && (
-              <p className="text-red-500 text-xs">{errors.endTime}</p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label>End Time</Label>
+              <DatePicker
+                caretAs={FaClock}
+                format="hh:mm a"
+                showMeridian
+                className="w-full rounded-md   "
+                value={formData.endTime}
+                onChange={(value) => handleChange("endTime", value)}
+              />
+              {errors.endTime && (
+                <p className="text-red-500 text-xs ">{errors.endTime}</p>
+              )}
+            </div>
+          </CustomProvider>
 
           <div className="flex w-full justify-between mt-4">
             <Button type="button" onClick={() => setShowModal(false)}>

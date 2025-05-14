@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { Game } from "@/types/auth";
 import { Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import "../../../../styles/Calender.css";
 
 const AllGames = () => {
   const [games, setGames] = useState<Game[]>([]);

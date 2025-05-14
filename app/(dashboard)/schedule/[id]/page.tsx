@@ -7,6 +7,7 @@ import { CirclePlus, Loader2 } from "lucide-react";
 import BookingForm from "@/imports/Bookings/ui/components/BookingForm";
 import { Label } from "@/components/ui/label";
 import { Game } from "@/types/auth";
+import "../../../../styles/Calender.css";
 
 const SchedulePage = () => {
   const { id } = useParams();
@@ -37,7 +38,7 @@ const SchedulePage = () => {
   return (
     <div className="p-10 ">
       <div className="flex justify-between">
-        <Label className="font-bold text-xl">Bookings</Label>
+        <Label className="font-bold text-3xl">Bookings</Label>
         <div>
           <CirclePlus
             className="cursor-pointer"
@@ -45,6 +46,7 @@ const SchedulePage = () => {
           />
         </div>
       </div>
+
       <ScheduleCalendar game={game} />
 
       {showModal && <BookingForm setShowModal={setShowModal} />}

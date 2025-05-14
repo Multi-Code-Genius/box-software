@@ -155,10 +155,10 @@ export interface Game {
 
 export interface Booking {
   id: string;
-  date: string; // e.g., "2025-05-12T00:00:00.000Z"
-  startTime: string; // e.g., "2025-05-12T16:30:00.000Z"
-  endTime: string; // e.g., "2025-05-12T18:30:00.000Z"
-  status: string; // e.g., "PENDING", "CONFIRMED", etc.
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: string;
   totalAmount: number;
   userMobile: string;
   nets: number;
@@ -172,10 +172,20 @@ export interface Booking {
   };
 }
 
-export interface FormData {
+// Add these types at the top of your file
+export interface BookingFormData {
   name: string;
   phone: string;
-  amount: string; // or number if you want to change below
+  amount: string;
+  date: Date | null;
+  startTime: Date | null;
+  endTime: Date | null;
+}
+
+export interface BookingRequest {
+  name: string;
+  number: string; // This matches your API's expected 'number' field
+  amount: number;
   date: string;
   startTime: string;
   endTime: string;
