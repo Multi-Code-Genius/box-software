@@ -36,7 +36,6 @@ export const api = async (
   const socketId = localStorage.getItem("socketId");
 
   const isFormData = body instanceof FormData;
-  console.log("isFormData", isFormData);
 
   const headersObj: Record<string, string> = {
     Accept: "application/json, text/plain, */*",

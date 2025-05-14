@@ -1,7 +1,8 @@
+// App.tsx
 import React from "react";
 
-const page = () => {
-  return <div>{/* <Edit /> */}</div>;
-};
+function App() {
+  return <div></div>;
+}
 
-export default page;
+export default App;

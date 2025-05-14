@@ -25,6 +25,20 @@
   font-family: "Poppins", sans-serif;
 }
 
+
+.tui-full-calendar-section-allday {
+  display: none !important;
+}
+
+
+.tui-full-calendar-time-schedule {
+  background-color: #b891eb !important;
+}
+
+.tui-full-calendar-timegrid-container {
+  overflow: visible !important;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
