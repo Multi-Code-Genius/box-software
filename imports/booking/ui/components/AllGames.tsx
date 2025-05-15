@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllGames } from "../../api/api";
 import {
   Card,
   CardContent,
@@ -10,12 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { IndianRupee, Map, MapPinned, Users } from "lucide-react";
-import ScheduleCalendar from "./ScheduleCalendar";
+
 import { useRouter } from "next/navigation";
 import { Game } from "@/types/auth";
 import { Loader2 } from "lucide-react";
-import { Label } from "@/components/ui/label";
+
 import "../../../../styles/Calender.css";
+import { getAllGames } from "../../api/api";
 
 const AllGames = () => {
   const [games, setGames] = useState<Game[]>([]);
@@ -46,7 +46,7 @@ const AllGames = () => {
       {loading ? (
         <div className="flex items-center justify-center w-full h-48">
           <Loader2 className="animate-spin text-gray-500" size={32} />
-          <span className="ml-3 text-gray-600 text-lg">Loading games...</span>
+          <span className="ml-3 text-gray-600 text-lg">Loading...</span>
         </div>
       ) : (
         <div className="flex gap-6 flex-wrap">
