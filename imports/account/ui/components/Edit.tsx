@@ -8,7 +8,7 @@ import {
   fetchUserData,
   UpdateUserData,
   uploadImage,
-} from "@/imports/dashboard/api/api";
+} from "@/imports/account/api/api";
 
 const Edit = ({ setShowEditModal }: any) => {
   const { user, setUser } = useUserStore();

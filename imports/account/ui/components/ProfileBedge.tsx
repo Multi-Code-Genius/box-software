@@ -10,10 +10,10 @@ import {
   LogOut,
   X,
 } from "lucide-react";
-import Edit from "@/imports/dashboard/components/Edit";
+import Edit from "@/imports/account/ui/components/Edit";
 import { useAuthStore } from "@/store/authStore";
 import { LogoutConfirmModal } from "./LogoutModel";
-import { fetchUserData } from "../api/api";
+import { fetchUserData } from "../../api/api";
 import { useUserStore } from "@/store/userStore";
 
 const ProfileBedge: React.FC = () => {

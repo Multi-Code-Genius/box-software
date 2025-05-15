@@ -3,12 +3,14 @@
 import { LayoutGrid, NotebookPen, User, UsersRound } from "lucide-react";
 import { ReactNode } from "react";
 import { TbLogout } from "react-icons/tb";
-import ProfileBedge from "./components/ProfileBedge";
+import ProfileBedge from "../components/ProfileBedge";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 
 const Dashboard = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+  const { user } = useUserStore();
 
   return (
     <>
@@ -30,6 +32,18 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
                   BrandName
                 </span>
               </a>
+              <div className="flex flex-col">
+                <div className="font-bold text-base">
+                  Welcome, {user?.name || "User"}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {new Date().toLocaleDateString("en-US", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
             </div>
             <ProfileBedge />
           </div>

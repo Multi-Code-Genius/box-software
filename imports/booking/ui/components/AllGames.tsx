@@ -9,9 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { IndianRupee, Map, MapPinned, Users } from "lucide-react";
-
 import { useRouter } from "next/navigation";
-import { Game } from "@/types/auth";
 import { Loader2 } from "lucide-react";
 
 import "../../../../styles/Calender.css";
@@ -35,12 +33,9 @@ const AllGames = () => {
         setLoading(false);
       }
     };
-    console.log("api");
 
     getGames();
   }, []);
-
-  console.log(games);
 
   return (
     <div className="p-10">

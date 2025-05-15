@@ -1,12 +1,7 @@
-import Form from "@/imports/vanue/page/Form";
-import React from "react";
+import DashBoardPage from "@/imports/dashboard/ui/page/DashBoardPage";
 
 const page = () => {
-  return (
-    <>
-      <Form />
-    </>
-  );
+  return <DashBoardPage />;
 };
 
 export default page;
