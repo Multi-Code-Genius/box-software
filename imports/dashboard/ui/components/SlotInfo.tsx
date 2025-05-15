@@ -87,7 +87,7 @@ const SlotInfo = () => {
 
   return (
     <div className="border  rounded-xl">
-      <div className="flex justify-between border-b p-5">
+      <div className="flex justify-between border-b py-3 px-5 items-center">
         <p className="text-base font-bold">Today's Slot Info</p>
         <div>
           {["All", "Morning", "Evening", "Night"].map((label, idx) => (
@@ -135,15 +135,15 @@ const SlotInfo = () => {
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p>{slot.time}</p>
+              <CardContent className="space-y-2">
+                <p className="font-medium">{slot.time}</p>
                 <p>{slot.duration}</p>
-                <p>{slot.price}</p>
+                <p className="text-2xl font-bold">{slot.price}</p>
               </CardContent>
               <CardFooter>
                 <Button
                   disabled={slot.availability === "booked"}
-                  className="mx-auto"
+                  className="mx-auto px-8"
                 >
                   Book Now
                 </Button>

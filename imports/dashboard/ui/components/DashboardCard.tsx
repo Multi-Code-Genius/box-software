@@ -50,18 +50,20 @@ const DashboardCard = () => {
             <CardContent>
               <h1 className="text-3xl font-bold">{card.value}</h1>
             </CardContent>
-            <CardFooter>
-              <p className="flex items-center gap-1 text-sm">
-                <ArrowIcon
-                  className={
+            <CardFooter className="font-medium">
+              <div className="flex items-center gap-1 ">
+                <p
+                  className={`flex items-center gap-1 ${
                     card.changeDirection === "up"
                       ? "text-green-500"
                       : "text-red-500"
-                  }
-                  size={18}
-                />
-                {card.changePercent}% vs last month
-              </p>
+                  }`}
+                >
+                  <ArrowIcon size={18} />
+                  {card.changePercent}%
+                </p>
+                <span>vs last month</span>
+              </div>
             </CardFooter>
           </Card>
         );
