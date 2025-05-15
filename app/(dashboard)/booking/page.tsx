@@ -1,10 +1,10 @@
-import BookingPage from "@/imports/booking/pages/BookingPage";
+import AllGames from "@/imports/Bookings/ui/components/AllGames";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <BookingPage />
+      <AllGames />
     </div>
   );
 };

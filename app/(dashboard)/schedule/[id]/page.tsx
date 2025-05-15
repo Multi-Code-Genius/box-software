@@ -8,6 +8,7 @@ import BookingForm from "@/imports/Bookings/ui/components/BookingForm";
 import { Label } from "@/components/ui/label";
 import { Game } from "@/types/auth";
 import "../../../../styles/Calender.css";
+import BookingPage from "@/imports/booking/pages/BookingPage";
 
 const SchedulePage = () => {
   const { id } = useParams();
@@ -17,6 +18,7 @@ const SchedulePage = () => {
   useEffect(() => {
     const fetchGame = async () => {
       const result = await getAllGames();
+
       const foundGame = result.games.find((g) => g.id === id);
       setGame(foundGame ?? null);
     };
@@ -37,19 +39,9 @@ const SchedulePage = () => {
 
   return (
     <div className="p-10 ">
-      <div className="flex justify-between">
-        <Label className="font-bold text-3xl">Bookings</Label>
-        <div>
-          <CirclePlus
-            className="cursor-pointer"
-            onClick={() => setShowModal(true)}
-          />
-        </div>
-      </div>
-
-      <ScheduleCalendar game={game} />
-
-      {showModal && <BookingForm setShowModal={setShowModal} />}
+      <p className="font-bold text-3xl pb-2">Boookings</p>
+      <p className="text-sm ">Booking for : {game?.name}</p>
+      <BookingPage game={game} />
     </div>
   );
 };

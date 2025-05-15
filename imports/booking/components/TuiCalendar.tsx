@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import moment from "moment";
 import { useEffect, useRef } from "react";
 import type { ISchedule } from "tui-calendar";
@@ -68,6 +69,7 @@ const TuiCalendar = ({
         const startTime = moment(start.toDate()).format("hh:mm A");
         const endTime = moment(end.toDate()).format("hh:mm A");
         const date = moment(start.toDate()).format("YYYY-MM-DD");
+        const gameId = localStorage.getItem("gameId");
 
         createBooking({
           name: title,
@@ -75,7 +77,7 @@ const TuiCalendar = ({
           startTime: startTime,
           endTime: endTime,
           totalAmount: 1220,
-          gameId: "a2d93d2c-d738-4cad-9884-f700dadfb10e",
+          gameId: gameId,
           nets: 2,
           date: date,
         });
@@ -178,8 +180,10 @@ const TuiCalendar = ({
 
   return (
     <div>
-      <button onClick={handlePrevWeek}>Previous Week</button>
-      <button onClick={handleNextWeek}>Next Week</button>
+      <div className="flex justify-between py-4">
+        <Button onClick={handlePrevWeek}>Previous Week</Button>
+        <Button onClick={handleNextWeek}>Next Week</Button>
+      </div>
       <div ref={calendarRef} />
     </div>
   );

@@ -209,10 +209,34 @@ export const useBookingById = (id: string) => {
   });
 };
 
+// const bookingByRange = async (
+//   gameId: string,
+//   range: { start: string; end: string }
+// ) => {
+//   try {
+//     const response = await api(
+//       `/api/booking/week/${gameId}/${range.start}/${range.end}`,
+//       {
+//         method: "GET",
+//         headers: { "Content-Type": "application/json" },
+//         cache: "no-store",
+//       }
+//     );
+//     const resp = await response;
+//     return resp;
+//   } catch (error) {
+//     throw new Error(error instanceof Error ? error.message : "Data Not Found");
+//   }
+// };
+
 const bookingByRange = async (
   gameId: string,
   range: { start: string; end: string }
 ) => {
+  if (!range.start || !range.end) {
+    throw new Error("Invalid range");
+  }
+
   try {
     const response = await api(
       `/api/booking/week/${gameId}/${range.start}/${range.end}`,
@@ -229,10 +253,27 @@ const bookingByRange = async (
   }
 };
 
+// export const useBookingByRange = (
+//   gameId: string,
+//   range: { start: string; end: string }
+// ) => {
+//   return useQuery({
+//     queryKey: ["booking", gameId, range],
+//     queryFn: () => bookingByRange(gameId, range),
+//     staleTime: 0,
+//     refetchOnMount: true,
+//     refetchOnWindowFocus: true,
+//     retry: 0,
+//     enabled: !!gameId && !!range,
+//   });
+// };
+
 export const useBookingByRange = (
   gameId: string,
   range: { start: string; end: string }
 ) => {
+  const isValid = !!gameId && !!range.start && !!range.end;
+
   return useQuery({
     queryKey: ["booking", gameId, range],
     queryFn: () => bookingByRange(gameId, range),
@@ -240,6 +281,6 @@ export const useBookingByRange = (
     refetchOnMount: true,
     refetchOnWindowFocus: true,
     retry: 0,
-    enabled: !!gameId && !!range,
+    enabled: isValid,
   });
 };

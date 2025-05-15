@@ -91,12 +91,6 @@ const AllGames = () => {
           ))}
         </div>
       )}
-
-      {selectedGame && (
-        <div className="mt-10">
-          <ScheduleCalendar game={selectedGame} />
-        </div>
-      )}
     </div>
   );
 };

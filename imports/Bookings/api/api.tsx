@@ -21,7 +21,7 @@ export const getAllGames = async (): Promise<{ games: Game[] }> => {
     }
 
     const data = await response.json();
-    console.log(data, "All games");
+
     return { games: data.games };
   } catch (error) {
     console.error("Failed to fetch games", error);
