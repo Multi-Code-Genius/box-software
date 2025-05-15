@@ -175,8 +175,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.name && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.name}</span>
               </div>
             )}
@@ -196,8 +196,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.description && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">
                   {errors.description}
                 </span>
@@ -221,8 +221,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.city && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.city}</span>
               </div>
             )}
@@ -241,8 +241,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.area && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.area}</span>
               </div>
             )}
@@ -263,8 +263,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.address && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.address}</span>
               </div>
             )}
@@ -283,8 +283,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.capacity && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.capacity}</span>
               </div>
             )}
@@ -308,8 +308,8 @@ const Form: React.FC = () => {
               </SelectContent>
             </Select>
             {errors.category && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.category}</span>
               </div>
             )}
@@ -329,8 +329,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.hourlyPrice && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">
                   {errors.hourlyPrice}
                 </span>
@@ -401,8 +401,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.surface && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.surface}</span>
               </div>
             )}
@@ -421,8 +421,8 @@ const Form: React.FC = () => {
               />
             </div>
             {errors.net && (
-              <div className="flex gap-2">
-                <CircleAlert className="text-red-600" size={18} />
+              <div className="flex gap-2 items-center">
+                <CircleAlert className="text-red-600" size={16} />
                 <span className="text-red-500 text-sm">{errors.net}</span>
               </div>
             )}
@@ -431,14 +431,14 @@ const Form: React.FC = () => {
 
         <div className="space-y-3">
           <Label>Upload Image</Label>
-          <label className="flex items-center justify-center w-[10%]">
+          <label className="flex items-center justify-center w-16">
             <div className="flex flex-col items-center justify-center w-full h-16 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <div className="flex flex-col items-center justify-center ">
                 {preview ? (
                   <img
                     src={preview}
                     alt="Preview"
-                    className="w-12 h-12 object-cover rounded-md"
+                    className="w-16 h-16 object-contain rounded-md"
                   />
                 ) : (
                   <ImageUp />
@@ -455,8 +455,8 @@ const Form: React.FC = () => {
             </div>
           </label>
           {errors.image && (
-            <div className="flex gap-2">
-              <CircleAlert className="text-red-600" size={18} />
+            <div className="flex gap-2 items-center">
+              <CircleAlert className="text-red-600" size={16} />
               <span className="text-red-500 text-sm">{errors.image}</span>
             </div>
           )}

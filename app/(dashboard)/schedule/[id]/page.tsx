@@ -6,22 +6,20 @@ import { Game } from "@/types/auth";
 import "../../../../styles/Calender.css";
 import BookingPage from "@/imports/booking/ui/pages/BookingPage";
 import { getAllGames } from "@/imports/booking/api/api";
+import { useBookingStore } from "@/store/bookingStore";
 
 const SchedulePage = () => {
   const { id } = useParams();
+  const { games } = useBookingStore();
+
   const [game, setGame] = useState<Game | null>(null);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const fetchGame = async () => {
-      const result = await getAllGames();
+    if (!id || games.length === 0) return;
 
-      const foundGame = result.games.find((g) => g.id === id);
-      setGame(foundGame ?? null);
-    };
-
-    if (id) fetchGame();
-  }, [id]);
+    const foundGame = games.find((g) => g.id === id);
+    setGame(foundGame ?? null);
+  }, [id, games]);
 
   if (!game)
     return (

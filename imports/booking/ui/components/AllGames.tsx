@@ -16,10 +16,10 @@ import { Loader2 } from "lucide-react";
 
 import "../../../../styles/Calender.css";
 import { getAllGames } from "../../api/api";
+import { useBookingStore } from "@/store/bookingStore";
 
 const AllGames = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const { games, setGames } = useBookingStore();
   const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
@@ -35,9 +35,12 @@ const AllGames = () => {
         setLoading(false);
       }
     };
+    console.log("api");
 
     getGames();
   }, []);
+
+  console.log(games);
 
   return (
     <div className="p-10">
