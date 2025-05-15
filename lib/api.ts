@@ -80,13 +80,13 @@ export const api = async (
     if (!response.ok) {
       if (response.status === 414) {
         console.error("URI Too Long Error (414) detected - logging out user");
-        removeCookieByKey("accessToken");
+        // removeCookieByKey("accessToken");
         window.location.href = "/login";
         return null;
       }
 
       if (response.status === 401) {
-        removeCookieByKey("accessToken");
+        // removeCookieByKey("accessToken");
         window.location.reload();
       }
 
