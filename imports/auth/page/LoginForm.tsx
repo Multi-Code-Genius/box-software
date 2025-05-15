@@ -25,14 +25,14 @@ const LoginForm = () => {
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    // const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    if (!isValidEmail) {
-      setEmailError("Please enter a valid email address.");
-      return;
-    }
+    // if (!isValidEmail) {
+    //   setEmailError("Please enter a valid email address.");
+    //   return;
+    // }
 
-    mutate({ email });
+    mutate({ number: email.toString() });
     setEmailError("");
   };
 
@@ -43,7 +43,7 @@ const LoginForm = () => {
       setOtpError("Please enter the 6-digit OTP.");
       return;
     }
-    VerifyMutate({ email, otp: otp });
+    VerifyMutate({ number: email.toString(), otp: otp });
     setOtpError("");
   };
 
@@ -63,10 +63,10 @@ const LoginForm = () => {
             className="flex flex-col gap-5 py-5 items-center"
           >
             <div>
-              <Label className="text-lg pb-2">Email</Label>
+              <Label className="text-lg pb-2">Number</Label>
               <Input
-                type="email"
-                placeholder="Enter email"
+                type="number"
+                placeholder="Enter number"
                 className="w-100 "
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -111,7 +111,7 @@ const LoginForm = () => {
             onChange={(val) => {
               setOTP(val);
               if (otp.length === 6) {
-                VerifyMutate({ email, otp: otp });
+                VerifyMutate({ number: email, otp: otp });
               }
             }}
           >

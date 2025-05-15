@@ -72,7 +72,7 @@ const Form: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    // if (!validate()) return;
 
     const formdata = new FormData();
     formdata.append("name", formData.name);
