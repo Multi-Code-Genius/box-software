@@ -46,9 +46,7 @@ export const UpdateUserData = async (user: User): Promise<User> => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
     const data = await response.json();
-
     return data.user;
   } catch (error) {
     console.error("Failed to update user data:", error);

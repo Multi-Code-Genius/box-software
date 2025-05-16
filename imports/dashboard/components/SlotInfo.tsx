@@ -57,7 +57,6 @@ const SlotInfo = () => {
       availability: "available",
       icon: <div className="bg-green-500 h-2 w-2 rounded-full" />,
     },
-
     {
       time: "10:00AM - 10:30AM",
       duration: "30 mins slot",
@@ -114,7 +113,7 @@ const SlotInfo = () => {
         </div>
       </div>
 
-      <div className="p-5">
+      <div className="px-5 py-4">
         <div className="flex justify-between pb-3">
           <div className="font-medium flex gap-2 items-center">
             Total all slots

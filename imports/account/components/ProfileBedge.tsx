@@ -60,7 +60,7 @@ const ProfileBedge: React.FC = () => {
 
       try {
         const data = await fetchUserData();
-        console.log(data, "ggggggggggggggggggg");
+
         setUser(data.user);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
