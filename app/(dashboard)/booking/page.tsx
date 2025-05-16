@@ -1,4 +1,4 @@
-import AllGames from "@/imports/booking/ui/components/AllGames";
+import AllGames from "@/imports/booking/components/AllGames";
 import React from "react";
 
 const page = () => {

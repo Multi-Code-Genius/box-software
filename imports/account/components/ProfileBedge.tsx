@@ -10,11 +10,11 @@ import {
   LogOut,
   X,
 } from "lucide-react";
-import Edit from "@/imports/account/ui/components/Edit";
+import Edit from "@/imports/account/components/Edit";
 import { useAuthStore } from "@/store/authStore";
 import { LogoutConfirmModal } from "./LogoutModel";
-import { fetchUserData } from "../../api/api";
 import { useUserStore } from "@/store/userStore";
+import { fetchUserData } from "@/api/account";
 
 const ProfileBedge: React.FC = () => {
   const [show, setShow] = useState(false);
@@ -56,8 +56,11 @@ const ProfileBedge: React.FC = () => {
 
   useEffect(() => {
     const getUserData = async () => {
+      console.log("trigger");
+
       try {
         const data = await fetchUserData();
+        console.log(data, "ggggggggggggggggggg");
         setUser(data.user);
       } catch (error) {
         console.error("Failed to fetch user data:", error);

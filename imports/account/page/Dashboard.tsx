@@ -32,9 +32,9 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
                   BrandName
                 </span>
               </a>
-              <div className="flex flex-col">
-                <div className="font-bold text-base">
-                  Welcome, {user?.name || "User"}
+              <div className="flex flex-col px-8">
+                <div className="font-medium text-xl flex gap-2 ">
+                  Welcome, <p className="font-bold"> {user?.name || "User"}</p>
                 </div>
                 <div className="text-sm text-gray-600">
                   {new Date().toLocaleDateString("en-US", {

@@ -12,9 +12,8 @@ import { IndianRupee, Map, MapPinned, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
-import "../../../../styles/Calender.css";
-import { getAllGames } from "../../api/api";
 import { useBookingStore } from "@/store/bookingStore";
+import { getAllGames } from "@/api/booking";
 
 const AllGames = () => {
   const { games, setGames } = useBookingStore();
@@ -45,6 +44,10 @@ const AllGames = () => {
         <div className="flex items-center justify-center w-full h-48">
           <Loader2 className="animate-spin text-gray-500" size={32} />
           <span className="ml-3 text-gray-600 text-lg">Loading...</span>
+        </div>
+      ) : games.length === 0 ? (
+        <div className="flex items-center justify-center w-full h-48 text-gray-500 text-lg">
+          No venues found.
         </div>
       ) : (
         <div className="flex gap-6 flex-wrap">

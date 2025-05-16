@@ -4,11 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import { Pen, X } from "lucide-react";
-import {
-  fetchUserData,
-  UpdateUserData,
-  uploadImage,
-} from "@/imports/account/api/api";
+import { fetchUserData, UpdateUserData, uploadImage } from "@/api/account";
 
 const Edit = ({ setShowEditModal }: any) => {
   const { user, setUser } = useUserStore();

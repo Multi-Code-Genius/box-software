@@ -18,7 +18,7 @@ const DashboardCard = () => {
     },
     {
       icon: <Zap />,
-      title: "Total Revenue in this month",
+      title: "Total revenue in this month",
       value: 20,
       changePercent: 5,
       changeDirection: "down",

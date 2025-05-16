@@ -43,17 +43,18 @@ const bookings = [
 
 const BookingList = () => {
   return (
-    <div className=" border rounded-xl  ">
+    <div className="h-full flex flex-col">
       <div className="border-b border-gray-300 px-3 py-6 font-bold">
         New Booking
       </div>
-      {bookings.map((booking, index) => (
-        <div key={booking.id} className="w-full  flex flex-row gap-3  px-4">
-          <div className="w-full px-3 py-6 border-b border-gray-300">
-            <div className="flex flex-row gap-3 ">
-              <div className="pt-1">
-                <div className="text-lg font-semibold">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-medium">
+
+      <div className="flex-1 overflow-auto">
+        {bookings.map((booking) => (
+          <div key={booking.id} className="w-full flex flex-row gap-3 px-4">
+            <div className="w-full px-3 py-7 border-b border-gray-300">
+              <div className="flex flex-row gap-3">
+                <div className="pt-1">
+                  <div className="text-lg font-semibold">
                     <Avatar>
                       <AvatarImage src={booking.avatarUrl} />
                       <AvatarFallback>
@@ -66,26 +67,27 @@ const BookingList = () => {
                     </Avatar>
                   </div>
                 </div>
-              </div>
 
-              <div className="w-full space-y-1">
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <p className="font-bold text-base">{booking.username}</p>
-                  <p>{booking.timeAgo}</p>
+                <div className="w-full space-y-1">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <p className="font-bold text-base">{booking.username}</p>
+                    <p>{booking.timeAgo}</p>
+                  </div>
+                  <p>{booking.message}</p>
+                  <p className="text-sm text-green-500 font-medium">
+                    {booking.slotInfo}
+                  </p>
+                  <p className="text-sm text-blue-500 cursor-pointer hover:underline font-bold pt-2">
+                    {booking.actionText}
+                  </p>
                 </div>
-                <p>{booking.message}</p>
-                <p className="text-sm text-green-500 font-medium">
-                  {booking.slotInfo}
-                </p>
-                <p className="text-sm text-blue-500 cursor-pointer hover:underline font-bold">
-                  {booking.actionText}
-                </p>
               </div>
             </div>
           </div>
-        </div>
-      ))}
-      <div className="w-full flex justify-center py-3">
+        ))}
+      </div>
+
+      <div className="w-full flex justify-center py-3 border-t border-gray-200">
         <button className="mx-auto">View all</button>
       </div>
     </div>

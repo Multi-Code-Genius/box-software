@@ -1,4 +1,4 @@
-import DashBoardPage from "@/imports/dashboard/ui/page/DashBoardPage";
+import DashBoardPage from "@/imports/dashboard/page/DashBoardPage";
 
 const page = () => {
   return <DashBoardPage />;

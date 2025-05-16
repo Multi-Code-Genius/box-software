@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Game } from "@/types/auth";
-import "../../../../styles/Calender.css";
-import BookingPage from "@/imports/booking/ui/pages/BookingPage";
-import { getAllGames } from "@/imports/booking/api/api";
+import BookingPage from "@/imports/booking/pages/BookingPage";
 import { useBookingStore } from "@/store/bookingStore";
 
 const SchedulePage = () => {
