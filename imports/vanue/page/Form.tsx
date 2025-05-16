@@ -28,6 +28,8 @@ import {
 import { useEffect, useState } from "react";
 
 const Form: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState<FormDataTypes>({
     name: "",
     description: "",
@@ -73,6 +75,7 @@ const Form: React.FC = () => {
     e.preventDefault();
 
     // if (!validate()) return;
+    setLoading(true);
 
     const formdata = new FormData();
     formdata.append("name", formData.name);
@@ -104,7 +107,9 @@ const Form: React.FC = () => {
     ) {
       formdata.append("game", formData.image);
     }
-    mutate(formdata);
+    mutate(formdata, {
+      onSettled: () => setLoading(false),
+    });
   };
 
   useEffect(() => {
@@ -218,14 +223,9 @@ const Form: React.FC = () => {
                 className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 onChange={handleChange}
                 value={formData.city}
+                readOnly
               />
             </div>
-            {errors.city && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.city}</span>
-              </div>
-            )}
           </div>
           <div className="space-y-2 w-[90%]">
             <Label>Area</Label>
@@ -238,14 +238,9 @@ const Form: React.FC = () => {
                 className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 onChange={handleChange}
                 value={formData.area}
+                readOnly
               />
             </div>
-            {errors.area && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.area}</span>
-              </div>
-            )}
           </div>
         </div>
         <div className="flex gap-5">
@@ -463,8 +458,13 @@ const Form: React.FC = () => {
         </div>
 
         <div className="flex justify-center">
-          <Button type="submit" className="w-[50%]" variant="default">
-            Submit
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-[50%]"
+            variant="default"
+          >
+            {loading ? "Submitting..." : "Submit"}
           </Button>
         </div>
       </form>

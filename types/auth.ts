@@ -172,7 +172,6 @@ export interface Booking {
   };
 }
 
-// Add these types at the top of your file
 export interface BookingFormData {
   name: string;
   phone: string;
@@ -184,7 +183,7 @@ export interface BookingFormData {
 
 export interface BookingRequest {
   name: string;
-  number: string; // This matches your API's expected 'number' field
+  number: string;
   amount: number;
   date: string;
   startTime: string;
@@ -192,4 +191,16 @@ export interface BookingRequest {
   nets: number;
   gameId: string | null;
   totalAmount: number;
+}
+
+export interface DashboardData {
+  message: string;
+  newBookings: any[];
+  bookingsThisMonth: any[];
+  thisMonthBookingsCount: number;
+  todaysBookingsCount: number;
+  newUsersCount: number;
+  thisMonthTotalAmount: number;
+  thisWeekTotalAmount: number;
+  todaysTotalAmount: number;
 }

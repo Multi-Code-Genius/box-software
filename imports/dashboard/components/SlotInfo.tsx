@@ -8,79 +8,74 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useDashboardStore } from "@/store/dashboardStore";
 import { useState } from "react";
+import { format, differenceInMinutes } from "date-fns";
 
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("All");
+  const { data } = useDashboardStore();
 
-  const slots = [
-    {
-      time: "6:00AM - 6:30AM",
-      duration: "30 mins slot",
-      price: "$200",
-      availability: "available",
-      icon: <div className="bg-green-500 h-2 w-2 rounded-full" />,
-    },
-    {
-      time: "6:30PM, - 7:00PM",
-      duration: "30 mins slot",
-      price: "$180",
-      availability: "available",
-      icon: <div className="bg-green-500 h-2 w-2 rounded-full" />,
-    },
-    {
-      time: "7:00AM - 7:30AM",
-      duration: "30 mins slot",
-      price: "$220",
-      availability: "booked",
-      icon: <div className="bg-red-500 h-2 w-2 rounded-full" />,
-    },
-    {
-      time: "8:00AM - 8:30AM",
-      duration: "30 mins slot",
-      price: "$250",
-      availability: "available",
-      icon: <div className="bg-green-500 h-2 w-2 rounded-full" />,
-    },
-    {
-      time: "9:00PM - 9:30PM",
-      duration: "30 mins slot",
-      price: "$230",
-      availability: "booked",
-      icon: <div className="bg-red-500 h-2 w-2 rounded-full" />,
-    },
-    {
-      time: "10:00AM - 10:30AM",
-      duration: "30 mins slot",
-      price: "$210",
-      availability: "available",
-      icon: <div className="bg-green-500 h-2 w-2 rounded-full" />,
-    },
-    {
-      time: "10:00AM - 10:30AM",
-      duration: "30 mins slot",
-      price: "$210",
-      availability: "available",
-      icon: <div className="bg-green-500 h-2 w-2 rounded-full" />,
-    },
-  ];
+  const getHour = (date: Date) => date.getHours();
 
-  const getHour = (timeStr: string) => {
-    const hour = parseInt(timeStr.split(":")[0]);
-    const isAM = timeStr.includes("AM");
-    return isAM ? hour : hour + 12;
+  const formatTime = (start: string, end: string) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    return `${format(startDate, "h:mma")} - ${format(endDate, "h:mma")}`;
   };
 
+  const getAvailability = (status: string) => {
+    switch (status) {
+      case "PENDING":
+      case "CONFIRMED":
+        return "booked";
+      case "CANCELLED":
+        return "cancelled";
+      default:
+        return "available";
+    }
+  };
+
+  const getIcon = (availability: string) => {
+    switch (availability) {
+      case "available":
+        return <div className="bg-green-500 h-2 w-2 rounded-full" />;
+      case "booked":
+        return <div className="bg-red-500 h-2 w-2 rounded-full" />;
+      case "cancelled":
+        return <div className="bg-gray-500 h-2 w-2 rounded-full" />;
+      default:
+        return <div className="bg-yellow-500 h-2 w-2 rounded-full" />;
+    }
+  };
+
+  const slots =
+    data?.bookingsThisMonth?.map((slot: any) => {
+      const start = new Date(slot.startTime);
+      const end = new Date(slot.endTime);
+      const duration = differenceInMinutes(end, start);
+      const availability = getAvailability(slot.status);
+
+      return {
+        time: formatTime(slot.startTime, slot.endTime),
+        duration: `${duration} mins slot`,
+        price: `$${slot.totalAmount}`,
+        availability,
+        icon: getIcon(availability),
+        original: slot, // optional if needed later
+      };
+    }) || [];
+
   const applyTimeFilter = (slot: (typeof slots)[0]) => {
-    const startHour = getHour(slot.time);
+    const hour = getHour(new Date(slot.original.startTime));
     switch (selectedTimeFilter) {
       case "Morning":
-        return startHour >= 5 && startHour < 12;
+        return hour >= 5 && hour < 12;
       case "Evening":
-        return startHour >= 17 && startHour < 20;
+        return hour >= 17 && hour < 20;
       case "Night":
-        return startHour >= 20 || startHour < 5;
+        return hour >= 20 || hour < 5;
       default:
         return true;
     }
@@ -101,7 +96,7 @@ const SlotInfo = () => {
             <button
               key={label}
               onClick={() => setSelectedTimeFilter(label)}
-              className={`border py-1 px-4 cursor-pointer ${
+              className={`border py-1 px-4 cursor-pointer text-sm ${
                 idx === 0 ? "rounded-l-md" : ""
               } ${idx === 3 ? "rounded-r-md" : ""} ${
                 selectedTimeFilter === label ? "bg-gray-200 font-semibold" : ""
@@ -127,7 +122,7 @@ const SlotInfo = () => {
               checked={showAvailableOnly}
               onChange={(e) => setShowAvailableOnly(e.target.checked)}
             />
-            <p className="font-medium">Show only Available slot</p>
+            <p className="font-medium text-sm">Show only Available slot</p>
           </div>
         </div>
 
@@ -137,7 +132,7 @@ const SlotInfo = () => {
               <Card key={index} className="gap-3 py-5">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2">
+                    <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs">
                       {slot.icon}
                       {slot.availability}
                     </div>

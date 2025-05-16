@@ -1,3 +1,6 @@
+"use client";
+
+import { Zap } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -5,39 +8,39 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowUp, ArrowDown, Zap } from "lucide-react";
+import { useDashboardStore } from "@/store/dashboardStore";
+import Games from "./Games";
 
 const DashboardCard = () => {
+  const { data } = useDashboardStore();
+
+  const bookingsCount = data?.thisMonthBookingsCount ?? 0;
+  const totalRevenue = data?.thisMonthTotalAmount ?? 0;
+  const newPlayers = data?.newUsersCount ?? 0;
+
   const cardsData = [
     {
       icon: <Zap />,
       title: "Total booked slot in this month",
-      value: 250,
-      changePercent: 30,
-      changeDirection: "up",
+      value: bookingsCount,
     },
     {
       icon: <Zap />,
       title: "Total revenue in this month",
-      value: 20,
-      changePercent: 5,
-      changeDirection: "down",
+      value: totalRevenue,
     },
     {
       icon: <Zap />,
       title: "Total players in this month",
-      value: 150,
-      changePercent: 15,
-      changeDirection: "up",
+      value: newPlayers,
     },
   ];
 
   return (
-    <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-      {cardsData.map((card, index) => {
-        const ArrowIcon = card.changeDirection === "up" ? ArrowUp : ArrowDown;
-
-        return (
+    <>
+      <Games />
+      <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        {cardsData.map((card, index) => (
           <Card key={index} className="gap-3">
             <CardHeader>
               <CardTitle className="flex items-center gap-5">
@@ -51,24 +54,16 @@ const DashboardCard = () => {
               <h1 className="text-3xl font-bold">{card.value}</h1>
             </CardContent>
             <CardFooter className="font-medium">
-              <div className="flex items-center gap-1 ">
-                <p
-                  className={`flex items-center gap-1 ${
-                    card.changeDirection === "up"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  <ArrowIcon size={18} />
-                  {card.changePercent}%
-                </p>
-                <span>vs last month</span>
-              </div>
+              {card.title === "Total players in this month" ? (
+                <p className="font-semibold">New users: {newPlayers ?? 0}</p>
+              ) : (
+                <></>
+              )}
             </CardFooter>
           </Card>
-        );
-      })}
-    </div>
+        ))}
+      </div>
+    </>
   );
 };
 

@@ -1,59 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-
-const bookings = [
-  {
-    id: 1,
-    avatarUrl: "https://github.com/shadcn.png",
-    username: "John Doe",
-    timeAgo: "2 mins ago",
-    message: "Booked a slot",
-    slotInfo: "20 June, Sunday, 9:30PM - 11:00PM",
-    actionText: "View booking info",
-  },
-  {
-    id: 2,
-    avatarUrl: "https://github.com/vercel.png",
-    username: "Alice Smith",
-    timeAgo: "10 mins ago",
-    message: "Booked a slot",
-    slotInfo: "22 June, Tuesday, 1:00PM - 2:30PM",
-    actionText: "View booking info",
-  },
-  {
-    id: 3,
-    avatarUrl: "https://github.com/shadcn.png",
-    username: "John Doe",
-    timeAgo: "2 mins ago",
-    message: "Booked a slot",
-    slotInfo: "20 June, Sunday, 9:30PM - 11:00PM",
-    actionText: "View booking info",
-  },
-  {
-    id: 4,
-    avatarUrl: "https://github.com/shadcn.png",
-    username: "John Doe",
-    timeAgo: "2 mins ago",
-    message: "Booked a slot",
-    slotInfo: "20 June, Sunday, 9:30PM - 11:00PM",
-    actionText: "View booking info",
-  },
-  {
-    id: 5,
-    avatarUrl: "https://github.com/shadcn.png",
-    username: "John Doe",
-    timeAgo: "2 mins ago",
-    message: "Booked a slot",
-    slotInfo: "20 June, Sunday, 9:30PM - 11:00PM",
-    actionText: "View booking info",
-  },
-];
+import { useDashboardStore } from "@/store/dashboardStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { format, formatDistanceToNow } from "date-fns";
 
 const BookingList = () => {
   const [showAll, setShowAll] = useState(false);
+  const { data } = useDashboardStore();
+
+  const bookings =
+    data?.newBookings?.map((booking: any, index: number) => {
+      const user = booking.user || {};
+      const startDate = new Date(booking.startTime);
+      const endDate = new Date(booking.endTime);
+      const formattedDate = format(startDate, "dd MMMM, EEEE");
+      const formattedTime = `${format(startDate, "h:mma")} - ${format(
+        endDate,
+        "h:mma"
+      )}`;
+
+      return {
+        id: booking.id,
+        avatarUrl: "https://github.com/shadcn.png",
+        username: user.name || "Unknown",
+        timeAgo: formatDistanceToNow(new Date(booking.createdAt), {
+          addSuffix: true,
+        }),
+        message: "Booked a slot",
+        slotInfo: `${formattedDate}, ${formattedTime}`,
+        actionText: "View booking info",
+      };
+    }) || [];
 
   const visibleBookings = showAll ? bookings : bookings.slice(0, 3);
 
@@ -64,7 +42,7 @@ const BookingList = () => {
       </div>
 
       <div
-        className={`flex-1 my-2  ${
+        className={`flex-1 my-2 ${
           showAll ? "overflow-auto" : "overflow-hidden"
         }`}
       >
@@ -78,7 +56,7 @@ const BookingList = () => {
                     <AvatarFallback>
                       {booking.username
                         .split(" ")
-                        .map((word) => word[0])
+                        .map((word: any) => word[0])
                         .join("")
                         .toUpperCase()}
                     </AvatarFallback>
@@ -104,7 +82,7 @@ const BookingList = () => {
         ))}
       </div>
 
-      {!showAll && (
+      {!showAll && bookings.length > 3 && (
         <div className="w-full flex justify-center py-3 border-t border-gray-200">
           <button
             onClick={() => setShowAll(true)}
