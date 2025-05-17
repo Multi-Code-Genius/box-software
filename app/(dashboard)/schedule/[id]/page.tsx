@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { Game } from "@/types/auth";
-import BookingPage from "@/imports/booking/pages/BookingPage";
 import { useBookingStore } from "@/store/bookingStore";
+import BookingPage from "@/imports/booking/pages/BookingPage";
 
 const SchedulePage = () => {
   const { id } = useParams();

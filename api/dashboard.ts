@@ -1,9 +1,11 @@
-import { DashboardData, Game } from "@/types/auth";
+import { DashboardData } from "@/types/auth";
 import Cookies from "js-cookie";
 
 const token = Cookies.get("accessToken");
 
-export const getDashboardData = async (gameId: any): Promise<DashboardData> => {
+export const getDashboardData = async (
+  gameId: string
+): Promise<DashboardData> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/game/${gameId}`,
