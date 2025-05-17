@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 
 export const LogoutConfirmModal = ({ onConfirm, onCancel }: any) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center">
-    <div className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-40" />
+  <div className="fixed inset-0 z-40 flex items-center justify-center w-[100vw] h-[100vh]">
+    <div className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-40 w-full" />
 
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded shadow-lg w-80 z-50 space-y-4">
       <div className="space-y-1">

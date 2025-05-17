@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Pencil,
   Building2,
@@ -16,16 +16,18 @@ import { LogoutConfirmModal } from "./LogoutModel";
 import { useUserStore } from "@/store/userStore";
 import { fetchUserData } from "@/api/account";
 
-const ProfileBedge: React.FC = () => {
-  const [show, setShow] = useState(false);
-  const [open, setOpen] = useState(false);
+interface ProfileBedgeProps {
+  setShowProfile: (value: boolean) => void;
+}
+
+const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const { logout } = useAuthStore();
   const { setUser, user } = useUserStore();
-  const sidenavRef = useRef<HTMLDivElement>(null);
-  const mainHeadRef = useRef<HTMLDivElement>(null);
-  type IconProps = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
+  type IconProps = React.ComponentType<React.SVGProps<SVGSVGElement>>;
   const icons: [string, IconProps][] = [
     ["Venue Manage", Building2],
     ["Customers", Users],
@@ -34,142 +36,69 @@ const ProfileBedge: React.FC = () => {
     ["Logout", LogOut],
   ];
 
-  useEffect(() => {
-    if (show) {
-      sidenavRef.current!.style.transform = "translateX(0)";
-    } else {
-      sidenavRef.current!.style.transform = "translateX(100%)";
-    }
-  }, [show]);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      mainHeadRef.current &&
-      !mainHeadRef.current.contains(event.target as Node) &&
-      sidenavRef.current &&
-      !sidenavRef.current.contains(event.target as Node)
-    ) {
-      setShow(false);
-      setOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    const getUserData = async () => {
-      console.log("trigger");
-
-      try {
-        const data = await fetchUserData();
-
-        setUser(data.user);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-
-    getUserData();
-  }, []);
-
-  useEffect(() => {
-    if (open || show) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open, show]);
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
   const handleClick = (label: string) => {
-    if (label === "Logout") setShowLogoutModal(true);
-    logout();
+    if (label === "Logout") {
+      setShowLogoutModal(true);
+    }
   };
 
   const handleLogoutConfirm = () => {
+    logout();
     setShowLogoutModal(false);
-    console.log("User logged out");
+    setShowProfile(false);
   };
 
   return (
-    <div className="flex relative items-center" ref={mainHeadRef}>
-      <div className="flex items-center ms-3">
-        <div>
-          <button
-            type="button"
-            className="flex text-sm  rounded-full   relative cursor-pointer"
-            aria-expanded="false"
-            onClick={() => {
-              setShow(!show);
-              setOpen(!open);
-            }}
-          >
-            <span className="sr-only">Open user menu</span>
-
-            <img
-              className="w-10 h-10 rounded-full"
-              src={user?.profile_pic || "/images/profile.jpg"}
-              alt="profile"
-            />
-          </button>
-
-          <div
-            ref={sidenavRef}
-            className={`absolute top-[-12px] right-[-20px]  w-[400px] h-[100vh] bg-white shadow-xl dark:bg-gray-700 overflow-hidden transform transition-transform duration-300 ease-in-out ${
-              show ? "translate-x-0" : "translate-x-full"
-            }`}
-          >
-            <div
-              className="absolute right-0 h-8 w-8 bg-black rounded-full flex items-center justify-center m-3  cursor-pointer"
-              onClick={() => setShow(false)}
+    <div className="fixed inset-0 z-50 flex items-end justify-center w-[400px]">
+      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full p-5 left-10 top-[-135px]">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Account
+            </h2>
+            <button
+              onClick={() => setShowProfile(false)}
+              className="  text-gray-500  h-6 w-6  bg-black  text-white  rounded-full flex justify-center items-center"
             >
-              <p className="text-lg font-bold text-white ">X</p>
-            </div>
-            <div className="h-full flex flex-col items-center p-10">
-              <div className="w-full mb-6 rounded shadow p-4 mt-5">
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-xl font-semibold">Account</p>
-                  <Pencil
-                    className="w-5 h-5 cursor-pointer"
-                    onClick={() => setShowEditModal(true)}
-                  />
-                </div>
-
-                <div className="mb-6 space-y-1 flex items-center gap-4">
-                  <img
-                    className="w-10 h-10 rounded-full text-[10px]"
-                    src={user?.profile_pic || "/images/profile.jpg"}
-                    alt="Profile"
-                  />
-                  <div>
-                    <div className="text-gray-700 dark:text-gray-300 font-medium">
-                      {user?.name || "User"}
-                    </div>
-                    <div className="text-gray-500 dark:text-gray-400">
-                      {!isNaN(Number(user?.mobileNumber))
-                        ? user?.mobileNumber
-                        : ""}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4 w-full">
-                {icons.map(([label, Icon], i) => (
-                  <div
-                    key={i}
-                    onClick={() => handleClick(label)}
-                    className="flex items-center gap-2 cursor-pointer hover:text-slate-600 dark:hover:text-gray-300 bg-gray-100 p-5 rounded-lg shadow-md"
-                  >
-                    <Icon className="w-5 h-5" />
-                    <p>{label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+              <X size={14} />
+            </button>
           </div>
+          <div className="flex items-center gap-4 justify-between">
+            <div className="flex gap-4">
+              <img
+                className="w-12 h-12 rounded-full"
+                src={user?.profile_pic || "/images/profile.jpg"}
+                alt="Profile"
+              />
+              <div>
+                <div className="text-gray-900 dark:text-white font-medium">
+                  {user?.name || "User"}
+                </div>
+                {user?.mobileNumber && !isNaN(Number(user.mobileNumber)) && (
+                  <div className="text-gray-500 dark:text-gray-400 text-sm">
+                    {user.mobileNumber}
+                  </div>
+                )}
+              </div>
+            </div>
+            <Pencil
+              className="w-5 h-5 text-gray-600 dark:text-gray-300 cursor-pointer"
+              onClick={() => setShowEditModal(true)}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {icons.map(([label, Icon], i) => (
+            <div
+              key={i}
+              onClick={() => handleClick(label)}
+              className="flex items-center gap-3 cursor-pointer bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-3 rounded-md transition"
+            >
+              <Icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              <span className="text-gray-800 dark:text-gray-200">{label}</span>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -1,16 +1,47 @@
 "use client";
 
-import { LayoutGrid, NotebookPen, User, UsersRound } from "lucide-react";
-import { ReactNode } from "react";
+import {
+  LayoutGrid,
+  LogOut,
+  NotebookPen,
+  User,
+  UsersRound,
+} from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
 import { TbLogout } from "react-icons/tb";
 import ProfileBedge from "../components/ProfileBedge";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogoutConfirmModal } from "../components/LogoutModel";
+import { fetchUserData } from "@/api/account";
 
 const Dashboard = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
-  const { user } = useUserStore();
+  const { setUser, user } = useUserStore();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { logout } = useAuthStore();
+  const [showProfile, setShowProfile] = useState(false);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const data = await fetchUserData();
+        setUser(data.user);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    getUserData();
+  }, [setUser]);
+
+  const handleLogoutConfirm = () => {
+    logout();
+    setShowLogoutModal(false);
+    setShowProfile(false);
+  };
 
   return (
     <>
@@ -27,14 +58,14 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
               >
                 <span className="sr-only">Open sidebar</span>
               </button>
-              <a href="" className="flex ms-2 md:me-24">
+              <a href="#" className="flex ms-2 md:me-24">
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                   BrandName
                 </span>
               </a>
               <div className="flex flex-col px-8">
-                <div className="font-medium text-xl flex gap-2 ">
-                  Welcome, <p className="font-bold"> {user?.name || "User"}</p>
+                <div className="font-medium text-xl flex gap-2">
+                  Welcome, <p className="font-bold">{user?.name || "User"}</p>
                 </div>
                 <div className="text-sm text-gray-600">
                   {new Date().toLocaleDateString("en-US", {
@@ -45,20 +76,20 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
                 </div>
               </div>
             </div>
-            <ProfileBedge />
           </div>
         </div>
       </nav>
+
       <aside
         id="logo-sidebar"
         className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800 flex flex-col justify-between">
           <ul className="space-y-2 font-medium">
             <li
               onClick={() => router.push("/dashboard")}
-              className="flex items-center cursor-pointer  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              className="flex items-center cursor-pointer p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <LayoutGrid className="h-5 w-5 text-gray-800" />
               <span className="ms-3">Dashboard</span>
@@ -66,7 +97,7 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
 
             <li
               onClick={() => router.push("/client")}
-              className="flex items-center cursor-pointer  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              className="flex items-center cursor-pointer p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <UsersRound className="h-5 w-5" />
               <span className="flex-1 ms-3 whitespace-nowrap">Client</span>
@@ -74,31 +105,65 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
 
             <li
               onClick={() => router.push("/booking")}
-              className="flex items-center cursor-pointer  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              className="flex items-center cursor-pointer p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <NotebookPen className="h-5 w-5" />
               <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
             </li>
 
-            {/* <li
-              onClick={() => router.push("/account")}
-              className="flex items-center cursor-pointer  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-            >
-              <User className="h-5 w-5" />
-              <span className="flex-1 ms-3 whitespace-nowrap">Account</span>
-            </li> */}
-
             <li
               onClick={() => useAuthStore.getState().logout()}
-              className="flex items-center cursor-pointer  p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              className="flex items-center cursor-pointer p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
             >
               <TbLogout className="h-5 w-5" />
               <span className="flex-1 ms-3 whitespace-nowrap">Logout</span>
             </li>
           </ul>
+
+          <div className=" border-t  pt-4 ">
+            <div className="flex justify-between gap-8 items-center">
+              <div className="flex gap-3 ">
+                <button
+                  type="button"
+                  className="cursor-pointer w-fit"
+                  onClick={() => setShowProfile(true)}
+                  aria-label="Open user profile"
+                >
+                  <Avatar>
+                    <AvatarImage
+                      src={user?.profile_pic || "/images/profile.jpg"}
+                      alt="profile"
+                      className=" rounded-full "
+                    />
+                    <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
+                  </Avatar>
+                </button>
+
+                <div className="text-sm">
+                  <p>{user?.name}</p>
+                  <p>{user?.email}</p>
+                </div>
+              </div>
+              <div className="w-full">
+                <LogOut
+                  className="cursor-pointer"
+                  onClick={() => setShowLogoutModal(true)}
+                />
+                {showLogoutModal && (
+                  <LogoutConfirmModal
+                    onConfirm={handleLogoutConfirm}
+                    onCancel={() => setShowLogoutModal(false)}
+                  />
+                )}
+              </div>
+            </div>
+
+            {showProfile && <ProfileBedge setShowProfile={setShowProfile} />}
+          </div>
         </div>
       </aside>
-      <div className="mt-16 mb-2.5 ml-64 mr-2.5 ">{children}</div>
+
+      <main className="mt-16 mb-2.5 ml-64 mr-2.5">{children}</main>
     </>
   );
 };

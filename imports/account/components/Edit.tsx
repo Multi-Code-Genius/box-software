@@ -128,8 +128,8 @@ const Edit = ({ setShowEditModal }: any) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-40" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center w-[100vw] h-[100vh]">
+      <div className="absolute inset-0 bg-[rgba(0,0,0,0.5)] z-40 w-full" />
 
       <div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg w-full z-50">
         <button
