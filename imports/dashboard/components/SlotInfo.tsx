@@ -63,7 +63,7 @@ const SlotInfo = () => {
         price: `$${slot.totalAmount}`,
         availability,
         icon: getIcon(availability),
-        original: slot, // optional if needed later
+        original: slot,
       };
     }) || [];
 
@@ -129,7 +129,7 @@ const SlotInfo = () => {
         <div className="overflow-y-auto">
           <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {filteredSlots.map((slot, index) => (
-              <Card key={index} className="gap-3 py-5">
+              <Card key={index} className="gap-2.5 py-5">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs">
@@ -138,7 +138,7 @@ const SlotInfo = () => {
                     </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-1.5">
+                <CardContent className="space-y-1">
                   <p className="font-medium">{slot.time}</p>
                   <p>{slot.duration}</p>
                   <p className="text-2xl font-bold">{slot.price}</p>

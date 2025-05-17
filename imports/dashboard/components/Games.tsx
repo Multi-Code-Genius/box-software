@@ -21,7 +21,6 @@ const Games = () => {
           const defaultGameId = result.games[0].id;
           setSelectedGameId(defaultGameId);
           localStorage.setItem("gameId", defaultGameId);
-          console.log("Default selected game:", result.games[0]);
         }
       } catch (error) {
         console.error("Error fetching games:", error);
@@ -55,15 +54,15 @@ const Games = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 pb-5">
-      <div className="flex gap-12">
+    <div className="flex flex-col gap-4 pb-2 overflow-auto">
+      <div className="flex gap-2">
         {games?.map((game) => (
           <div
             key={game.id}
-            className={`border rounded-xl px-30 py-1 cursor-pointer ${
+            className={`border rounded-xl px-10 py-1 cursor-pointer ${
               selectedGameId === game.id
-                ? "bg-black text-white"
-                : "hover:bg-black hover:text-white"
+                ? "bg-gray-200 "
+                : "hover:bg-gray-200  "
             }`}
             onClick={() => handleSelectGame(game)}
           >

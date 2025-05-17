@@ -14,7 +14,6 @@ import Edit from "@/imports/account/components/Edit";
 import { useAuthStore } from "@/store/authStore";
 import { LogoutConfirmModal } from "./LogoutModel";
 import { useUserStore } from "@/store/userStore";
-import { fetchUserData } from "@/api/account";
 
 interface ProfileBedgeProps {
   setShowProfile: (value: boolean) => void;
@@ -58,7 +57,7 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
             </h2>
             <button
               onClick={() => setShowProfile(false)}
-              className="  text-gray-500  h-6 w-6  bg-black  text-white  rounded-full flex justify-center items-center"
+              className="   h-6 w-6  bg-black  text-white  rounded-full flex justify-center items-center font-bold"
             >
               <X size={14} />
             </button>

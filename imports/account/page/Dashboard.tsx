@@ -7,7 +7,7 @@ import {
   User,
   UsersRound,
 } from "lucide-react";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { TbLogout } from "react-icons/tb";
 import ProfileBedge from "../components/ProfileBedge";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,7 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { logout } = useAuthStore();
   const [showProfile, setShowProfile] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -36,6 +37,27 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
 
     getUserData();
   }, [setUser]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setShowProfile(false);
+      }
+    };
+
+    if (showProfile) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showProfile]);
 
   const handleLogoutConfirm = () => {
     logout();
@@ -120,27 +142,27 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
             </li>
           </ul>
 
-          <div className=" border-t  pt-4 ">
+          <div className="border-t pt-4" ref={profileRef}>
             <div className="flex justify-between gap-8 items-center">
               <div className="flex gap-3 ">
                 <button
                   type="button"
                   className="cursor-pointer w-fit"
-                  onClick={() => setShowProfile(true)}
+                  onClick={() => setShowProfile((prev) => !prev)}
                   aria-label="Open user profile"
                 >
                   <Avatar>
                     <AvatarImage
                       src={user?.profile_pic || "/images/profile.jpg"}
                       alt="profile"
-                      className=" rounded-full "
+                      className="rounded-full"
                     />
                     <AvatarFallback>{user?.name?.[0] || "U"}</AvatarFallback>
                   </Avatar>
                 </button>
 
                 <div className="text-sm">
-                  <p>{user?.name}</p>
+                  <p>{user?.name || "user"}</p>
                   <p>{user?.email}</p>
                 </div>
               </div>

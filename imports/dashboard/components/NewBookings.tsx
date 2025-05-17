@@ -37,8 +37,11 @@ const BookingList = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-gray-300 px-3 py-6 font-bold">
+      <div className="border-b border-gray-300 px-3 py-6 font-bold flex items-center justify-between ">
         New Booking
+        <div className="text-xs font-medium bg-gray-200 h-5 w-5 flex justify-center items-center rounded-full">
+          {bookings.length}
+        </div>
       </div>
 
       <div

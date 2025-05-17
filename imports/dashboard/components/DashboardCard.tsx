@@ -44,7 +44,7 @@ const DashboardCard = () => {
           <Card key={index} className="gap-3">
             <CardHeader>
               <CardTitle className="flex items-center gap-5">
-                <div className="h-10 w-10 bg-slate-300 rounded-full flex justify-center items-center">
+                <div className="h-10 w-10 bg-gray-200 rounded-full flex justify-center items-center">
                   {card.icon}
                 </div>
                 {card.title}
@@ -55,7 +55,12 @@ const DashboardCard = () => {
             </CardContent>
             <CardFooter className="font-medium">
               {card.title === "Total players in this month" ? (
-                <p className="font-semibold">New users: {newPlayers ?? 0}</p>
+                <div className="font-semibold flex gap-3 items-center ">
+                  New users{" "}
+                  <div className="h-5 w-5 bg-gray-200 rounded-full flex justify-center items-center text-xs">
+                    {newPlayers ?? 0}
+                  </div>
+                </div>
               ) : (
                 <></>
               )}

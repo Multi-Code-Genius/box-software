@@ -11,7 +11,7 @@ const DashBoardPage = () => {
       <div className="p-7 pb-0">
         <DashboardCard />
       </div>
-      <div className="flex flex-row gap-7 px-7 py-7 flex-1 overflow-hidden">
+      <div className="flex flex-row gap-7 px-7 pt-7 pb-3 flex-1 overflow-hidden">
         <div className="w-[70%] border rounded-xl overflow-auto">
           <SlotInfo />
         </div>

@@ -12,8 +12,14 @@ import { useRouter } from "next/navigation";
 import { useBookingStore } from "@/store/bookingStore";
 
 const AllGames = () => {
+<<<<<<< Updated upstream
   const { games } = useBookingStore();
   console.log(games, "games");
+=======
+  const { games, setGames } = useBookingStore();
+  const [loading, setLoading] = useState<boolean>(true);
+
+>>>>>>> Stashed changes
   const router = useRouter();
 
   return (
