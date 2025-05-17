@@ -50,7 +50,7 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center w-[400px]">
-      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full p-5 left-10 top-[-135px]">
+      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full p-5 left-10 top-[-70px]">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
