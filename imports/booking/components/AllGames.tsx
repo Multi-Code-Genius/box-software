@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,14 +9,10 @@ import {
 } from "@/components/ui/card";
 import { IndianRupee, Map, MapPinned, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-
 import { useBookingStore } from "@/store/bookingStore";
-import { getAllGames } from "@/api/booking";
 
 const AllGames = () => {
-  const { games, setGames } = useBookingStore();
-  const [loading, setLoading] = useState<boolean>(true);
+  const { games } = useBookingStore();
   console.log(games, "games");
   const router = useRouter();
 

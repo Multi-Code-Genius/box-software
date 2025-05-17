@@ -25,3 +25,20 @@ export interface Errors {
   net?: string;
   image?: string;
 }
+
+export interface CreateBooking {
+  gameId: string;
+  startTime: string;
+  endTime: string;
+  totalAmount: number;
+  nets: number;
+  date: string;
+  name: string;
+  number: string;
+}
+
+export interface UpdateBooking {
+  id: string;
+  startTime: string;
+  endTime: string;
+}

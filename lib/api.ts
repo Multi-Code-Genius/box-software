@@ -13,9 +13,9 @@ function getCookieByKey(key: string): string | undefined {
   return undefined;
 }
 
-function removeCookieByKey(key: string): void {
-  document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-}
+// function removeCookieByKey(key: string): void {
+//   document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+// }
 
 export const api = async (
   endpoint: string,

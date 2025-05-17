@@ -2,19 +2,20 @@
 
 import React, { useState } from "react";
 
-const sampleFlashcards = [
+const cards = [
   { id: 1, question: "What is the capital of France?", answer: "Paris" },
   { id: 2, question: "What is 2 + 2?", answer: "4" },
   { id: 3, question: "What color is the sky?", answer: "Blue" },
 ];
 
 export default function FlashcardApp() {
-  const [cards, setCards] = useState(sampleFlashcards);
   const [current, setCurrent] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [stats, setStats] = useState([]);
+  const [stats, setStats] = useState<
+    { id: number; known: boolean; timestamp: string }[]
+  >([]);
 
-  const handleResponse = (known) => {
+  const handleResponse = (known: boolean) => {
     const newStat = {
       id: cards[current].id,
       known,
