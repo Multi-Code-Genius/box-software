@@ -1,4 +1,4 @@
-import { getAllGames } from "@/api/booking";
+import { getAllGames, useGames } from "@/api/booking";
 import { getDashboardData } from "@/api/dashboard";
 import { useBookingStore } from "@/store/bookingStore";
 import { useDashboardStore } from "@/store/dashboardStore";
@@ -6,29 +6,29 @@ import { useEffect, useState } from "react";
 
 const Games = () => {
   const { games, setGames } = useBookingStore();
-  const { data, setDashboardData, selectedGameId, setSelectedGameId } =
+  const { setDashboardData, selectedGameId, setSelectedGameId } =
     useDashboardStore();
 
-  //   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+
+  const { data, isLoading, isError, error } = useGames();
 
   useEffect(() => {
-    const getGames = async () => {
-      try {
-        const result = await getAllGames();
-        setGames(result.games);
+    if (data?.games?.length) {
+      setGames(data.games);
 
-        if (result.games?.length) {
-          const defaultGameId = result.games[0].id;
-          setSelectedGameId(defaultGameId);
-          localStorage.setItem("gameId", defaultGameId);
-        }
-      } catch (error) {
-        console.error("Error fetching games:", error);
-      }
-    };
+      const defaultGameId = data.games[0].id;
+      setSelectedGameId(defaultGameId);
+      localStorage.setItem("gameId", defaultGameId);
+    }
+  }, [data, setGames, setSelectedGameId]);
 
-    getGames();
-  }, [setGames]);
+  console.log(data);
+
+  useEffect(() => {
+    getAllGames();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,19 +54,19 @@ const Games = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 pb-2 overflow-auto">
+    <div className="flex flex-col gap-4 pb-3 overflow-auto">
       <div className="flex gap-2">
         {games?.map((game) => (
           <div
             key={game.id}
-            className={`border rounded-xl px-10 py-1 cursor-pointer ${
+            className={`border rounded-lg px-10 py-1 cursor-pointer shadow-md ${
               selectedGameId === game.id
-                ? "bg-gray-200 "
+                ? "bg-gray-200 font-medium"
                 : "hover:bg-gray-200  "
             }`}
             onClick={() => handleSelectGame(game)}
           >
-            <p className="font-medium">{game.name}</p>
+            <p className="text-sm">{game.name}</p>
           </div>
         ))}
       </div>

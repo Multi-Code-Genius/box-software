@@ -9,13 +9,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, differenceInMinutes } from "date-fns";
+import { useGames } from "@/api/booking";
 
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("All");
   const { data } = useDashboardStore();
+
+  const { isLoading } = useGames();
+
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  if (!hydrated) {
+    return (
+      <div className="text-center text-gray-500 py-10">Loading slots...</div>
+    );
+  }
 
   const getHour = (date: Date) => date.getHours();
 
@@ -60,7 +75,7 @@ const SlotInfo = () => {
       return {
         time: formatTime(slot.startTime, slot.endTime),
         duration: `${duration} mins slot`,
-        price: `$${slot.totalAmount}`,
+        price: `${slot.totalAmount}`,
         availability,
         icon: getIcon(availability),
         original: slot,
@@ -127,33 +142,43 @@ const SlotInfo = () => {
         </div>
 
         <div className="overflow-y-auto">
-          <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-            {filteredSlots.map((slot, index) => (
-              <Card key={index} className="gap-2.5 py-5">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs">
-                      {slot.icon}
-                      {slot.availability}
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-1">
-                  <p className="font-medium">{slot.time}</p>
-                  <p>{slot.duration}</p>
-                  <p className="text-2xl font-bold">{slot.price}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    disabled={slot.availability === "booked"}
-                    className="mx-auto px-8"
-                  >
-                    Book Now
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center text-gray-500 py-10">
+              Loading slots...
+            </div>
+          ) : filteredSlots.length === 0 ? (
+            <div className="text-center text-gray-500 py-10">
+              No slots available
+            </div>
+          ) : (
+            <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+              {filteredSlots.map((slot, index) => (
+                <Card key={index} className="gap-2.5 py-5">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs">
+                        {slot.icon}
+                        {slot.availability}
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-1">
+                    <p className="font-medium">{slot.time}</p>
+                    <p>{slot.duration}</p>
+                    <p className="text-2xl font-bold">{slot.price}</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button
+                      disabled={slot.availability === "booked"}
+                      className="mx-auto px-8"
+                    >
+                      Book Now
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

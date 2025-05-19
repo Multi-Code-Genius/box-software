@@ -20,17 +20,17 @@ const DashboardCard = () => {
 
   const cardsData = [
     {
-      icon: <Zap />,
+      icon: <Zap size={20} />,
       title: "Total booked slot in this month",
       value: bookingsCount,
     },
     {
-      icon: <Zap />,
+      icon: <Zap size={20} />,
       title: "Total revenue in this month",
       value: totalRevenue,
     },
     {
-      icon: <Zap />,
+      icon: <Zap size={20} />,
       title: "Total players in this month",
       value: newPlayers,
     },

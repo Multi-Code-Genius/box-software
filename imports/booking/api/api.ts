@@ -1,4 +1,3 @@
-// Game interface matching the structure defined in auth.ts
 export interface Game {
   id: string;
   name: string;

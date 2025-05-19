@@ -49,43 +49,49 @@ const BookingList = () => {
           showAll ? "overflow-auto" : "overflow-hidden"
         }`}
       >
-        {visibleBookings.map((booking) => (
-          <div key={booking.id} className="w-full flex flex-row gap-3 px-4">
-            <div className="w-full px-3 py-6 border-b border-gray-300">
-              <div className="flex flex-row gap-3">
-                <div className="pt-1">
-                  <Avatar>
-                    <AvatarImage src={booking.avatarUrl} />
-                    <AvatarFallback>
-                      {booking.username
-                        .split(" ")
-                        .map((word: any) => word[0])
-                        .join("")
-                        .toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-
-                <div className="w-full space-y-1">
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <p className="font-bold text-base">{booking.username}</p>
-                    <p>{booking.timeAgo}</p>
+        {visibleBookings.length === 0 ? (
+          <div className="text-center text-gray-500 py-10">
+            No new bookings available.
+          </div>
+        ) : (
+          visibleBookings.map((booking) => (
+            <div key={booking.id} className="w-full flex flex-row gap-3 px-4">
+              <div className="w-full px-3 py-6 border-b border-gray-300">
+                <div className="flex flex-row gap-3">
+                  <div className="pt-1">
+                    <Avatar>
+                      <AvatarImage src={booking.avatarUrl} />
+                      <AvatarFallback>
+                        {booking.username
+                          .split(" ")
+                          .map((word: any) => word[0])
+                          .join("")
+                          .toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
-                  <p>{booking.message}</p>
-                  <p className="text-sm text-green-500 font-medium">
-                    {booking.slotInfo}
-                  </p>
-                  <p className="text-sm text-blue-500 cursor-pointer hover:underline font-bold pt-2">
-                    {booking.actionText}
-                  </p>
+
+                  <div className="w-full space-y-1">
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <p className="font-bold text-base">{booking.username}</p>
+                      <p>{booking.timeAgo}</p>
+                    </div>
+                    <p>{booking.message}</p>
+                    <p className="text-sm text-green-500 font-medium">
+                      {booking.slotInfo}
+                    </p>
+                    <p className="text-sm text-blue-500 cursor-pointer hover:underline font-bold pt-2">
+                      {booking.actionText}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      {!showAll && bookings.length > 3 && (
+      {!showAll && bookings.length > 3 && visibleBookings.length > 0 && (
         <div className="w-full flex justify-center py-3 border-t border-gray-200">
           <button
             onClick={() => setShowAll(true)}

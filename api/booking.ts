@@ -1,6 +1,10 @@
 import { api } from "@/lib/api";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Game } from "@/types/auth";
+import Cookies from "js-cookie";
+
+const token = Cookies.get("accessToken");
 
 const fetchBooking = async (data: { date: string; gameId: string }) => {
   try {
@@ -285,11 +289,6 @@ export const useBookingByRange = (
   });
 };
 
-import { BookingRequest, Game } from "@/types/auth";
-import Cookies from "js-cookie";
-
-const token = Cookies.get("accessToken");
-
 export const getAllGames = async (): Promise<{ games: Game[] }> => {
   try {
     const response = await fetch(
@@ -314,6 +313,14 @@ export const getAllGames = async (): Promise<{ games: Game[] }> => {
     console.error("Failed to fetch games", error);
     throw error;
   }
+};
+
+export const useGames = () => {
+  return useQuery<{ games: Game[] }, Error>({
+    queryKey: ["games"],
+    queryFn: () => getAllGames(),
+    enabled: !!token,
+  });
 };
 
 export const getGameById = async (
