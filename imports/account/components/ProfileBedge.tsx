@@ -105,6 +105,10 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
         <LogoutConfirmModal
           onConfirm={handleLogoutConfirm}
           onCancel={() => setShowLogoutModal(false)}
+          open={false}
+          onOpenChange={function (open: boolean): void {
+            throw new Error("Function not implemented.");
+          }}
         />
       )}
 

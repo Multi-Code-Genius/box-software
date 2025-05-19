@@ -171,12 +171,12 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
                   className="cursor-pointer"
                   onClick={() => setShowLogoutModal(true)}
                 />
-                {showLogoutModal && (
-                  <LogoutConfirmModal
-                    onConfirm={handleLogoutConfirm}
-                    onCancel={() => setShowLogoutModal(false)}
-                  />
-                )}
+                <LogoutConfirmModal
+                  open={showLogoutModal}
+                  onOpenChange={setShowLogoutModal}
+                  onConfirm={handleLogoutConfirm}
+                  onCancel={() => setShowLogoutModal(false)}
+                />
               </div>
             </div>
 

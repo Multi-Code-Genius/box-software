@@ -55,13 +55,6 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
                     onClick={() => setShow(!show)}
                   >
                     <span className="sr-only">Open user menu</span>
-                    {/* <Image
-                      className="w-8 h-8 rounded-full"
-                      width={32}
-                      height={32}
-                      
-                      alt="user photo"
-                    /> */}
                   </button>
                   {false && (
                     <div
