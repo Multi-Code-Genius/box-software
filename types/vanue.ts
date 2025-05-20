@@ -38,7 +38,8 @@ export interface CreateBooking {
 }
 
 export interface UpdateBooking {
-  id: string;
+  id?: string;
   startTime: string;
   endTime: string;
+  date: any;
 }

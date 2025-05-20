@@ -113,12 +113,6 @@ const TuiCalendar = ({
         );
         console.log("updatedSchedule", schedule);
 
-        // updateBooking(updatedSchedule.id, {
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   date: date,
-        // });
-
         updateBooking({
           id: updatedSchedule.id,
           data: {
