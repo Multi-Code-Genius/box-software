@@ -32,7 +32,6 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
     ["Customers", Users],
     ["Settings", Settings],
     ["Help", HelpCircle],
-    ["Logout", LogOut],
   ];
 
   const handleClick = (label: string) => {
@@ -57,7 +56,7 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
             </h2>
             <button
               onClick={() => setShowProfile(false)}
-              className="   h-6 w-6  bg-black  text-white  rounded-full flex justify-center items-center font-bold"
+              className="h-6 w-6  bg-black  text-white  rounded-full flex justify-center items-center font-bold"
             >
               <X size={14} />
             </button>
