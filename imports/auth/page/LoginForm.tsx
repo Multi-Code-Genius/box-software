@@ -63,14 +63,15 @@ const LoginForm = () => {
             className="flex flex-col gap-5 py-5 items-center"
           >
             <div>
-              <Label className="text-lg pb-2">Number</Label>
+              <Label className="text-lg pb-2">Phone Number</Label>
               <Input
-                type="number"
+                type="tel"
                 placeholder="Enter number"
                 className="w-100 "
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+
               {emailError && (
                 <p className="text-sm text-red-500 pt-2">{emailError}</p>
               )}

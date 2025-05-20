@@ -210,7 +210,7 @@ const Edit = ({ setShowEditModal }: any) => {
             <div className="space-y-2">
               <Label>Phone Number</Label>
               <Input
-                type="number"
+                type="tel"
                 name="mobileNumber"
                 value={formData.mobileNumber}
                 onChange={handleChange}
