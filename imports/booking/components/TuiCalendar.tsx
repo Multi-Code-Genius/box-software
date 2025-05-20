@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { CreateBooking } from "@/types/vanue";
+import { CreateBooking, UpdateBooking } from "@/types/vanue";
 import moment from "moment";
 import { useEffect, useRef } from "react";
 import type { ISchedule } from "tui-calendar";
@@ -14,7 +14,7 @@ const TuiCalendar = ({
   isLoading,
   setEvents,
   cancelBooking,
-  // updateBooking,
+  updateBooking,
   setRange,
 }: {
   events: ISchedule[];
@@ -23,7 +23,7 @@ const TuiCalendar = ({
   isLoading: boolean;
   setEvents: (events: ISchedule[]) => void;
   cancelBooking: (id: string) => void;
-  // updateBooking: (id: string, data: UpdateBooking) => void;
+  updateBooking: (input: { id: string; data: UpdateBooking }) => void;
   setRange: (range: { start: string; end: string }) => void;
 }) => {
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -96,9 +96,9 @@ const TuiCalendar = ({
           start: changes.start?.toDate?.() || schedule.start,
           end: changes.end?.toDate?.() || schedule.end,
         };
-        // const startTime = moment(updatedSchedule.start).format("hh:mm A");
-        // const endTime = moment(updatedSchedule.end).format("hh:mm A");
-        // const date = moment(updatedSchedule.start).format("YYYY-MM-DD");
+        const startTime = moment(updatedSchedule.start).format("hh:mm A");
+        const endTime = moment(updatedSchedule.end).format("hh:mm A");
+        const date = moment(updatedSchedule.start).format("YYYY-MM-DD");
 
         setEvents(
           events.map((item) =>
@@ -111,12 +111,22 @@ const TuiCalendar = ({
           schedule.calendarId,
           changes
         );
+        console.log("updatedSchedule", schedule);
 
         // updateBooking(updatedSchedule.id, {
         //   startTime: startTime,
         //   endTime: endTime,
         //   date: date,
         // });
+
+        updateBooking({
+          id: updatedSchedule.id,
+          data: {
+            startTime,
+            endTime,
+            date,
+          },
+        });
       });
 
       calendarInstance.current.on("beforeDeleteSchedule", (event: any) => {

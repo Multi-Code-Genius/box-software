@@ -113,10 +113,8 @@ export const useCancelBooking = (
 
 const updateBooking = async (
   id: string,
-  data: { date: string; gameId: string }
+  data: { date: string; startTime: string; endTime: string }
 ) => {
-  console.log("id, data", id, data);
-
   try {
     const response = await api(`/api/booking/update/${id}`, {
       method: "PATCH",
@@ -124,8 +122,8 @@ const updateBooking = async (
       body: JSON.stringify(data),
       cache: "no-store",
     });
-    const resp = await response;
-    return resp;
+
+    return response;
   } catch (error) {
     console.log("Booking Response", error);
     throw new Error(error instanceof Error ? error.message : "Data Not Found");
@@ -142,8 +140,9 @@ export const useUpdateBooking = (
       data,
     }: {
       id: string;
-      data: { date: string; gameId: string };
+      data: { date: string; startTime: string; endTime: string };
     }) => updateBooking(id, data),
+
     onSuccess: () => {
       toast.success("Booking Updated!");
       onSuccess?.();

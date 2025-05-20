@@ -4,6 +4,7 @@ import {
   useBookingByRange,
   useCancelBooking,
   useCreateBooking,
+  useUpdateBooking,
 } from "@/api/booking";
 import { Game } from "@/types/auth";
 import moment from "moment";
@@ -53,10 +54,10 @@ const BookingPage = ({ game }: { game: Game }) => {
     () => refetch()
   );
 
-  // const { mutate: updateBooking } = useUpdateBooking(
-  //   () => refetch(),
-  //   () => refetch()
-  // );
+  const { mutate: updateBooking } = useUpdateBooking(
+    () => refetch(),
+    () => refetch()
+  );
 
   const { mutate: createBooking } = useCreateBooking(
     async () => {
@@ -78,7 +79,7 @@ const BookingPage = ({ game }: { game: Game }) => {
         refetch={refetch}
         isLoading={isLoading}
         cancelBooking={cancelBooking}
-        // updateBooking={updateBooking}
+        updateBooking={updateBooking}
         setRange={setRange}
       />
     </div>
