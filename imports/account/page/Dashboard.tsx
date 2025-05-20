@@ -110,6 +110,13 @@ const Dashboard = ({ children }: { children: ReactNode }) => {
               <NotebookPen className="h-5 w-5" />
               <span className="flex-1 ms-3 whitespace-nowrap">Bookings</span>
             </li>
+            <li
+              onClick={() => router.push("/customer")}
+              className="flex items-center cursor-pointer p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+            >
+              <Contact className="h-5 w-5" />
+              <span className="flex-1 ms-3 whitespace-nowrap">Customers</span>
+            </li>
           </ul>
 
           <div
