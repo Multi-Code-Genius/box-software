@@ -74,16 +74,16 @@ export const api = async (
   try {
     // const api_url = "http://localhost:5001";
     const api_url = BASE_URL;
-
+console.log("apirul>>>>",api_url)
     const response = await fetch(`${api_url}${endpoint}`, requestConfig);
 
     if (!response.ok) {
-      if (response.status === 414) {
-        console.error("URI Too Long Error (414) detected - logging out user");
-        // removeCookieByKey("accessToken");
-        window.location.href = "/login";
-        return null;
-      }
+      // if (response.status === 414) {
+      //   console.error("URI Too Long Error (414) detected - logging out user");
+      //   // removeCookieByKey("accessToken");
+      //   window.location.href = "/login";
+      //   return null;
+      // }
 
       if (response.status === 401) {
         // removeCookieByKey("accessToken");

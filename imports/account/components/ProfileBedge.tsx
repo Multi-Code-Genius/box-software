@@ -14,6 +14,7 @@ import Edit from "@/imports/account/components/Edit";
 import { useAuthStore } from "@/store/authStore";
 import { LogoutConfirmModal } from "./LogoutModel";
 import { useUserStore } from "@/store/userStore";
+import { useRouter } from "next/navigation";
 
 interface ProfileBedgeProps {
   setShowProfile: (value: boolean) => void;
@@ -22,12 +23,12 @@ interface ProfileBedgeProps {
 const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
+  const router = useRouter();
   const { logout } = useAuthStore();
   const { setUser, user } = useUserStore();
 
   type IconProps = React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  const icons: [string, IconProps][] = [
+  const accountmenu: [string, IconProps][] = [
     ["Venue Manage", Building2],
     ["Customers", Users],
     ["Settings", Settings],
@@ -37,6 +38,8 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
   const handleClick = (label: string) => {
     if (label === "Logout") {
       setShowLogoutModal(true);
+    } else if (label === "Venue Manage") {
+      router.push("/venue");
     }
   };
 
@@ -87,7 +90,7 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
         </div>
 
         <div className="space-y-3">
-          {icons.map(([label, Icon], i) => (
+          {accountmenu.map(([label, Icon], i) => (
             <div
               key={i}
               onClick={() => handleClick(label)}

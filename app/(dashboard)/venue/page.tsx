@@ -1,10 +1,10 @@
-import Form from "@/imports/vanueForm/page/Form";
+import VenuePage from "@/imports/venue/ui/page/VenuePage";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <Form />
+      <VenuePage />
     </div>
   );
 };
