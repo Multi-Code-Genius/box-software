@@ -1,6 +1,6 @@
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
-import Dashboard from "@/imports/account/page/Dashboard";
+import Dashboard from "@/imports/account/page/Sidebar";
 import "tui-calendar/dist/tui-calendar.css";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

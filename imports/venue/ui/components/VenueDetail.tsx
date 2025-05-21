@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useBookingStore } from "@/store/bookingStore";
-import { IndianRupee, Map, MapPinned, Users } from "lucide-react";
+import { IndianRupee, Loader2, Map, MapPinned, Users } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const VenueDetail = () => {
@@ -222,7 +222,7 @@ const VenueDetail = () => {
                   </label>
                   <Input
                     type="number"
-                    value={selectedGame.net}
+                    value={selectedGame.net || ""}
                     onChange={(e) => handleEditField("net", e.target.value)}
                   />
                 </div>

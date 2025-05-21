@@ -15,14 +15,28 @@ import { useAuthStore } from "@/store/authStore";
 import { LogoutConfirmModal } from "./LogoutModel";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 interface ProfileBedgeProps {
   setShowProfile: (value: boolean) => void;
+  showProfile: boolean;
 }
 
-const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+const ProfileBedge: React.FC<ProfileBedgeProps> = ({
+  setShowProfile,
+  showProfile,
+}) => {
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
+
   const router = useRouter();
   const { logout } = useAuthStore();
   const { setUser, user } = useUserStore();
@@ -41,6 +55,7 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
     } else if (label === "Venue Manage") {
       router.push("/venue");
     }
+    setShowProfile(false);
   };
 
   const handleLogoutConfirm = () => {
@@ -50,72 +65,76 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({ setShowProfile }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center w-[400px]">
-      <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-lg w-full p-5 left-10 top-[-70px]">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+    <>
+      <Dialog open={showProfile} onOpenChange={setShowProfile}>
+        <DialogContent className="relative bg-white rounded-xl w-full w-[400px] p-5 left-[250px] bottom-73">
+          <DialogHeader className="mb-6 gap-10">
+            <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white mx-auto">
               Account
-            </h2>
-            <button
-              onClick={() => setShowProfile(false)}
-              className="h-6 w-6  bg-black  text-white  rounded-full flex justify-center items-center font-bold"
+            </DialogTitle>
+            <DialogClose
+              asChild
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
             >
-              <X size={14} />
-            </button>
-          </div>
-          <div className="flex items-center gap-4 justify-between">
-            <div className="flex gap-4">
-              <img
-                className="w-12 h-12 rounded-full"
-                src={user?.profile_pic || "/images/profile.jpg"}
-                alt="Profile"
-              />
-              <div>
-                <div className="text-gray-900 dark:text-white font-medium">
-                  {user?.name || "User"}
-                </div>
-                {user?.mobileNumber && !isNaN(Number(user.mobileNumber)) && (
-                  <div className="text-gray-500 dark:text-gray-400 text-sm">
-                    {user.mobileNumber}
-                  </div>
-                )}
-              </div>
-            </div>
-            <Pencil
-              className="w-5 h-5 text-gray-600 dark:text-gray-300 cursor-pointer"
-              onClick={() => setShowEditModal(true)}
-            />
-          </div>
-        </div>
+              <X className="h-4 w-4" />
+            </DialogClose>
 
-        <div className="space-y-3">
-          {accountmenu.map(([label, Icon], i) => (
-            <div
-              key={i}
-              onClick={() => handleClick(label)}
-              className="flex items-center gap-3 cursor-pointer bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-3 rounded-md transition"
-            >
-              <Icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              <span className="text-gray-800 dark:text-gray-200">{label}</span>
+            <div className="flex items-center gap-4 justify-between">
+              <div className="flex gap-4">
+                <img
+                  className="w-12 h-12 rounded-full"
+                  src={user?.profile_pic || "/images/profile.jpg"}
+                  alt="Profile"
+                />
+                <div>
+                  <div className="text-gray-900 dark:text-white font-medium">
+                    {user?.name || "User"}
+                  </div>
+                  {user?.mobileNumber && !isNaN(Number(user.mobileNumber)) && (
+                    <div className="text-gray-500 dark:text-gray-400 text-sm">
+                      {user.mobileNumber}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Pencil
+                className="w-5 h-5 text-gray-600 dark:text-gray-300 cursor-pointer"
+                onClick={() => {
+                  setShowEditModal(true);
+                  setShowProfile(false);
+                }}
+              />
             </div>
-          ))}
-        </div>
-      </div>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {accountmenu.map(([label, Icon], i) => (
+              <div
+                key={i}
+                onClick={() => handleClick(label)}
+                className="flex items-center gap-3 cursor-pointer bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-4 py-3 rounded-md transition"
+              >
+                <Icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                <span className="text-gray-800 dark:text-gray-200">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {showLogoutModal && (
         <LogoutConfirmModal
           onConfirm={handleLogoutConfirm}
           onCancel={() => setShowLogoutModal(false)}
-          open={false}
-          onOpenChange={function (open: boolean): void {
-            throw new Error("Function not implemented.");
-          }}
+          open={showLogoutModal}
+          onOpenChange={setShowLogoutModal}
         />
       )}
 
-      {showEditModal && <Edit setShowEditModal={setShowEditModal} />}
-    </div>
+      <Edit showEditModal={showEditModal} setShowEditModal={setShowEditModal} />
+    </>
   );
 };
 
