@@ -27,8 +27,6 @@ const VenueDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const { mutate: editVenue } = useEditVenue();
 
-  const [activeTurfType, setActiveTurfType] = useState<string | null>(null);
-
   const handleEditField = (
     field: string,
     value: any,
@@ -83,8 +81,6 @@ const VenueDetail = () => {
 
     setShowModal(false);
   };
-
-  console.log(selectedGame);
 
   return (
     <div className="m-5">
@@ -187,13 +183,11 @@ const VenueDetail = () => {
                     {["indoor", "outdoor", "roof"].map((type) => (
                       <button
                         key={type}
-                        onClick={() => {
-                          setActiveTurfType(type);
-                          handleEditField("turfType", type, true, "gameInfo");
-                        }}
+                        onClick={() =>
+                          handleEditField("turfType", type, true, "gameInfo")
+                        }
                         className={`px-3 py-2 rounded-lg border transition-colors duration-200 text-sm ${
-                          activeTurfType === type ||
-                          selectedGame.gameInfo?.[type]
+                          selectedGame.gameInfo?.turfType === type
                             ? "bg-black text-white"
                             : "bg-white text-gray-800 hover:bg-black hover:text-white"
                         }`}

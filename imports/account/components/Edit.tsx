@@ -23,7 +23,6 @@ const Edit: React.FC<ProfileBedgeProps> = ({
   showEditModal,
 }) => {
   const { user, setUser, image, setUserImage } = useUserStore();
-  const [loadingUser, setLoadingUser] = useState(true); // ⬅️ NEW
   const [uploading, setUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [localImage, setLocalImage] = useState<string | null>(null);
@@ -44,8 +43,6 @@ const Edit: React.FC<ProfileBedgeProps> = ({
         setUser(data.user);
       } catch (err) {
         console.error("Fetch user failed:", err);
-      } finally {
-        setLoadingUser(false);
       }
     };
 
@@ -108,84 +105,80 @@ const Edit: React.FC<ProfileBedgeProps> = ({
           <DialogClose className="absolute top-2 right-2 p-2 rounded-full hover:bg-muted" />
         </DialogHeader>
 
-        {loadingUser ? (
-          <div className="py-10 text-center">Loading…</div>
-        ) : (
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-            <div className="flex justify-center">
-              <div className="relative w-40 h-40">
-                <img
-                  src={localImage ?? formData.profile_pic}
-                  alt="profile"
-                  className="rounded-full w-full h-full object-cover"
-                />
-                {uploading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
-                    <div className="w-6 h-6 border-2 border-t-transparent border-black rounded-full animate-spin" />
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-1 right-3 bg-white p-3 rounded-full shadow-md"
-                >
-                  <Pen size={16} />
-                </button>
-              </div>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+          <div className="flex justify-center">
+            <div className="relative w-40 h-40">
+              <img
+                src={localImage ?? formData.profile_pic}
+                alt="profile"
+                className="rounded-full w-full h-full object-cover"
+              />
+              {uploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
+                  <div className="w-6 h-6 border-2 border-t-transparent border-black rounded-full animate-spin" />
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-1 right-3 bg-white p-3 rounded-full shadow-md"
+              >
+                <Pen size={16} />
+              </button>
             </div>
+          </div>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+
+          <Label className="text-center mx-auto text-xl font-bold">
+            Profile Information
+          </Label>
+
+          <div className="space-y-2">
+            <Label>Email</Label>
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter Email"
             />
+          </div>
 
-            <Label className="text-center mx-auto text-xl font-bold">
-              Profile Information
-            </Label>
+          <div className="space-y-2">
+            <Label>Name</Label>
+            <Input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter Name"
+            />
+          </div>
 
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter Email"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label>Phone Number</Label>
+            <Input
+              type="tel"
+              name="mobileNumber"
+              value={formData.mobileNumber}
+              onChange={handleChange}
+              placeholder="Enter Number"
+            />
+          </div>
 
-            <div className="space-y-2">
-              <Label>Name</Label>
-              <Input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter Name"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Phone Number</Label>
-              <Input
-                type="tel"
-                name="mobileNumber"
-                value={formData.mobileNumber}
-                onChange={handleChange}
-                placeholder="Enter Number"
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? "Saving…" : "Save"}
-              </Button>
-            </div>
-          </form>
-        )}
+          <div className="flex justify-center">
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? "Saving…" : "Save"}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
