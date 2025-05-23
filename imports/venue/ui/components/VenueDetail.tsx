@@ -1,6 +1,6 @@
 "use client";
-import { useGames } from "@/api/booking";
-import { useEditVenue } from "@/api/vanue";
+import { getAllGames, useGames } from "@/api/booking";
+import { useDeleteVenue, useEditVenue } from "@/api/vanue";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,14 +17,25 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useBookingStore } from "@/store/bookingStore";
-import { IndianRupee, Loader2, Map, MapPinned, Users } from "lucide-react";
+import {
+  IndianRupee,
+  Loader2,
+  Map,
+  MapPinned,
+  Trash2,
+  Users,
+} from "lucide-react";
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const VenueDetail = () => {
   const { games, setGames } = useBookingStore();
   const { data } = useGames();
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedGameId, setSelectedGameId] = useState<any>(null);
+  const DeleteDialog = dynamic(() => import("./DeleteDialog"), { ssr: false });
   const { mutate: editVenue } = useEditVenue();
 
   const handleEditField = (
@@ -61,6 +72,7 @@ const VenueDetail = () => {
 
   const handleCardClick = (game: any) => {
     setSelectedGame(game);
+    setSelectedGameId(game.id);
     setShowModal(true);
   };
 
@@ -82,42 +94,77 @@ const VenueDetail = () => {
     setShowModal(false);
   };
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleDeleteClick = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    gameId: string
+  ) => {
+    e.stopPropagation();
+    setSelectedGameId(gameId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDeleteDialogOpen(false);
+    setSelectedGameId(null);
+  };
+
   return (
     <div className="m-5">
       <h2 className="font-bold text-2xl pb-8">Venues Details</h2>
       <div className="flex gap-6 flex-wrap">
-        {games.map((game) => (
-          <Card
-            key={game.id}
-            className="w-[370px] gap-3 shadow-xl cursor-pointer"
-            onClick={() => handleCardClick(game)}
-          >
-            <CardHeader className="gap-0">
-              <CardTitle className="text-lg">{game.name}</CardTitle>
-              <CardDescription className="text-lg">
-                {game.category}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="flex items-center gap-2">
-                <MapPinned size={18} />
-                Address: {game.address}
-              </p>
-              <p className="flex items-center gap-2">
-                <Users size={18} />
-                Capacity: {game.capacity}
-              </p>
-              <p className="flex items-center gap-2">
-                <IndianRupee size={18} />
-                Price: {game.hourlyPrice}
-              </p>
-              <p className="flex items-center gap-2">
-                <Map size={18} />
-                {game.location.area}, {game.location.city}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+        {games.length === 0 ? (
+          <div className="flex items-center justify-center w-full h-48 text-gray-500 text-lg">
+            No venues found.
+          </div>
+        ) : (
+          games.map((game) => (
+            <div key={game.id}>
+              <Card
+                className="w-[370px] gap-3 shadow-xl cursor-pointer"
+                onClick={() => handleCardClick(game)}
+              >
+                <CardHeader className="gap-0">
+                  <CardTitle className="text-lg flex justify-between">
+                    {game.name}
+                    <DeleteDialog
+                      isOpen={isDeleteDialogOpen}
+                      selectedGameId={selectedGameId}
+                      onClose={handleCloseDialog}
+                    />
+
+                    <button
+                      className="w-10 ms-auto cursor-pointer"
+                      onClick={(e) => handleDeleteClick(e, game.id)}
+                      aria-label={`Delete ${game.name}`}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </CardTitle>
+                  <CardDescription className="text-lg">
+                    {game.category}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-2">
+                  <p className="flex items-center gap-2">
+                    <MapPinned size={18} /> Address: {game.address}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Users size={18} /> Capacity: {game.capacity}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <IndianRupee size={18} /> Price: {game.hourlyPrice}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Map size={18} /> {game.location.area}, {game.location.city}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          ))
+        )}
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>

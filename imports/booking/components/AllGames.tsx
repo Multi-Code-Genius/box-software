@@ -46,7 +46,7 @@ const AllGames = () => {
       {isLoading ? (
         <div className="flex items-center justify-center w-full h-48">
           <Loader2 className="animate-spin text-gray-500" size={32} />
-          <span className="ml-3 text-gray-600 text-lg">Loading...</span>
+          <span className="ml-3 text-gray-600 text-lg">Loading Venues...</span>
         </div>
       ) : games.length === 0 ? (
         <div className="flex items-center justify-center w-full h-48 text-gray-500 text-lg">

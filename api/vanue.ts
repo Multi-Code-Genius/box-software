@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+
 interface GameInfo {
   surface: string;
   indoor: string;
@@ -47,7 +48,7 @@ export const useAddGame = () => {
       toast.success(data.message);
     },
     onError: () => {
-      toast.error("Something Went Wrong");
+      toast.error("Something went wrong");
     },
   });
 };
@@ -94,4 +95,44 @@ export const useEditVenue = () => {
       toast.error(error?.message || "Failed to update venue.");
     },
   });
+};
+const deleteVenue = async (venueId: string) => {
+  try {
+    const response = await api(`/api/game/delete-venue/${venueId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    console.log(response);
+    return response;
+  } catch (error: any) {
+    const errorMessage = error?.message || "Failed to delete venue";
+    throw new Error(errorMessage);
+  }
+};
+
+export const useDeleteVenue = () => {
+  const queryClient = useQueryClient();
+
+  const {
+    mutate: deleteVenueMutation,
+    error,
+    isSuccess,
+  } = useMutation({
+    mutationFn: (id: string) => deleteVenue(id),
+    onSuccess: (data) => {
+      toast.success("Venue deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["games"] });
+    },
+    onError: (error) => {
+      toast.error("Failed to delete venue");
+      console.error(error);
+    },
+  });
+
+  return {
+    deleteVenueMutation,
+    error,
+    isSuccess,
+  };
 };

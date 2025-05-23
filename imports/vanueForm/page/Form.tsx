@@ -1,4 +1,5 @@
 "use client";
+import { getAllGames, useGames } from "@/api/booking";
 import { useAddGame } from "@/api/vanue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFormValidation } from "@/hooks/useFormValidation";
+import { useBookingStore } from "@/store/bookingStore";
 import { FormData as FormDataTypes } from "@/types/vanue";
 import {
   Building2,
@@ -48,6 +50,8 @@ const Form: React.FC = () => {
   const { validate, errors } = useFormValidation(formData);
 
   const { mutate, isSuccess } = useAddGame();
+  const { setGames, games } = useBookingStore();
+  const { refetch } = useGames();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
@@ -105,10 +109,9 @@ const Form: React.FC = () => {
       formdata.append("game", formData.image);
     }
     mutate(formdata, {
+      onSuccess: () => refetch(),
       onSettled: () => setLoading(false),
     });
-
-    console.log(formData);
   };
 
   useEffect(() => {
@@ -116,8 +119,8 @@ const Form: React.FC = () => {
       setFormData({
         name: "",
         description: "",
-        city: "",
-        area: "",
+        city: "Surat",
+        area: "Vesu",
         address: "",
         capacity: "",
         category: "",
