@@ -1,50 +1,38 @@
-import { getAllGames, useGames } from "@/api/booking";
-import { getDashboardData } from "@/api/dashboard";
+import { useEffect, useState } from "react";
+import { useGames } from "@/api/booking";
 import { useBookingStore } from "@/store/bookingStore";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useDashboardData } from "@/api/dashboard";
 
 const Games = () => {
   const { games, setGames } = useBookingStore();
   const { setDashboardData, selectedGameId, setSelectedGameId } =
     useDashboardStore();
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+  const { data: dashboardData, isLoading: dashboardLoading } =
+    useDashboardData(selectedGameId);
 
-  const { data, isLoading, isError, error } = useGames();
+  const { data, isLoading: gamesLoading } = useGames();
 
   useEffect(() => {
     if (data?.games?.length) {
       setGames(data.games);
 
-      const defaultGameId = data.games[0].id;
-      setSelectedGameId(defaultGameId);
-      localStorage.setItem("gameId", defaultGameId);
-    }
-  }, [data, setGames, setSelectedGameId]);
-
-  console.log(data);
-
-  useEffect(() => {
-    getAllGames();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!selectedGameId) return;
-
-      try {
-        const result = await getDashboardData(selectedGameId);
-        setDashboardData(result);
-        console.log("Dashboard data for game:", selectedGameId, result);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+      if (!selectedGameId) {
+        const defaultGameId = data.games[0].id;
+        setSelectedGameId(defaultGameId);
+        localStorage.setItem("gameId", defaultGameId);
       }
-    };
+    }
+  }, [data, setGames, setSelectedGameId, selectedGameId]);
 
-    fetchData();
-  }, [selectedGameId, setDashboardData]);
+  useEffect(() => {
+    if (dashboardData) {
+      setDashboardData(dashboardData);
+      console.log("Dashboard data for game:", selectedGameId, dashboardData);
+    }
+  }, [dashboardData, setDashboardData, selectedGameId]);
 
   const handleSelectGame = (game: any) => {
     setSelectedGameId(game.id);
@@ -59,14 +47,17 @@ const Games = () => {
         {games?.map((game) => (
           <div
             key={game.id}
-            className={`border rounded-lg px-10 py-1 cursor-pointer shadow-md ${
+            className={`border rounded-lg px-6 py-2 cursor-pointer shadow-md flex items-center gap-2 transition ${
               selectedGameId === game.id
                 ? "bg-gray-200 font-medium"
-                : "hover:bg-gray-200  "
+                : "hover:bg-gray-100"
             }`}
             onClick={() => handleSelectGame(game)}
           >
             <p className="text-sm">{game.name}</p>
+            {selectedGameId === game.id && dashboardLoading && (
+              <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+            )}
           </div>
         ))}
       </div>

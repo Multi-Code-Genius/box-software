@@ -1,4 +1,5 @@
 import { DashboardData } from "@/types/auth";
+import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 
 const token = Cookies.get("accessToken");
@@ -29,4 +30,17 @@ export const getDashboardData = async (
     console.error("Failed to fetch dashboard data", error);
     throw error;
   }
+};
+
+export const useDashboardData = (gameId: string | undefined) => {
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["dashboard-data", gameId],
+    queryFn: () => {
+      if (!gameId) throw new Error("No game ID provided");
+      return getDashboardData(gameId);
+    },
+    enabled: !!gameId,
+  });
+
+  return { data, isLoading, isError, error, refetch };
 };

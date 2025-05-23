@@ -15,13 +15,13 @@ type WeeklyBookings = {
 type DashboardStore = {
   data: DashboardData | null;
   setDashboardData: (data: DashboardData) => void;
-  selectedGameId: string | null;
+  selectedGameId: string | undefined;
   setSelectedGameId: (id: string) => void;
 };
 
 export const useDashboardStore = create<DashboardStore>((set) => ({
   data: null,
   setDashboardData: (data) => set({ data }),
-  selectedGameId: null,
+  selectedGameId: undefined,
   setSelectedGameId: (id) => set({ selectedGameId: id }),
 }));

@@ -12,13 +12,14 @@ import { useDashboardStore } from "@/store/dashboardStore";
 import { useState, useEffect } from "react";
 import { format, differenceInMinutes } from "date-fns";
 import { useGames } from "@/api/booking";
+import { useDashboardData } from "@/api/dashboard";
 
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("All");
   const { data } = useDashboardStore();
-
-  const { isLoading } = useGames();
+  const { selectedGameId } = useDashboardStore();
+  const { isLoading } = useDashboardData(selectedGameId);
 
   const [hydrated, setHydrated] = useState(false);
 

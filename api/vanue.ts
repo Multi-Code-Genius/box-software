@@ -29,6 +29,7 @@ const registerNewGame = async (data: unknown) => {
     });
 
     const resp = await response;
+    console.log(resp);
     return resp;
   } catch (error: unknown) {
     if (error && typeof error === "object" && "message" in error) {

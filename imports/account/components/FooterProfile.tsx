@@ -41,12 +41,12 @@ const FooterProfile = () => {
   return (
     <>
       <div
-        className="border-t pt-4"
+        className="border-t pt-4 overflow-hidden  relative "
         ref={profileRef}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between gap-8 items-center">
-          <div className="flex gap-3">
+        <div className="flex   items-center ">
+          <div className="flex gap-3 w-[100%]">
             <button
               type="button"
               className="cursor-pointer w-fit"
@@ -63,23 +63,24 @@ const FooterProfile = () => {
               </Avatar>
             </button>
 
-            <div className="text-sm">
-              <p>{user?.name || "User"}</p>
+            <div className="text-[13px] w-[100%] ">
+              <div className="flex justify-between ">
+                <p>{user?.name || "User"}</p>
+                <div>
+                  <TbLogout
+                    className="cursor-pointer text-xl"
+                    onClick={() => setShowLogoutModal(true)}
+                  />
+                  <LogoutConfirmModal
+                    open={showLogoutModal}
+                    onOpenChange={setShowLogoutModal}
+                    onConfirm={handleLogoutConfirm}
+                    onCancel={() => setShowLogoutModal(false)}
+                  />
+                </div>
+              </div>
               <p>{user?.email}</p>
             </div>
-          </div>
-
-          <div>
-            <TbLogout
-              className="cursor-pointer text-xl"
-              onClick={() => setShowLogoutModal(true)}
-            />
-            <LogoutConfirmModal
-              open={showLogoutModal}
-              onOpenChange={setShowLogoutModal}
-              onConfirm={handleLogoutConfirm}
-              onCancel={() => setShowLogoutModal(false)}
-            />
           </div>
         </div>
 

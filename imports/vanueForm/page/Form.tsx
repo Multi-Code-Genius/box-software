@@ -85,8 +85,7 @@ const Form: React.FC = () => {
     formdata.append("location[area]", formData.area);
     formdata.append("address", formData.address);
     formdata.append("gameInfo[surface]", formData.surface);
-    formdata.append("location[city]", formData.city);
-    formdata.append("location[area]", formData.area);
+    formdata.append("gameInfo[turfType]", formData.turfType);
 
     formdata.append(
       "gameInfo[indoor]",
@@ -108,6 +107,8 @@ const Form: React.FC = () => {
     mutate(formdata, {
       onSettled: () => setLoading(false),
     });
+
+    console.log(formData);
   };
 
   useEffect(() => {
@@ -115,8 +116,8 @@ const Form: React.FC = () => {
       setFormData({
         name: "",
         description: "",
-        city: "Surat",
-        area: "Vesu",
+        city: "",
+        area: "",
         address: "",
         capacity: "",
         category: "",
@@ -126,6 +127,7 @@ const Form: React.FC = () => {
         net: "",
         image: null,
       });
+      setPreview(null);
     }
   }, [isSuccess]);
 
@@ -160,7 +162,7 @@ const Form: React.FC = () => {
   return (
     <div className="h-[calc(100vh-75px)]  w-full flex justify-center items-center m-auto">
       <form
-        className="w-[80%] flex flex-col gap-6 border px-14 py-10 shadow-lg rounded-lg "
+        className="w-[60%] flex flex-col gap-6 border px-14 py-10 shadow-lg rounded-lg "
         onSubmit={handleSubmit}
       >
         <div className="flex gap-5">
@@ -406,7 +408,7 @@ const Form: React.FC = () => {
               <Layers className="w-4 h-4 mr-2" />
               <Input
                 name="net"
-                type="text"
+                type="number"
                 placeholder="Please Enter Net"
                 className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 onChange={handleChange}

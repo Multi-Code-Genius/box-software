@@ -179,6 +179,7 @@ const VenueDetail = () => {
                   <label className="block text-sm font-medium text-gray-700">
                     Turf Type
                   </label>
+
                   <div className="flex gap-4">
                     {["indoor", "outdoor", "roof"].map((type) => (
                       <button
@@ -187,7 +188,7 @@ const VenueDetail = () => {
                           handleEditField("turfType", type, true, "gameInfo")
                         }
                         className={`px-3 py-2 rounded-lg border transition-colors duration-200 text-sm ${
-                          selectedGame.gameInfo?.turfType === type
+                          selectedGame.gameInfo.turfType === type
                             ? "bg-black text-white"
                             : "bg-white text-gray-800 hover:bg-black hover:text-white"
                         }`}
