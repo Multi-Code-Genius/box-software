@@ -14,9 +14,9 @@ type WeeklyBookings = {
 
 type DashboardStore = {
   data: DashboardData | null;
-  setDashboardData: (data: DashboardData) => void;
+  setDashboardData: (data: DashboardData | null) => void;
   selectedGameId: string | undefined;
-  setSelectedGameId: (id: string) => void;
+  setSelectedGameId: (id: string | undefined) => void;
 };
 
 export const useDashboardStore = create<DashboardStore>((set) => ({

@@ -61,7 +61,7 @@ const BookingList = () => {
                   <div className="pt-1">
                     <Avatar>
                       <AvatarImage src={booking.avatarUrl} />
-                      <AvatarFallback>
+                      <AvatarFallback className="text-xs">
                         {booking.username
                           .split(" ")
                           .map((word: any) => word[0])

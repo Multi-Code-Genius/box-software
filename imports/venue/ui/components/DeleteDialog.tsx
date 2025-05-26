@@ -11,11 +11,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useDashboardStore } from "@/store/dashboardStore";
 
 function DeleteDialog({ isOpen, selectedGameId, onClose }: any) {
   if (!isOpen) return null;
 
   const { deleteVenueMutation } = useDeleteVenue();
+  const { setSelectedGameId, setDashboardData } = useDashboardStore();
 
   const handleDelete = (id: string) => {
     if (!id) {
@@ -25,6 +27,9 @@ function DeleteDialog({ isOpen, selectedGameId, onClose }: any) {
 
     console.log("Deleting venue ID:", id);
     deleteVenueMutation(id);
+    localStorage.removeItem("gameId");
+    setSelectedGameId(undefined);
+    setDashboardData(null);
   };
 
   return (

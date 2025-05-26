@@ -3,15 +3,18 @@ import { useGames } from "@/api/booking";
 import { useBookingStore } from "@/store/bookingStore";
 import { useDashboardStore } from "@/store/dashboardStore";
 import { Loader2 } from "lucide-react";
-import { useDashboardData } from "@/api/dashboard";
+import { getDashboardData, useDashboardData } from "@/api/dashboard";
 
 const Games = () => {
   const { games, setGames } = useBookingStore();
   const { setDashboardData, selectedGameId, setSelectedGameId } =
     useDashboardStore();
 
-  const { data: dashboardData, isLoading: dashboardLoading } =
-    useDashboardData(selectedGameId);
+  const {
+    data: dashboardData,
+    isLoading: dashboardLoading,
+    refetch,
+  } = useDashboardData(selectedGameId);
 
   const { data, isLoading: gamesLoading } = useGames();
 
@@ -25,7 +28,7 @@ const Games = () => {
         localStorage.setItem("gameId", defaultGameId);
       }
     }
-  }, [data, setGames, setSelectedGameId, selectedGameId]);
+  }, [data, selectedGameId]);
 
   useEffect(() => {
     if (dashboardData) {
@@ -33,6 +36,12 @@ const Games = () => {
       console.log("Dashboard data for game:", selectedGameId, dashboardData);
     }
   }, [dashboardData, setDashboardData, selectedGameId]);
+
+  useEffect(() => {
+    if (selectedGameId) {
+      refetch();
+    }
+  }, [selectedGameId, refetch]);
 
   const handleSelectGame = (game: any) => {
     setSelectedGameId(game.id);
@@ -47,7 +56,7 @@ const Games = () => {
         {games?.map((game) => (
           <div
             key={game.id}
-            className={`border rounded-lg px-6 py-2 cursor-pointer shadow-md flex items-center gap-2 transition ${
+            className={`border rounded-lg px-6 py-1 cursor-pointer shadow-md flex items-center gap-2 transition ${
               selectedGameId === game.id
                 ? "bg-gray-200 font-medium"
                 : "hover:bg-gray-100"

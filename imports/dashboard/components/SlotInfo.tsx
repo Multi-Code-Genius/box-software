@@ -11,7 +11,6 @@ import {
 import { useDashboardStore } from "@/store/dashboardStore";
 import { useState, useEffect } from "react";
 import { format, differenceInMinutes } from "date-fns";
-import { useGames } from "@/api/booking";
 import { useDashboardData } from "@/api/dashboard";
 
 const SlotInfo = () => {
@@ -20,7 +19,6 @@ const SlotInfo = () => {
   const { data } = useDashboardStore();
   const { selectedGameId } = useDashboardStore();
   const { isLoading } = useDashboardData(selectedGameId);
-
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -124,7 +122,7 @@ const SlotInfo = () => {
         </div>
       </div>
 
-      <div className="px-5 py-4">
+      <div className="px-5 py-3">
         <div className="flex justify-between pb-3">
           <div className="font-medium flex gap-2 items-center">
             Total all slots

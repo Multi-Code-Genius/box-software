@@ -1,4 +1,3 @@
-// stores/useGameStore.ts
 import { Game } from "@/types/auth";
 import { create } from "zustand";
 
