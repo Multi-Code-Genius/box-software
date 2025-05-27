@@ -111,7 +111,7 @@ const VenueDetail = () => {
   };
 
   return (
-    <div className="m-5">
+    <div className="p-7">
       <h2 className="font-bold text-2xl pb-8">Venues Details</h2>
       <div className="flex gap-6 flex-wrap">
         {games.length === 0 ? (

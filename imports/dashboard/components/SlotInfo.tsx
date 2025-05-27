@@ -12,6 +12,7 @@ import { useDashboardStore } from "@/store/dashboardStore";
 import { useState, useEffect } from "react";
 import { format, differenceInMinutes } from "date-fns";
 import { useDashboardData } from "@/api/dashboard";
+import { IndianRupee } from "lucide-react";
 
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
@@ -164,7 +165,11 @@ const SlotInfo = () => {
                   <CardContent className="space-y-1">
                     <p className="font-medium">{slot.time}</p>
                     <p>{slot.duration}</p>
-                    <p className="text-2xl font-bold">{slot.price}</p>
+                    <p className="text-2xl font-bold">
+                      {" "}
+                      <IndianRupee size={18} className="inline" />
+                      {slot.price}
+                    </p>
                   </CardContent>
                   <CardFooter>
                     <Button

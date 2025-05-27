@@ -1,6 +1,6 @@
 "use client";
 
-import { Zap } from "lucide-react";
+import { IndianRupee, Zap } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -27,7 +27,12 @@ const DashboardCard = () => {
     {
       icon: <Zap size={20} />,
       title: "Total revenue in this month",
-      value: totalRevenue,
+      value: (
+        <>
+          <IndianRupee className="inline mb-1" />
+          {totalRevenue}
+        </>
+      ),
     },
     {
       icon: <Zap size={20} />,
@@ -47,11 +52,12 @@ const DashboardCard = () => {
                 <div className="h-10 w-10 bg-gray-200 rounded-full flex justify-center items-center">
                   {card.icon}
                 </div>
+
                 {card.title}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <h1 className="text-3xl font-bold">{card.value}</h1>
+              <h1 className="text-3xl font-bold"> {card.value}</h1>
             </CardContent>
             <CardFooter className="font-medium">
               {card.title === "Total players in this month" ? (

@@ -44,3 +44,23 @@ export const useDashboardData = (gameId: string | undefined) => {
 
   return { data, isLoading, isError, error, refetch };
 };
+
+export const fetchDashboardPDF = async (gameId: string) => {
+  const token = Cookies.get("accessToken");
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/export-report/${gameId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch dashboard report");
+  }
+
+  return res.blob();
+};

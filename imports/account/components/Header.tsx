@@ -1,10 +1,39 @@
 import { useUserStore } from "@/store/userStore";
+import { ArrowBigDownDash, FileDown } from "lucide-react";
 import React from "react";
+import Cookies from "js-cookie";
+import { fetchDashboardPDF } from "@/api/dashboard";
 
 const Header = () => {
   const { setUser, user } = useUserStore();
+
+  const downloadDashboardPDF = async () => {
+    const gameId = localStorage.getItem("gameId");
+
+    if (!gameId) {
+      alert("Game ID not found.");
+      return;
+    }
+
+    try {
+      const blob = await fetchDashboardPDF(gameId);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download = `dashboard-report-${gameId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+      alert("Failed to download PDF. Please try again.");
+    }
+  };
+
   return (
-    <div className="flex items-center justify-start rtl:justify-end">
+    <div className="flex items-center  rtl:justify-end w-full">
       <button
         data-drawer-target="logo-sidebar"
         data-drawer-toggle="logo-sidebar"
@@ -19,16 +48,25 @@ const Header = () => {
           BrandName
         </span>
       </a>
-      <div className="flex flex-col px-8">
-        <div className="font-medium text-xl flex gap-2">
-          Welcome, <p className="font-bold">{user?.name || "User"}</p>
+      <div className="flex justify-between w-full items-center">
+        <div className="flex flex-col px-8 ">
+          <div className="font-medium text-xl flex gap-2">
+            Welcome, <p className="font-bold">{user?.name || "User"}</p>
+          </div>
+          <div className="text-sm text-gray-600">
+            {new Date().toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </div>
         </div>
-        <div className="text-sm text-gray-600">
-          {new Date().toLocaleDateString("en-US", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
+
+        <div>
+          <button onClick={() => downloadDashboardPDF()}>
+            {" "}
+            <FileDown />
+          </button>
         </div>
       </div>
     </div>

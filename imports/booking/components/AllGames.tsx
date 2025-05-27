@@ -40,7 +40,7 @@ const AllGames = () => {
   }
 
   return (
-    <div className="p-10">
+    <div className="p-7">
       <h2 className="font-bold text-2xl pb-8">Venues Details</h2>
 
       {isLoading ? (
