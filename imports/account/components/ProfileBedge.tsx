@@ -67,7 +67,7 @@ const ProfileBedge: React.FC<ProfileBedgeProps> = ({
   return (
     <>
       <Dialog open={showProfile} onOpenChange={setShowProfile}>
-        <DialogContent className=" fixed bg-white  w-full w-[400px] p-5 left-[250px] translate-y-[-10%]  ">
+        <DialogContent className="absolute bg-white  w-full w-[400px] p-5 left-[250px]   translate-y-0  ">
           <DialogHeader className="mb-3 gap-5">
             <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white mx-auto">
               Account

@@ -112,7 +112,7 @@ const VenueDetail = () => {
 
   return (
     <div className="p-7">
-      <h2 className="font-bold text-2xl pb-8">Venues Details</h2>
+      <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
       <div className="flex gap-6 flex-wrap">
         {games.length === 0 ? (
           <div className="flex items-center justify-center w-full h-48 text-gray-500 text-lg">
@@ -128,14 +128,9 @@ const VenueDetail = () => {
                 <CardHeader className="gap-0">
                   <CardTitle className="text-lg flex justify-between">
                     {game.name}
-                    <DeleteDialog
-                      isOpen={isDeleteDialogOpen}
-                      selectedGameId={selectedGameId}
-                      onClose={handleCloseDialog}
-                    />
 
                     <button
-                      className="w-10 ms-auto cursor-pointer"
+                      className=" ms-auto cursor-pointer"
                       onClick={(e) => handleDeleteClick(e, game.id)}
                       aria-label={`Delete ${game.name}`}
                     >
@@ -165,6 +160,12 @@ const VenueDetail = () => {
             </div>
           ))
         )}
+
+        <DeleteDialog
+          isOpen={isDeleteDialogOpen}
+          selectedGameId={selectedGameId}
+          onClose={handleCloseDialog}
+        />
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>

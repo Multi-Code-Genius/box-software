@@ -56,7 +56,7 @@ const BookingList = () => {
         ) : (
           visibleBookings.map((booking) => (
             <div key={booking.id} className="w-full flex flex-row gap-3 px-4">
-              <div className="w-full px-3 py-6 border-b border-gray-300">
+              <div className="w-full px-3 py-5 border-b border-gray-300">
                 <div className="flex flex-row gap-3">
                   <div className="pt-1">
                     <Avatar>

@@ -62,7 +62,7 @@ const Header = () => {
           </div>
         </div>
 
-        <div>
+        <div className="mx-3">
           <button onClick={() => downloadDashboardPDF()}>
             {" "}
             <FileDown />
