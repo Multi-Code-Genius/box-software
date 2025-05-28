@@ -10,28 +10,30 @@ const BookingList = () => {
   const { data } = useDashboardStore();
 
   const bookings =
-    data?.newBookings?.map((booking: any, index: number) => {
-      const user = booking.user || {};
-      const startDate = new Date(booking.startTime);
-      const endDate = new Date(booking.endTime);
-      const formattedDate = format(startDate, "dd MMMM, EEEE");
-      const formattedTime = `${format(startDate, "h:mma")} - ${format(
-        endDate,
-        "h:mma"
-      )}`;
+    data?.newBookings
+      ?.filter((booking: any) => !booking.isCancel)
+      .map((booking: any, index: number) => {
+        const user = booking.user || {};
+        const startDate = new Date(booking.startTime);
+        const endDate = new Date(booking.endTime);
+        const formattedDate = format(startDate, "dd MMMM, EEEE");
+        const formattedTime = `${format(startDate, "h:mma")} - ${format(
+          endDate,
+          "h:mma"
+        )}`;
 
-      return {
-        id: booking.id,
-        avatarUrl: "https://github.com/shadcn.png",
-        username: user.name || "Unknown",
-        timeAgo: formatDistanceToNow(new Date(booking.createdAt), {
-          addSuffix: true,
-        }),
-        message: "Booked a slot",
-        slotInfo: `${formattedDate}, ${formattedTime}`,
-        actionText: "View booking info",
-      };
-    }) || [];
+        return {
+          id: booking.id,
+          avatarUrl: "https://github.com/shadcn.png",
+          username: user.name || "Unknown",
+          timeAgo: formatDistanceToNow(new Date(booking.createdAt), {
+            addSuffix: true,
+          }),
+          message: "Booked a slot",
+          slotInfo: `${formattedDate}, ${formattedTime}`,
+          actionText: "View booking info",
+        };
+      }) || [];
 
   const visibleBookings = showAll ? bookings : bookings.slice(0, 3);
 

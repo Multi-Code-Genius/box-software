@@ -29,7 +29,7 @@ const TuiCalendar = ({
 }) => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarInstance = useRef<any>(null);
-  const { games, setGames } = useBookingStore();
+  const { games } = useBookingStore();
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -69,32 +69,24 @@ const TuiCalendar = ({
           location,
         };
 
+        const startTime = moment(start.toDate()).format("hh:mm A");
+        const endTime = moment(end.toDate()).format("hh:mm A");
+        const date = moment(start.toDate()).format("YYYY-MM-DD");
+
         const gameId = localStorage.getItem("gameId");
         const selectedGame = games.find((g) => g.id === gameId);
-
-        if (!selectedGame) {
-          console.warn("No game found for gameId:", gameId);
-        }
-
-        const startMoment = moment(start.toDate());
-        const endMoment = moment(end.toDate());
-        const durationInMinutes = endMoment.diff(startMoment, "minutes");
-        const durationInHours = durationInMinutes / 60;
-
         const hourlyPrice = selectedGame?.hourlyPrice || 0;
-        const totalAmount = Math.round(hourlyPrice * durationInHours);
 
         createBooking({
           name: title,
           number: location,
-          startTime: startMoment.format("hh:mm A"),
-          endTime: endMoment.format("hh:mm A"),
-          totalAmount,
+          startTime: startTime,
+          endTime: endTime,
+          totalAmount: hourlyPrice,
           gameId: gameId || "",
           nets: 2,
-          date: startMoment.format("YYYY-MM-DD"),
+          date: date,
         });
-
         setEvents([...events, newSchedule]);
 
         calendarInstance.current.createSchedules([newSchedule]);

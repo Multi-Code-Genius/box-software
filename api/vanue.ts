@@ -30,7 +30,6 @@ const registerNewGame = async (data: unknown) => {
     });
 
     const resp = await response;
-    console.log(resp);
     return resp;
   } catch (error: unknown) {
     if (error && typeof error === "object" && "message" in error) {
@@ -64,8 +63,6 @@ export const editVenueDetails = async (
       cache: "no-store",
       body: JSON.stringify(data),
     });
-
-    console.log("response", response);
 
     return response;
   } catch (error) {
@@ -103,7 +100,6 @@ const deleteVenue = async (venueId: string) => {
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log(response);
     return response;
   } catch (error: any) {
     const errorMessage = error?.message || "Failed to delete venue";

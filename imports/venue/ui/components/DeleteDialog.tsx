@@ -25,7 +25,6 @@ function DeleteDialog({ isOpen, selectedGameId, onClose }: any) {
       return;
     }
 
-    console.log("Deleting venue ID:", id);
     deleteVenueMutation(id);
     localStorage.removeItem("gameId");
     setSelectedGameId(undefined);

@@ -17,6 +17,7 @@ import {
   HelpCircle,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const FooterProfile = () => {
   const { setUser, user } = useUserStore();
@@ -70,6 +71,9 @@ const FooterProfile = () => {
     logout();
     setShowLogoutModal(false);
     setShowProfile(false);
+
+    router.push("/login");
+    toast.success("Logout Successfully");
   };
 
   const accountMenu: [string, React.ElementType][] = [

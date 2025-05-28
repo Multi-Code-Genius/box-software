@@ -36,50 +36,28 @@ const SlotInfo = () => {
     return `${format(startDate, "h:mma")} - ${format(endDate, "h:mma")}`;
   };
 
-  const getAvailability = (status: string) => {
-    switch (status) {
-      case "PENDING":
-      case "CONFIRMED":
-        return "booked";
-      case "CANCELLED":
-        return "cancelled";
-      default:
-        return "available";
-    }
-  };
-
-  const getIcon = (availability: string) => {
-    switch (availability) {
-      case "available":
-        return <div className="bg-green-500 h-2 w-2 rounded-full" />;
-      case "booked":
-        return <div className="bg-red-500 h-2 w-2 rounded-full" />;
-      case "cancelled":
-        return <div className="bg-gray-500 h-2 w-2 rounded-full" />;
-      default:
-        return <div className="bg-yellow-500 h-2 w-2 rounded-full" />;
-    }
-  };
-
   const slots =
-    data?.bookingsThisMonth?.map((slot: any) => {
-      const start = new Date(slot.startTime);
-      const end = new Date(slot.endTime);
-      const duration = differenceInMinutes(end, start);
-      const availability = getAvailability(slot.status);
+    data?.bookingsThisMonth
+      ?.filter((slot: any) => !slot.isCancel)
+      .map((slot: any) => {
+        const start = new Date(slot.startTime);
+        const end = new Date(slot.endTime);
+        const duration = differenceInMinutes(end, start);
+        const status = slot.status;
+        const hourlyRate = slot.totalAmount;
+        const price = Math.round((hourlyRate * duration) / 60);
 
-      return {
-        time: formatTime(slot.startTime, slot.endTime),
-        duration: `${duration} mins slot`,
-        price: `${slot.totalAmount}`,
-        availability,
-        icon: getIcon(availability),
-        original: slot,
-      };
-    }) || [];
+        return {
+          time: formatTime(slot.startTime, slot.endTime),
+          duration: `${duration} mins slot`,
+          price,
+          status,
+          originalStartTime: slot.startTime,
+        };
+      }) || [];
 
   const applyTimeFilter = (slot: (typeof slots)[0]) => {
-    const hour = getHour(new Date(slot.original.startTime));
+    const hour = getHour(new Date(slot.originalStartTime));
     switch (selectedTimeFilter) {
       case "Morning":
         return hour >= 5 && hour < 12;
@@ -136,11 +114,7 @@ const SlotInfo = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              // checked={showAvailableOnly}
-              // onChange={(e) => setShowAvailableOnly(e.target.checked)}
-            />
+            <input type="checkbox" />
             <p className="font-medium text-sm">Show only Available slot</p>
           </div>
         </div>
@@ -157,8 +131,11 @@ const SlotInfo = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs">
-                        {slot.icon}
-                        {slot.availability}
+                        <div className="bg-red-500 h-2 w-2 rounded-full" />
+                        {slot.status === "PENDING" ||
+                        slot.status === "CONFIRMED"
+                          ? "booked"
+                          : slot.status.toLowerCase()}
                       </div>
                     </CardTitle>
                   </CardHeader>
@@ -173,7 +150,7 @@ const SlotInfo = () => {
                   </CardContent>
                   <CardFooter>
                     <Button
-                      disabled={slot.availability === "booked"}
+                      disabled={slot.status === "PENDING"}
                       className="mx-auto px-8"
                     >
                       Book Now
