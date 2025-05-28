@@ -1,23 +1,57 @@
-import { useRef, useState, useEffect } from "react";
+"use client";
+
+import React, { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
+import { fetchUserData } from "@/api/account";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogoutConfirmModal } from "./LogoutModel";
-import { fetchUserData } from "@/api/account";
+import Edit from "@/imports/account/components/Edit";
 import { TbLogout } from "react-icons/tb";
-import ProfileBedge from "./ProfileBedge";
+import {
+  Pencil,
+  Building2,
+  Users,
+  Settings,
+  HelpCircle,
+  X,
+} from "lucide-react";
 
 const FooterProfile = () => {
   const { setUser, user } = useUserStore();
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { logout } = useAuthStore();
+  const router = useRouter();
+
   const [showProfile, setShowProfile] = useState<boolean>(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
 
-  const handleOpenForm = () => {
-    setShowProfile((prev) => !prev);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        profileRef.current &&
+        avatarRef.current &&
+        !profileRef.current.contains(target) &&
+        !avatarRef.current.contains(target)
+      ) {
+        setShowProfile(false);
+      }
+    };
+
+    if (showProfile) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showProfile]);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -38,19 +72,33 @@ const FooterProfile = () => {
     setShowProfile(false);
   };
 
+  const accountMenu: [string, React.ElementType][] = [
+    ["Venue Manage", Building2],
+    ["Customers", Users],
+    ["Settings", Settings],
+    ["Help", HelpCircle],
+  ];
+
+  const handleMenuClick = (label: string) => {
+    if (label === "Venue Manage") {
+      router.push("/venue");
+    }
+    setShowProfile(false);
+  };
+
   return (
     <>
       <div
-        className="border-t pt-4 overflow-hidden  relative "
-        ref={profileRef}
+        className="border-t pt-4 overflow-hidden relative"
+        ref={avatarRef}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex   items-center ">
-          <div className="flex gap-3 w-[100%]">
+        <div className="flex items-center">
+          <div className="flex gap-3 w-full">
             <button
               type="button"
               className="cursor-pointer w-fit"
-              onClick={handleOpenForm}
+              onClick={() => setShowProfile((prev) => !prev)}
               aria-label="Open user profile"
             >
               <Avatar>
@@ -63,8 +111,8 @@ const FooterProfile = () => {
               </Avatar>
             </button>
 
-            <div className="text-[13px] w-[100%] ">
-              <div className="flex justify-between ">
+            <div className="text-[13px] w-full">
+              <div className="flex justify-between">
                 <p>{user?.name || "User"}</p>
                 <div>
                   <TbLogout
@@ -83,12 +131,74 @@ const FooterProfile = () => {
             </div>
           </div>
         </div>
-
-        <ProfileBedge
-          setShowProfile={setShowProfile}
-          showProfile={showProfile}
-        />
       </div>
+
+      {showProfile && (
+        <div
+          ref={profileRef}
+          style={{
+            boxShadow:
+              "rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px",
+          }}
+          className="fixed left-[60px] w-[400px] bottom-[70px] bg-white z-50 p-5  rounded-lg"
+        >
+          <div className="flex gap-5 flex-col ">
+            <div className="flex justify-between items-center   ">
+              <h2 className="text-2xl font-semibold text-gray-900 text-center">
+                Account
+              </h2>
+              <button
+                onClick={() => setShowProfile(false)}
+                className="  h-5 w-5 text-gray-600 hover:text-gray-900 "
+              >
+                <X className="w-full" size={18} />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-4 justify-between ">
+              <div className="flex gap-4 items-center">
+                <img
+                  className="w-12 h-12 rounded-full"
+                  src={user?.profile_pic || "/images/profile.jpg"}
+                  alt="Profile"
+                />
+                <div>
+                  <div className="text-gray-900 font-medium">
+                    {user?.name || "User"}
+                  </div>
+                  {user?.mobileNumber && !isNaN(Number(user.mobileNumber)) && (
+                    <div className="text-gray-500 text-sm">
+                      {user.mobileNumber}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <Pencil
+                className="w-5 h-5 text-gray-600 cursor-pointer"
+                onClick={() => {
+                  setShowEditModal(true);
+                  setShowProfile(false);
+                }}
+              />
+            </div>
+
+            <div className="space-y-4 ">
+              {accountMenu.map(([label, Icon], i) => (
+                <div
+                  key={i}
+                  onClick={() => handleMenuClick(label)}
+                  className="flex items-center gap-3 cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-md transition"
+                >
+                  <Icon className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-800">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Edit showEditModal={showEditModal} setShowEditModal={setShowEditModal} />
     </>
   );
 };

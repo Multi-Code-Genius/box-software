@@ -13,12 +13,12 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-interface ProfileBedgeProps {
+interface FooterProfileProps {
   setShowEditModal: (value: boolean) => void;
   showEditModal: boolean;
 }
 
-const Edit: React.FC<ProfileBedgeProps> = ({
+const Edit: React.FC<FooterProfileProps> = ({
   setShowEditModal,
   showEditModal,
 }) => {

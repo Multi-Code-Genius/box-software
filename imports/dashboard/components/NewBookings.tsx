@@ -51,7 +51,7 @@ const BookingList = () => {
       >
         {visibleBookings.length === 0 ? (
           <div className="text-center text-gray-500 py-10">
-            No new bookings available.
+            No new bookings found
           </div>
         ) : (
           visibleBookings.map((booking) => (

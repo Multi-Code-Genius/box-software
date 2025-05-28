@@ -12,7 +12,7 @@ import { useDashboardStore } from "@/store/dashboardStore";
 import { useState, useEffect } from "react";
 import { format, differenceInMinutes } from "date-fns";
 import { useDashboardData } from "@/api/dashboard";
-import { IndianRupee } from "lucide-react";
+import { IndianRupee, Loader2 } from "lucide-react";
 
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
@@ -20,17 +20,13 @@ const SlotInfo = () => {
   const { data } = useDashboardStore();
   const { selectedGameId } = useDashboardStore();
   const { isLoading } = useDashboardData(selectedGameId);
-  const [hydrated, setHydrated] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
+    setHasMounted(true);
   }, []);
 
-  if (!hydrated) {
-    return (
-      <div className="text-center text-gray-500 py-10">Loading slots...</div>
-    );
-  }
+  if (!hasMounted) return null;
 
   const getHour = (date: Date) => date.getHours();
 
@@ -97,11 +93,19 @@ const SlotInfo = () => {
   };
 
   const filteredSlots = slots
-    .filter((slot) =>
-      showAvailableOnly ? slot.availability === "available" : true
-    )
+    // .filter((slot) =>
+    //   showAvailableOnly ? slot.availability === "available" : true
+    // )
     .filter(applyTimeFilter);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center w-full h-48">
+        <Loader2 className="animate-spin text-gray-500 mx-2" size={20} />
+        Loading Slots...
+      </div>
+    );
+  }
   return (
     <div>
       <div className="flex justify-between border-b py-3 px-5 items-center">
@@ -134,21 +138,17 @@ const SlotInfo = () => {
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
-              checked={showAvailableOnly}
-              onChange={(e) => setShowAvailableOnly(e.target.checked)}
+              // checked={showAvailableOnly}
+              // onChange={(e) => setShowAvailableOnly(e.target.checked)}
             />
             <p className="font-medium text-sm">Show only Available slot</p>
           </div>
         </div>
 
         <div className="overflow-y-auto">
-          {isLoading ? (
+          {filteredSlots.length === 0 ? (
             <div className="text-center text-gray-500 py-10">
-              Loading slots...
-            </div>
-          ) : filteredSlots.length === 0 ? (
-            <div className="text-center text-gray-500 py-10">
-              No slots available
+              No slots found
             </div>
           ) : (
             <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -167,7 +167,7 @@ const SlotInfo = () => {
                     <p>{slot.duration}</p>
                     <p className="text-2xl font-bold">
                       {" "}
-                      <IndianRupee size={18} className="inline" />
+                      <IndianRupee size={18} className="inline mb-1" />
                       {slot.price}
                     </p>
                   </CardContent>

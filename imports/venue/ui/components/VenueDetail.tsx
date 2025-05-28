@@ -37,6 +37,8 @@ const VenueDetail = () => {
   const [selectedGameId, setSelectedGameId] = useState<any>(null);
   const DeleteDialog = dynamic(() => import("./DeleteDialog"), { ssr: false });
   const { mutate: editVenue } = useEditVenue();
+  const { isLoading } = useGames();
+  const [hasMounted, setHasMounted] = useState(false);
 
   const handleEditField = (
     field: string,
@@ -110,56 +112,72 @@ const VenueDetail = () => {
     setSelectedGameId(null);
   };
 
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return null;
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-40 text-muted-foreground">
+        <Loader2 className="animate-spin mr-2" /> Loading Venues...
+      </div>
+    );
+  }
+
+  if (!games?.length) {
+    return (
+      <div className="pt-10 text-center text-xl text-muted-foreground">
+        No Venues found.
+      </div>
+    );
+  }
+
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
       <div className="flex gap-6 flex-wrap">
-        {games.length === 0 ? (
-          <div className="flex items-center justify-center w-full h-48 text-gray-500 text-lg">
-            No venues found.
+        {games.map((game) => (
+          <div key={game.id}>
+            <Card
+              className="w-[370px] gap-3 shadow-xl cursor-pointer"
+              onClick={() => handleCardClick(game)}
+            >
+              <CardHeader className="gap-0">
+                <CardTitle className="text-lg flex justify-between">
+                  {game.name}
+
+                  <button
+                    className=" ms-auto cursor-pointer"
+                    onClick={(e) => handleDeleteClick(e, game.id)}
+                    aria-label={`Delete ${game.name}`}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </CardTitle>
+                <CardDescription className="text-lg">
+                  {game.category}
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-2">
+                <p className="flex items-center gap-2">
+                  <MapPinned size={18} /> Address: {game.address}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Users size={18} /> Capacity: {game.capacity}
+                </p>
+                <p className="flex items-center gap-2">
+                  <IndianRupee size={18} /> Price: {game.hourlyPrice}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Map size={18} /> {game.location.area}, {game.location.city}
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        ) : (
-          games.map((game) => (
-            <div key={game.id}>
-              <Card
-                className="w-[370px] gap-3 shadow-xl cursor-pointer"
-                onClick={() => handleCardClick(game)}
-              >
-                <CardHeader className="gap-0">
-                  <CardTitle className="text-lg flex justify-between">
-                    {game.name}
-
-                    <button
-                      className=" ms-auto cursor-pointer"
-                      onClick={(e) => handleDeleteClick(e, game.id)}
-                      aria-label={`Delete ${game.name}`}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </CardTitle>
-                  <CardDescription className="text-lg">
-                    {game.category}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-2">
-                  <p className="flex items-center gap-2">
-                    <MapPinned size={18} /> Address: {game.address}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Users size={18} /> Capacity: {game.capacity}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <IndianRupee size={18} /> Price: {game.hourlyPrice}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Map size={18} /> {game.location.area}, {game.location.city}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          ))
-        )}
+        ))}
 
         <DeleteDialog
           isOpen={isDeleteDialogOpen}

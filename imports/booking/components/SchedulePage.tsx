@@ -32,8 +32,8 @@ const SchedulePage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-48">
-        <Loader2 className="animate-spin text-gray-500" size={32} />
-        <span className="ml-3 text-gray-600 text-lg">Loading...</span>
+        <Loader2 className="animate-spin text-gray-500 mx-2" size={32} />
+        Loading...
       </div>
     );
   }
