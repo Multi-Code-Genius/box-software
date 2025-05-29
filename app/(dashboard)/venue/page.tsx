@@ -1,4 +1,4 @@
-import VenuePage from "@/imports/venue/ui/page/VenuePage";
+import VenuePage from "@/imports/venue/page/VenuePage";
 import React from "react";
 
 const page = () => {

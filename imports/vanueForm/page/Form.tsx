@@ -23,6 +23,7 @@ import {
   Grid3X3,
   Home,
   ImageUp,
+  IndianRupee,
   Layers,
   MapPin,
   User,
@@ -316,7 +317,7 @@ const Form: React.FC = () => {
           <div className="space-y-2 w-[90%]">
             <Label>Hourly Price</Label>
             <div className="flex items-center border rounded-md px-3">
-              <DollarSign className="w-4 h-4 mr-2" />
+              <IndianRupee className="w-4 h-4 mr-2" />
               <Input
                 name="hourlyPrice"
                 type="number"

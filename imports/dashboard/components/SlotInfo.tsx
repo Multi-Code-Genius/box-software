@@ -37,44 +37,41 @@ const SlotInfo = () => {
   };
 
   const slots =
-    data?.bookingsThisMonth
-      ?.filter((slot: any) => !slot.isCancel)
-      .map((slot: any) => {
-        const start = new Date(slot.startTime);
-        const end = new Date(slot.endTime);
-        const duration = differenceInMinutes(end, start);
-        const status = slot.status;
-        const hourlyRate = slot.totalAmount;
-        const price = Math.round((hourlyRate * duration) / 60);
+    data?.bookingsThisMonth?.map((slot: any) => {
+      const start = new Date(slot.startTime);
+      const end = new Date(slot.endTime);
+      const duration = differenceInMinutes(end, start);
+      const status = slot.status;
+      const hourlyRate = slot.totalAmount;
+      const price = Math.round((hourlyRate * duration) / 60);
 
-        return {
-          time: formatTime(slot.startTime, slot.endTime),
-          duration: `${duration} mins slot`,
-          price,
-          status,
-          originalStartTime: slot.startTime,
-        };
-      }) || [];
+      return {
+        time: formatTime(slot.startTime, slot.endTime),
+        duration: `${duration} mins slot`,
+        price,
+        status,
+        isCancel: slot.isCancel,
+        originalStartTime: slot.startTime,
+      };
+    }) || [];
 
   const applyTimeFilter = (slot: (typeof slots)[0]) => {
     const hour = getHour(new Date(slot.originalStartTime));
     switch (selectedTimeFilter) {
       case "Morning":
-        return hour >= 5 && hour < 12;
+        return hour >= 5 && hour < 12; // Morning → 5 AM – 11:59 AM
+      case "Afternoon":
+        return hour >= 12 && hour < 16; // Afternoon → 12 PM – 4:59 PM
       case "Evening":
-        return hour >= 17 && hour < 20;
+        return hour >= 16 && hour < 20; // Evening → 5 PM – 7:59 PM
       case "Night":
-        return hour >= 20 || hour < 5;
+        return hour >= 20 || hour < 5; // Night → 8 PM – 4:59 AM (wraps around)
       default:
         return true;
     }
   };
 
-  const filteredSlots = slots
-    // .filter((slot) =>
-    //   showAvailableOnly ? slot.availability === "available" : true
-    // )
-    .filter(applyTimeFilter);
+  const filteredSlots = slots.filter(applyTimeFilter);
 
   if (isLoading) {
     return (
@@ -89,19 +86,23 @@ const SlotInfo = () => {
       <div className="flex justify-between border-b py-3 px-5 items-center">
         <p className="text-base font-bold">Today's slot Info</p>
         <div>
-          {["All", "Morning", "Evening", "Night"].map((label, idx) => (
-            <button
-              key={label}
-              onClick={() => setSelectedTimeFilter(label)}
-              className={`border py-1 px-4 cursor-pointer text-sm ${
-                idx === 0 ? "rounded-l-md" : ""
-              } ${idx === 3 ? "rounded-r-md" : ""} ${
-                selectedTimeFilter === label ? "bg-gray-200 font-semibold" : ""
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+          {["All", "Morning", "Afternoon", "Evening", "Night"].map(
+            (label, idx) => (
+              <button
+                key={label}
+                onClick={() => setSelectedTimeFilter(label)}
+                className={`border py-1 px-4 cursor-pointer text-sm ${
+                  idx === 0 ? "rounded-l-md" : ""
+                } ${idx === 4 ? "rounded-r-md" : ""} ${
+                  selectedTimeFilter === label
+                    ? "bg-gray-200 font-semibold"
+                    : ""
+                }`}
+              >
+                {label}
+              </button>
+            )
+          )}
         </div>
       </div>
 
@@ -130,12 +131,19 @@ const SlotInfo = () => {
                 <Card key={index} className="gap-2.5 py-5">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <div className="capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs">
-                        <div className="bg-red-500 h-2 w-2 rounded-full" />
-                        {slot.status === "PENDING" ||
-                        slot.status === "CONFIRMED"
-                          ? "booked"
-                          : slot.status.toLowerCase()}
+                      <div
+                        className={`capitalize flex items-center border rounded-lg py-1 px-4 gap-2 text-xs ${
+                          slot.isCancel
+                            ? "bg-red-100 text-red-700 border-red-300"
+                            : "bg-green-100 text-green-700 border-green-300"
+                        }`}
+                      >
+                        <div
+                          className={`h-2 w-2 rounded-full ${
+                            slot.isCancel ? "bg-red-500" : "bg-green-500" //showing dots
+                          }`}
+                        />
+                        {slot.isCancel ? "cancelled" : "booked"}
                       </div>
                     </CardTitle>
                   </CardHeader>
