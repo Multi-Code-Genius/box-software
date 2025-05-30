@@ -6,13 +6,17 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-export const requestOtp = async (email: { number: string }) => {
+export const requestOtp = async (data: { phone: string; name: string }) => {
   try {
-    const response = await api("/api/auth/send-otp", {
+    const response = await api("/api/v2/auth/send-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(email),
+      body: JSON.stringify({
+        phone: data.phone,
+        name: data.name,
+      }),
     });
+
     const resp = await response;
     return resp;
   } catch (error: unknown) {
@@ -26,19 +30,19 @@ export const requestOtp = async (email: { number: string }) => {
 
 export const useRequestOtp = () => {
   return useMutation({
-    mutationFn: (email: { number: string }) => requestOtp(email),
+    mutationFn: requestOtp,
     onSuccess: (data) => {
       toast.success(data.message);
     },
-    onError: (data) => {
-      toast.error(data.message);
+    onError: (error: any) => {
+      toast.error(error?.message || "Something went wrong");
     },
   });
 };
 
-export const verifyOtp = async (data: { number: string; otp: string }) => {
+export const verifyOtp = async (data: { phone: string; otp: string }) => {
   try {
-    const response = await api("/api/auth/verify-otp", {
+    const response = await api("/api/v2/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -57,28 +61,26 @@ export const verifyOtp = async (data: { number: string; otp: string }) => {
 export const useVerifyOtp = () => {
   const router = useRouter();
 
-  return useMutation<VerifyOtpResponse, Error, { number: string; otp: string }>(
-    {
-      mutationFn: async (data: { number: string; otp: string }) => {
-        const response = await verifyOtp(data);
-        return response;
-      },
-      onSuccess: async (data: VerifyOtpResponse) => {
-        toast.success(data.message);
+  return useMutation<VerifyOtpResponse, Error, { phone: string; otp: string }>({
+    mutationFn: async (data: { phone: string; otp: string }) => {
+      const response = await verifyOtp(data);
+      return response;
+    },
+    onSuccess: async (data: VerifyOtpResponse) => {
+      toast.success(data.message);
 
-        if (data.token) {
-          await useAuthStore
-            .getState()
-            .saveToken(data.token)
-            .then(() => {
-              router.push("/dashboard");
-            });
-        }
-      },
-      onError: (error: Error) => {
-        toast.error(error.message);
-        console.log("Login Failed", error.message);
-      },
-    }
-  );
+      if (data.token) {
+        await useAuthStore
+          .getState()
+          .saveToken(data.token)
+          .then(() => {
+            router.push("/dashboard");
+          });
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+      console.log("Login Failed", error.message);
+    },
+  });
 };

@@ -13,6 +13,7 @@ import { useRequestOtp, useVerifyOtp } from "@/api/auth";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [otp, setOTP] = useState("");
   const [emailError, setEmailError] = useState("");
   const [otpError, setOtpError] = useState("");
@@ -25,25 +26,28 @@ const LoginForm = () => {
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!email.trim()) {
+      setEmailError("Email or phone is required.");
+      return;
+    }
 
-    // if (!isValidEmail) {
-    //   setEmailError("Please enter a valid email address.");
-    //   return;
-    // }
+    if (!name.trim()) {
+      setEmailError("Name is required.");
+      return;
+    }
 
-    mutate({ number: email.toString() });
+    mutate({ phone: email.trim(), name: name.trim() });
     setEmailError("");
   };
 
   const handleOTPSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (otp.trim().length < 6) {
-      setOtpError("Please enter the 6-digit OTP.");
+    if (otp.trim().length < 4) {
+      setOtpError("Please enter the 4-digit OTP.");
       return;
     }
-    VerifyMutate({ number: email.toString(), otp: otp });
+    VerifyMutate({ phone: email.toString(), otp: otp });
     setOtpError("");
   };
 
@@ -63,9 +67,20 @@ const LoginForm = () => {
             className="flex flex-col gap-5 py-5 items-center"
           >
             <div>
+              <Label className="text-lg pb-2">Name</Label>
+              <Input
+                type="text"
+                placeholder="Enter name"
+                className="w-100"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
+            <div>
               <Label className="text-lg pb-2">Phone Number</Label>
               <Input
-                type="tel"
+                type="number"
                 placeholder="Enter number"
                 className="w-100 "
                 value={email}
@@ -107,17 +122,17 @@ const LoginForm = () => {
           </p>
 
           <InputOTP
-            maxLength={6}
+            maxLength={4}
             value={otp}
             onChange={(val) => {
               setOTP(val);
-              if (otp.length === 6) {
-                VerifyMutate({ number: email, otp: otp });
+              if (otp.length === 4) {
+                VerifyMutate({ phone: email, otp: otp });
               }
             }}
           >
             <InputOTPGroup className="gap-2">
-              {[...Array(6)].map((_, idx) => (
+              {[...Array(4)].map((_, idx) => (
                 <InputOTPSlot
                   key={idx}
                   index={idx}

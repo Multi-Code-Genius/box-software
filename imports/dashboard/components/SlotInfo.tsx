@@ -65,7 +65,7 @@ const SlotInfo = () => {
       case "Evening":
         return hour >= 16 && hour < 20; // Evening → 5 PM – 7:59 PM
       case "Night":
-        return hour >= 20 || hour < 5; // Night → 8 PM – 4:59 AM (wraps around)
+        return hour >= 20 || hour < 5; // Night → 8 PM – 4:59 AM
       default:
         return true;
     }
@@ -84,7 +84,7 @@ const SlotInfo = () => {
   return (
     <div>
       <div className="flex justify-between border-b py-3 px-5 items-center">
-        <p className="text-base font-bold">Today's slot Info</p>
+        <p className="text-base font-bold"> Slot info of this month</p>
         <div>
           {["All", "Morning", "Afternoon", "Evening", "Night"].map(
             (label, idx) => (

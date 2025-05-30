@@ -1,12 +1,14 @@
 import { User } from "@/types/auth";
+import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const token = Cookies.get("accessToken");
 
 export const fetchUserData = async (): Promise<User> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/user/profile`,
       {
         method: "GET",
         headers: {
@@ -21,7 +23,8 @@ export const fetchUserData = async (): Promise<User> => {
     }
 
     const data: User = await response.json();
-    localStorage.setItem("userId", data?.user?.id);
+    // localStorage.setItem("userId", data?.user?.id);
+
     return data;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
@@ -29,10 +32,10 @@ export const fetchUserData = async (): Promise<User> => {
   }
 };
 
-export const UpdateUserData = async (user: User): Promise<User> => {
+export const UpdateUserData = async (user: any, id: string): Promise<any> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/update`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/user/update/${id}`,
       {
         method: "PATCH",
         headers: {
@@ -52,6 +55,19 @@ export const UpdateUserData = async (user: User): Promise<User> => {
     console.error("Failed to update user data:", error);
     throw error;
   }
+};
+
+export const useUpdateUserMutation = () => {
+  return useMutation({
+    mutationFn: ({ data, id }: { data: any; id: string }) =>
+      UpdateUserData(data, id),
+    onSuccess: () => {
+      toast.success("User updated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to update user");
+    },
+  });
 };
 
 export const uploadImage = async (file: File) => {

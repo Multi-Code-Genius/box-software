@@ -1,10 +1,16 @@
 import { create } from "zustand";
 
 type User = {
+  zip_code: string;
+  state: string;
+  city: string;
+  address: string;
+  phone: string;
   email: string;
   name: string;
-  mobileNumber: string;
+  // mobileNumber: string;
   profile_pic: string;
+  id: string;
 };
 
 type UserStore = {

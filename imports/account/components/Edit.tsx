@@ -4,7 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import { Pen } from "lucide-react";
-import { fetchUserData, UpdateUserData, uploadImage } from "@/api/account";
+import {
+  fetchUserData,
+  uploadImage,
+  useUpdateUserMutation,
+} from "@/api/account";
+
 import {
   Dialog,
   DialogContent,
@@ -26,12 +31,17 @@ const Edit: React.FC<FooterProfileProps> = ({
   const [uploading, setUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [localImage, setLocalImage] = useState<string | null>(null);
+  const { mutate: upateUser } = useUpdateUserMutation();
 
   const [formData, setFormData] = useState({
     email: "",
     name: "",
-    mobileNumber: "",
+    phone: "",
     profile_pic: "/images/profile.jpg",
+    address: "",
+    city: "",
+    state: "",
+    zip_code: "",
   });
 
   useEffect(() => {
@@ -54,8 +64,12 @@ const Edit: React.FC<FooterProfileProps> = ({
     setFormData({
       email: user.email ?? "",
       name: user.name ?? "",
-      mobileNumber: user.mobileNumber ?? "",
+      phone: user.phone ?? "",
       profile_pic: user.profile_pic ?? "/images/profile.jpg",
+      address: user.address ?? "",
+      city: user.city ?? "",
+      state: user.state ?? "",
+      zip_code: user.zip_code ?? "",
     });
     setLocalImage(user.profile_pic ?? null);
   }, [user]);
@@ -65,17 +79,33 @@ const Edit: React.FC<FooterProfileProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setIsSaving(true);
-    try {
-      await UpdateUserData(formData);
-      setUser(formData);
-      setShowEditModal(false);
-    } catch (err) {
-      console.error("Update failed:", err);
-    } finally {
-      setIsSaving(false);
+
+    const userId = user?.id;
+    console.log(userId);
+
+    if (!userId) {
+      console.error("User ID not found");
+      return;
     }
+
+    upateUser(
+      { data: formData, id: userId },
+      {
+        onSuccess: () => {
+          setUser({
+            ...formData,
+            id: userId,
+          });
+          setShowEditModal(false);
+          setIsSaving(false);
+        },
+        onError: (err: any) => {
+          console.error("Update failed:", err);
+          setIsSaving(false);
+        },
+      }
+    );
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -99,15 +129,15 @@ const Edit: React.FC<FooterProfileProps> = ({
 
   return (
     <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-      <DialogContent className="max-w-lg w-full">
+      <DialogContent className="max-w-lg w-full gap-0">
         <DialogHeader>
           <DialogTitle></DialogTitle>
           <DialogClose className="absolute top-2 right-2 p-2 rounded-full hover:bg-muted" />
         </DialogHeader>
 
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <div className="flex justify-center">
-            <div className="relative w-40 h-40">
+            <div className="relative w-30 h-30">
               <img
                 src={localImage ?? formData.profile_pic}
                 alt="profile"
@@ -121,7 +151,7 @@ const Edit: React.FC<FooterProfileProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-1 right-3 bg-white p-3 rounded-full shadow-md"
+                className="absolute bottom-1 right-3 bg-white p-2 rounded-full shadow-md"
               >
                 <Pen size={16} />
               </button>
@@ -166,10 +196,40 @@ const Edit: React.FC<FooterProfileProps> = ({
             <Label>Phone Number</Label>
             <Input
               type="tel"
-              name="mobileNumber"
-              value={formData.mobileNumber}
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
               placeholder="Enter Number"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>City</Label>
+            <Input
+              type="tel"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              placeholder="Enter City"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>State</Label>
+            <Input
+              type="text"
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              placeholder="Enter Number"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Zip code</Label>
+            <Input
+              type="number"
+              name="zip_code"
+              value={formData.zip_code}
+              onChange={handleChange}
+              placeholder="Enter Zip code"
             />
           </div>
 

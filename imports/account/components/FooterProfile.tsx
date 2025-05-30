@@ -153,9 +153,9 @@ const FooterProfile = () => {
               </h2>
               <button
                 onClick={() => setShowProfile(false)}
-                className="  h-5 w-5 text-gray-600 hover:text-gray-900 "
+                className=" text-gray-600 hover:text-gray-900 "
               >
-                <X className="w-full" size={18} />
+                <X size={20} />
               </button>
             </div>
 
@@ -170,10 +170,8 @@ const FooterProfile = () => {
                   <div className="text-gray-900 font-medium">
                     {user?.name || "User"}
                   </div>
-                  {user?.mobileNumber && !isNaN(Number(user.mobileNumber)) && (
-                    <div className="text-gray-500 text-sm">
-                      {user.mobileNumber}
-                    </div>
+                  {user?.phone && !isNaN(Number(user.phone)) && (
+                    <div className="text-gray-500 text-sm">{user.phone}</div>
                   )}
                 </div>
               </div>
@@ -186,7 +184,7 @@ const FooterProfile = () => {
               />
             </div>
 
-            <div className="space-y-4 ">
+            <div className="space-y-3 ">
               {accountMenu.map(([label, Icon], i) => (
                 <div
                   key={i}
