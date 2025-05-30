@@ -1,19 +1,12 @@
 "use client";
 
-import {
-  LayoutGrid,
-  LogOut,
-  NotebookPen,
-  User,
-  Contact,
-  UsersRound,
-} from "lucide-react";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { Contact, LayoutGrid, NotebookPen, UsersRound } from "lucide-react";
+import { ReactNode } from "react";
 
 import { useRouter } from "next/navigation";
 
-import Header from "../components/Header";
 import FooterProfile from "../components/FooterProfile";
+import Header from "../components/Header";
 
 const Dashboard = ({ children }: { children: ReactNode }) => {
   const router = useRouter();

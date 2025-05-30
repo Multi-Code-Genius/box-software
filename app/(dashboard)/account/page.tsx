@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 const cards = [
   { id: 1, question: "What is the capital of France?", answer: "Paris" },

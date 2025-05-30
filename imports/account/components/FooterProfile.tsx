@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/authStore";
-import { useUserStore } from "@/store/userStore";
 import { fetchUserData } from "@/api/account";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogoutConfirmModal } from "./LogoutModel";
 import Edit from "@/imports/account/components/Edit";
-import { TbLogout } from "react-icons/tb";
+import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 import {
-  Pencil,
   Building2,
-  Users,
-  Settings,
   HelpCircle,
+  Pencil,
+  Settings,
+  Users,
   X,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { TbLogout } from "react-icons/tb";
 import { toast } from "sonner";
+import { LogoutConfirmModal } from "./LogoutModel";
 
 const FooterProfile = () => {
   const { setUser, user } = useUserStore();

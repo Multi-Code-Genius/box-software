@@ -6,14 +6,13 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 
-export const requestOtp = async (data: { phone: string; name: string }) => {
+export const requestOtp = async (data: { phone: string }) => {
   try {
     const response = await api("/api/v2/auth/send-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         phone: data.phone,
-        name: data.name,
       }),
     });
 

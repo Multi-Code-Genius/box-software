@@ -2,8 +2,6 @@
 import DashboardCard from "@/imports/dashboard/components/DashboardCard";
 import NewBookings from "@/imports/dashboard/components/NewBookings";
 import SlotInfo from "@/imports/dashboard/components/SlotInfo";
-import { useBookingStore } from "@/store/bookingStore";
-import React from "react";
 
 const DashBoardPage = () => {
   return (

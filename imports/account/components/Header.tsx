@@ -1,11 +1,9 @@
-import { useUserStore } from "@/store/userStore";
-import { ArrowBigDownDash, FileDown } from "lucide-react";
-import React from "react";
-import Cookies from "js-cookie";
 import { fetchDashboardPDF } from "@/api/dashboard";
+import { useUserStore } from "@/store/userStore";
+import { FileDown } from "lucide-react";
 
 const Header = () => {
-  const { setUser, user } = useUserStore();
+  const { user } = useUserStore();
 
   const downloadDashboardPDF = async () => {
     const gameId = localStorage.getItem("gameId");
@@ -45,7 +43,7 @@ const Header = () => {
       </button>
       <a href="#" className="flex ms-2 md:me-24">
         <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-          BrandName
+          TurfKeeper
         </span>
       </a>
       <div className="flex justify-between w-full items-center">

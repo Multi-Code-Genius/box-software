@@ -1,21 +1,21 @@
-import { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useUserStore } from "@/store/userStore";
-import { Pen } from "lucide-react";
 import {
   fetchUserData,
   uploadImage,
   useUpdateUserMutation,
 } from "@/api/account";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useUserStore } from "@/store/userStore";
+import { Pen } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog";
 
 interface FooterProfileProps {
@@ -27,7 +27,7 @@ const Edit: React.FC<FooterProfileProps> = ({
   setShowEditModal,
   showEditModal,
 }) => {
-  const { user, setUser, image, setUserImage } = useUserStore();
+  const { user, setUser, setUserImage } = useUserStore();
   const [uploading, setUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [localImage, setLocalImage] = useState<string | null>(null);

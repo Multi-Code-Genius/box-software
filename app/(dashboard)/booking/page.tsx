@@ -1,5 +1,4 @@
 import AllGames from "@/imports/booking/components/AllGames";
-import React from "react";
 
 const page = () => {
   return (

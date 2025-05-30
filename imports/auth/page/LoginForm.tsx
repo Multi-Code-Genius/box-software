@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRequestOtp, useVerifyOtp } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useRequestOtp, useVerifyOtp } from "@/api/auth";
+import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
   const [otp, setOTP] = useState("");
   const [emailError, setEmailError] = useState("");
   const [otpError, setOtpError] = useState("");
@@ -31,12 +30,7 @@ const LoginForm = () => {
       return;
     }
 
-    if (!name.trim()) {
-      setEmailError("Name is required.");
-      return;
-    }
-
-    mutate({ phone: email.trim(), name: name.trim() });
+    mutate({ phone: email.trim() });
     setEmailError("");
   };
 
@@ -66,17 +60,6 @@ const LoginForm = () => {
             onSubmit={handleEmailSubmit}
             className="flex flex-col gap-5 py-5 items-center"
           >
-            <div>
-              <Label className="text-lg pb-2">Name</Label>
-              <Input
-                type="text"
-                placeholder="Enter name"
-                className="w-100"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-
             <div>
               <Label className="text-lg pb-2">Phone Number</Label>
               <Input

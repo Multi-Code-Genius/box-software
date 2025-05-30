@@ -24,7 +24,7 @@ export interface GamesResponse {
 export const getAllGames = async (): Promise<GamesResponse> => {
   try {
     // In a real application, this would be an API call
-    // For now, we'll return mock data
+    // For now, we'll return mock dataO
     const mockGames: Game[] = [
       {
         id: "1",

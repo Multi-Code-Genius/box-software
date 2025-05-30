@@ -1,5 +1,6 @@
 "use client";
 
+import { useGames } from "@/api/booking";
 import {
   Card,
   CardContent,
@@ -7,11 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useBookingStore } from "@/store/bookingStore";
 import { IndianRupee, Loader2, Map, MapPinned, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useBookingStore } from "@/store/bookingStore";
 import { useEffect, useState } from "react";
-import { useGames } from "@/api/booking";
 
 const AllGames = () => {
   const [hasMounted, setHasMounted] = useState(false);

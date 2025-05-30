@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { Game } from "@/types/auth";
-import BookingPage from "@/imports/booking/pages/BookingPage";
 import { useGames } from "@/api/booking";
+import BookingPage from "@/imports/booking/pages/BookingPage";
+import { Game } from "@/types/auth";
+import { Loader2 } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const SchedulePage = () => {
   const params = useParams();

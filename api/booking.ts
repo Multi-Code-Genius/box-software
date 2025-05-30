@@ -1,8 +1,8 @@
 import { api } from "@/lib/api";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Game } from "@/types/auth";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const token = Cookies.get("accessToken");
 
