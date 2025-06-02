@@ -45,9 +45,13 @@ export interface CreateBooking {
 
 export interface UpdateBooking {
   id?: string;
+  name: string;
   startTime: string;
   endTime: string;
-  date: any;
+  date: string;
+  bookedGrounds: number;
+  totalAmount: number;
+  phone: number;
 }
 
 export interface Venues {

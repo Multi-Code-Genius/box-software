@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
+import { UpdateBooking } from "@/types/vanue";
 
 const token = Cookies.get("accessToken");
 
@@ -127,19 +128,18 @@ export const useCancelBooking = (
   });
 };
 
-const updateBooking = async (
-  id: string,
-  data: { date: string; startTime: string; endTime: string }
-) => {
+const updateBooking = async (id: string, data: UpdateBooking) => {
   try {
-    const response = await api(`/api/booking/update/${id}`, {
+    const response = await api(`/api/v2/booking/update-booking/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
       cache: "no-store",
     });
 
-    return response;
+    const res = response;
+    console.log(res);
+    return res;
   } catch (error) {
     console.log("Booking Response", error);
     throw new Error(error instanceof Error ? error.message : "Data Not Found");
@@ -151,13 +151,8 @@ export const useUpdateBooking = (
   onError?: () => void
 ) => {
   return useMutation({
-    mutationFn: ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: { date: string; startTime: string; endTime: string };
-    }) => updateBooking(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateBooking }) =>
+      updateBooking(id, data),
 
     onSuccess: () => {
       toast.success("Booking Updated!");

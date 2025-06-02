@@ -112,10 +112,14 @@ const TuiCalendar = ({
           ...changes,
           start: changes.start?.toDate?.() || schedule.start,
           end: changes.end?.toDate?.() || schedule.end,
+          location: changes.location || schedule.location,
         };
-        const startTime = moment(updatedSchedule.start).format("hh:mm A");
-        const endTime = moment(updatedSchedule.end).format("hh:mm A");
-        const date = moment(updatedSchedule.start).format("YYYY-MM-DD");
+
+        const startTime = moment(updatedSchedule.start).toISOString();
+        const endTime = moment(updatedSchedule.end).toISOString();
+        const date = moment(updatedSchedule.start)
+          .startOf("week")
+          .toISOString();
 
         setEvents(
           events.map((item) =>
@@ -129,12 +133,25 @@ const TuiCalendar = ({
           changes
         );
 
+        const venueId = Number(localStorage.getItem("venueId"));
+
+        const selectedVenue = venues?.venues.find(
+          (g) => Number(g.id) === venueId
+        );
+
+        const hourlyPrice = selectedVenue?.hourly_price || 0;
+        const bookedGround = selectedVenue?.grounds || 0;
+
         updateBooking({
           id: updatedSchedule.id,
           data: {
-            startTime,
-            endTime,
-            date,
+            startTime: moment(updatedSchedule.start).toISOString(),
+            endTime: moment(updatedSchedule.end).toISOString(),
+            date: moment(updatedSchedule.start).startOf("day").toISOString(),
+            name: updatedSchedule.title,
+            bookedGrounds: Number(bookedGround),
+            totalAmount: hourlyPrice,
+            phone: updatedSchedule.location || "",
           },
         });
       });

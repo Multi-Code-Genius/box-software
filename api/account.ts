@@ -1,3 +1,4 @@
+import { api } from "@/lib/api";
 import { User } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -7,24 +8,15 @@ const token = Cookies.get("accessToken");
 
 export const fetchUserData = async (): Promise<User> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/user/profile`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api(`/api/v2/user/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data: User = await response.json();
-    // localStorage.setItem("userId", data?.user?.id);
-
+    const data = await response;
     return data;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
@@ -34,22 +26,15 @@ export const fetchUserData = async (): Promise<User> => {
 
 export const UpdateUserData = async (user: any, id: string): Promise<any> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/user/update/${id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(user),
-      }
-    );
+    const response = await api(`/api/v2/user/update/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
+    const data = await response;
     return data.user;
   } catch (error) {
     console.error("Failed to update user data:", error);
@@ -83,24 +68,15 @@ export const uploadImage = async (file: File) => {
     const formData = new FormData();
     formData.append("profile_pic", file);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/upload-profile/${userId}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      }
-    );
+    const response = await api(`/api/user/upload-profile/${userId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
     const responseData = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        `Error: ${response.status} - ${responseData.message || "Unknown error"}`
-      );
-    }
 
     const data = responseData;
     return data.user.profile_pic;

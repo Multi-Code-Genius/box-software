@@ -59,22 +59,15 @@ export const useAddGame = () => {
 
 export const getVenues = async (): Promise<{ venues: Venues[] }> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/venue/my-venues`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api(`/api/v2/venue/my-venues`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-    if (!response.ok) {
-      throw new Error(`status:${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await response;
     console.log("venues", data);
     return { venues: data.venues };
   } catch (error) {
