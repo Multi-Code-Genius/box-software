@@ -1,6 +1,7 @@
 "use client";
+import { useVenues } from "@/api/vanue";
 import { Button } from "@/components/ui/button";
-import { useBookingStore } from "@/store/bookingStore";
+import { useVenueStore } from "@/store/venueStore";
 import { CreateBooking, UpdateBooking } from "@/types/vanue";
 import moment from "moment";
 import { useEffect, useRef } from "react";
@@ -29,7 +30,7 @@ const TuiCalendar = ({
 }) => {
   const calendarRef = useRef<HTMLDivElement>(null);
   const calendarInstance = useRef<any>(null);
-  const { games } = useBookingStore();
+  const { data: venues } = useVenues();
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -59,6 +60,8 @@ const TuiCalendar = ({
 
       calendarInstance.current.on("beforeCreateSchedule", (event: any) => {
         const { start, end, title, location } = event;
+        console.log(title);
+
         const newSchedule = {
           id: String(new Date().getTime()),
           calendarId: "1",
@@ -69,24 +72,33 @@ const TuiCalendar = ({
           location,
         };
 
-        const startTime = moment(start.toDate()).format("hh:mm A");
-        const endTime = moment(end.toDate()).format("hh:mm A");
-        const date = moment(start.toDate()).format("YYYY-MM-DD");
+        console.log(newSchedule, "newSchedule");
 
-        const gameId = localStorage.getItem("gameId");
-        const selectedGame = games.find((g) => g.id === gameId);
-        const hourlyPrice = selectedGame?.hourlyPrice || 0;
+        const startTime = start.toDate().toISOString();
+        const endTime = end.toDate().toISOString();
+        const date = moment(start.toDate()).toISOString();
+        console.log(date);
+
+        const venueId = Number(localStorage.getItem("venueId"));
+
+        const selectedVenue = venues?.venues.find(
+          (g) => Number(g.id) === venueId
+        );
+
+        const hourlyPrice = selectedVenue?.hourly_price || 0;
+        const bookedGrounds = selectedVenue?.grounds || 0;
 
         createBooking({
-          name: title,
-          number: location,
-          startTime: startTime,
-          endTime: endTime,
-          totalAmount: hourlyPrice,
-          gameId: gameId || "",
-          nets: 2,
-          date: date,
+          name: newSchedule.title,
+          phone: location,
+          startTime,
+          endTime,
+          date,
+          totalAmount: Number(hourlyPrice),
+          venueId,
+          bookedGrounds: Number(bookedGrounds),
         });
+
         setEvents([...events, newSchedule]);
 
         calendarInstance.current.createSchedules([newSchedule]);
@@ -116,7 +128,6 @@ const TuiCalendar = ({
           schedule.calendarId,
           changes
         );
-        console.log("updatedSchedule", schedule);
 
         updateBooking({
           id: updatedSchedule.id,

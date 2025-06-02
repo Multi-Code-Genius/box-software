@@ -3,6 +3,8 @@ import DashboardCard from "@/imports/dashboard/components/DashboardCard";
 import NewBookings from "@/imports/dashboard/components/NewBookings";
 import SlotInfo from "@/imports/dashboard/components/SlotInfo";
 
+import React from "react";
+
 const DashBoardPage = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-74px)] overflow-hidden">

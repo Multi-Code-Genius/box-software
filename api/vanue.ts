@@ -1,6 +1,8 @@
 import { api } from "@/lib/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
+import { Venues } from "@/types/vanue";
 
 interface GameInfo {
   surface: string;
@@ -21,11 +23,14 @@ interface VenueFormDetails {
   gameInfo: GameInfo;
   images: string[];
 }
+
+const token = Cookies.get("accessToken");
+
 const registerNewGame = async (data: unknown) => {
   try {
-    const response = await api("/api/game/create", {
+    const response = await api("/api/v2/venue/create-venue", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+
       body: data,
     });
 
@@ -52,12 +57,46 @@ export const useAddGame = () => {
   });
 };
 
+export const getVenues = async (): Promise<{ venues: Venues[] }> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/venue/my-venues`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`status:${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("venues", data);
+    return { venues: data.venues };
+  } catch (error) {
+    console.error("Failed to fetch venues", error);
+    throw error;
+  }
+};
+
+export const useVenues = () => {
+  return useQuery<{ venues: Venues[] }, Error>({
+    queryKey: ["venues"],
+    queryFn: () => getVenues(),
+    enabled: !!token,
+  });
+};
+
 export const editVenueDetails = async (
   data: Partial<VenueFormDetails>,
-  gameId: any
+  venueId: any
 ) => {
   try {
-    const response = await api(`/api/game/update-venue/${gameId}`, {
+    const response = await api(`/api/v2/venue/update/${venueId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
@@ -77,11 +116,11 @@ export const useEditVenue = () => {
   return useMutation({
     mutationFn: ({
       data,
-      gameId,
+      venueId,
     }: {
       data: Partial<VenueFormDetails>;
-      gameId: string;
-    }) => editVenueDetails(data, gameId),
+      venueId: string;
+    }) => editVenueDetails(data, venueId),
 
     onSuccess: (data: any) => {
       toast.success(data?.message || "Venue updated successfully!");
@@ -95,7 +134,7 @@ export const useEditVenue = () => {
 };
 const deleteVenue = async (venueId: string) => {
   try {
-    const response = await api(`/api/game/delete-venue/${venueId}`, {
+    const response = await api(`/api/v2/venue/delete/${venueId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });

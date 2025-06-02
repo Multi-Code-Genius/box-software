@@ -1,18 +1,18 @@
 "use client";
 
-import { useGames } from "@/api/booking";
-import BookingPage from "@/imports/booking/pages/BookingPage";
-import { Game } from "@/types/auth";
-import { Loader2 } from "lucide-react";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import BookingPage from "@/imports/booking/pages/BookingPage";
+import { useVenues } from "@/api/vanue";
+import { Venue } from "@/types/auth";
 
 const SchedulePage = () => {
   const params = useParams();
   const id = params?.id;
-  const { data: games, isLoading, isError } = useGames();
+  const { data: venues, isLoading, isError } = useVenues();
 
-  const [game, setGame] = useState<Game | null>(null);
+  const [venue, setVenue] = useState<Venue | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,10 +20,10 @@ const SchedulePage = () => {
   }, []);
 
   useEffect(() => {
-    if (!id || games?.games.length === 0) return;
-    const foundGame = games?.games.find((g) => g.id === id);
-    setGame(foundGame ?? null);
-  }, [id, games]);
+    if (!id || !venues?.venues?.length) return;
+    const foundVenue = venues.venues.find((g) => String(g.id) === id);
+    setVenue((foundVenue ?? null) as Venue | null);
+  }, [id, venues]);
 
   if (!mounted) {
     return null;
@@ -37,8 +37,9 @@ const SchedulePage = () => {
       </div>
     );
   }
+  console.log(venues);
 
-  if (!game || isError) {
+  if (!venue || isError) {
     return (
       <div className="flex items-center justify-center w-full h-48">
         <span className="text-gray-600 text-lg">
@@ -51,8 +52,8 @@ const SchedulePage = () => {
   return (
     <div className="p-10">
       <p className="font-bold text-3xl pb-2">Bookings</p>
-      <p className="text-sm">Booking for: {game.name}</p>
-      <BookingPage game={game} />
+      <p className="text-sm">Booking for: {venue.name}</p>
+      <BookingPage venue={venue} />
     </div>
   );
 };

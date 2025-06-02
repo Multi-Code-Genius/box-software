@@ -6,20 +6,20 @@ const Header = () => {
   const { user } = useUserStore();
 
   const downloadDashboardPDF = async () => {
-    const gameId = localStorage.getItem("gameId");
+    const venueId = localStorage.getItem("venueId");
 
-    if (!gameId) {
+    if (!venueId) {
       alert("Game ID not found.");
       return;
     }
 
     try {
-      const blob = await fetchDashboardPDF(gameId);
+      const blob = await fetchDashboardPDF(venueId);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
 
       a.href = url;
-      a.download = `dashboard-report-${gameId}.pdf`;
+      a.download = `dashboard-report-${venueId}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();

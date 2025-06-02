@@ -1,9 +1,10 @@
-import AllGames from "@/imports/booking/components/AllGames";
+import AllVenues from "@/imports/booking/components/AllVenues";
+import React from "react";
 
 const page = () => {
   return (
     <div>
-      <AllGames />
+      <AllVenues />
     </div>
   );
 };

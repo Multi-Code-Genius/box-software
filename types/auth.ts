@@ -136,7 +136,7 @@ export interface VerifyOtpResponse {
   token: string;
 }
 
-export interface Game {
+export interface Venue {
   description: any;
   bookings: any;
   endDate: any;
@@ -164,7 +164,7 @@ export interface Booking {
   nets: number;
   createdAt: string;
   updatedAt: string;
-  gameId: string;
+  venueId: string;
   user: {
     id: string;
     name: string;
@@ -189,7 +189,7 @@ export interface BookingRequest {
   startTime: string;
   endTime: string;
   nets: number;
-  gameId: string | null;
+  venueId: string | null;
   totalAmount: number;
 }
 

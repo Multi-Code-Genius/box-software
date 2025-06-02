@@ -9,14 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useDashboardStore } from "@/store/dashboardStore";
-import Games from "./Games";
+import Venues from "./Venues";
 
 const DashboardCard = () => {
   const { data } = useDashboardStore();
 
   return (
     <>
-      <Games />
+      <Venues />
       <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {/* Booked Slots */}
         <Card className="gap-3">

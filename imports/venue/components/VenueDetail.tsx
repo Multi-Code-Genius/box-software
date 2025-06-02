@@ -1,6 +1,5 @@
 "use client";
-import { getAllGames, useGames } from "@/api/booking";
-import { useDeleteVenue, useEditVenue } from "@/api/vanue";
+import { useDeleteVenue, useEditVenue, useVenues } from "@/api/vanue";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useBookingStore } from "@/store/bookingStore";
+
+import { useVenueStore } from "@/store/venueStore";
 import {
   IndianRupee,
   Loader2,
@@ -30,14 +30,14 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const VenueDetail = () => {
-  const { games, setGames } = useBookingStore();
-  const { data } = useGames();
+  const { venues, setVenues } = useVenueStore();
+  const { data } = useVenues();
   const [selectedGame, setSelectedGame] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
-  const [selectedGameId, setSelectedGameId] = useState<any>(null);
+  const [selectedvenueId, setSelectedvenueId] = useState<any>(null);
   const DeleteDialog = dynamic(() => import("./DeleteDialog"), { ssr: false });
   const { mutate: editVenue } = useEditVenue();
-  const { isLoading } = useGames();
+  const { isLoading } = useVenues();
   const [hasMounted, setHasMounted] = useState(false);
 
   const handleEditField = (
@@ -67,14 +67,14 @@ const VenueDetail = () => {
   };
 
   useEffect(() => {
-    if (data?.games) {
-      setGames(data.games);
+    if (data?.venues) {
+      setVenues(data.venues);
     }
-  }, [data, setGames]);
+  }, [data, setVenues]);
 
   const handleCardClick = (game: any) => {
     setSelectedGame(game);
-    setSelectedGameId(game.id);
+    setSelectedvenueId(game.id);
     setShowModal(true);
   };
 
@@ -89,7 +89,7 @@ const VenueDetail = () => {
     const { id, ...rest } = selectedGame;
 
     editVenue({
-      gameId: id,
+      venueId: id,
       data: rest,
     });
 
@@ -100,16 +100,16 @@ const VenueDetail = () => {
 
   const handleDeleteClick = (
     e: React.MouseEvent<HTMLButtonElement>,
-    gameId: string
+    venueId: string
   ) => {
     e.stopPropagation();
-    setSelectedGameId(gameId);
+    setSelectedvenueId(venueId);
     setIsDeleteDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setIsDeleteDialogOpen(false);
-    setSelectedGameId(null);
+    setSelectedvenueId(null);
   };
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const VenueDetail = () => {
     );
   }
 
-  if (!games?.length) {
+  if (!venues?.length) {
     return (
       <div className="pt-10 text-center text-xl text-muted-foreground">
         No Venues found.
@@ -138,50 +138,42 @@ const VenueDetail = () => {
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
       <div className="flex gap-6 flex-wrap">
-        {games.map((game) => (
-          <div key={game.id}>
-            <Card
-              className="w-[370px] gap-3 shadow-xl cursor-pointer"
-              onClick={() => handleCardClick(game)}
-            >
-              <CardHeader className="gap-0">
-                <CardTitle className="text-lg flex justify-between">
-                  {game.name}
-
-                  <button
-                    className=" ms-auto cursor-pointer"
-                    onClick={(e) => handleDeleteClick(e, game.id)}
-                    aria-label={`Delete ${game.name}`}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  {game.category}
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-2">
-                <p className="flex items-center gap-2">
-                  <MapPinned size={18} /> Address: {game.address}
-                </p>
-                <p className="flex items-center gap-2">
-                  <Users size={18} /> Capacity: {game.capacity}
-                </p>
-                <p className="flex items-center gap-2">
-                  <IndianRupee size={18} /> Price: {game.hourlyPrice}
-                </p>
-                <p className="flex items-center gap-2">
-                  <Map size={18} /> {game.location.area}, {game.location.city}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+        {venues.map((venue) => (
+          <Card
+            key={venue.id}
+            className="w-[370px] gap-3 shadow-xl cursor-pointer"
+            onClick={() => handleCardClick(venue)}
+          >
+            <CardHeader className="gap-0">
+              <CardTitle className="text-lg">{venue.name}</CardTitle>
+              <CardDescription className="text-lg">
+                {venue.category}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="flex items-center gap-2">
+                <MapPinned size={18} />
+                Address: {venue.address}
+              </p>
+              <p className="flex items-center gap-2">
+                <Users size={18} />
+                Capacity: {venue.capacity}
+              </p>
+              <p className="flex items-center gap-2">
+                <IndianRupee size={18} />
+                Price: {venue.hourly_price}
+              </p>
+              <p className="flex items-center gap-2">
+                <Map size={18} />
+                {venue.location.area}, {venue.location.city}
+              </p>
+            </CardContent>
+          </Card>
         ))}
 
         <DeleteDialog
           isOpen={isDeleteDialogOpen}
-          selectedGameId={selectedGameId}
+          selectedvenueId={selectedvenueId}
           onClose={handleCloseDialog}
         />
       </div>
@@ -228,123 +220,81 @@ const VenueDetail = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  City
+                </label>
+                <Input
+                  value={selectedGame.location?.city || ""}
+                  onChange={(e) =>
+                    handleEditField("city", e.target.value, true, "location")
+                  }
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Game
+                    Latitude
                   </label>
                   <Input
-                    value={selectedGame.category}
+                    value={selectedGame.location?.lat || ""}
                     onChange={(e) =>
-                      handleEditField("category", e.target.value)
+                      handleEditField("lat", e.target.value, true, "location")
                     }
                   />
                 </div>
-
-                <div className="space-y-1">
+                <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Turf Type
+                    Longitude
                   </label>
-
-                  <div className="flex gap-4">
-                    {["indoor", "outdoor", "roof"].map((type) => (
-                      <button
-                        key={type}
-                        onClick={() =>
-                          handleEditField("turfType", type, true, "gameInfo")
-                        }
-                        className={`px-3 py-2 rounded-lg border transition-colors duration-200 text-sm ${
-                          selectedGame.gameInfo.turfType === type
-                            ? "bg-black text-white"
-                            : "bg-white text-gray-800 hover:bg-black hover:text-white"
-                        }`}
-                      >
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                      </button>
-                    ))}
-                  </div>
+                  <Input
+                    value={selectedGame.location?.lng || ""}
+                    onChange={(e) =>
+                      handleEditField("lng", e.target.value, true, "location")
+                    }
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Surface
+                    Game Type
                   </label>
                   <Input
-                    value={selectedGame.gameInfo?.surface}
+                    value={selectedGame.game_info?.type || ""}
+                    onChange={(e) =>
+                      handleEditField("type", e.target.value, true, "game_info")
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Max Players
+                  </label>
+                  <Input
+                    value={selectedGame.game_info?.maxPlayers || ""}
                     onChange={(e) =>
                       handleEditField(
-                        "surface",
+                        "maxPlayers",
                         e.target.value,
                         true,
-                        "gameInfo"
+                        "game_info"
                       )
                     }
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Net
-                  </label>
-                  <Input
-                    type="number"
-                    value={selectedGame.net || ""}
-                    onChange={(e) => handleEditField("net", e.target.value)}
-                  />
-                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Capacity
-                  </label>
-                  <Input
-                    type="number"
-                    value={selectedGame.capacity}
-                    onChange={(e) =>
-                      handleEditField("capacity", e.target.value)
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Price
-                  </label>
-                  <Input
-                    type="number"
-                    value={selectedGame.hourlyPrice}
-                    onChange={(e) =>
-                      handleEditField("hourlyPrice", e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Area
-                  </label>
-                  <Input
-                    value={selectedGame.location?.area}
-                    onChange={(e) =>
-                      handleEditField("area", e.target.value, true, "location")
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    City
-                  </label>
-                  <Input
-                    value={selectedGame.location?.city}
-                    onChange={(e) =>
-                      handleEditField("city", e.target.value, true, "location")
-                    }
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Grounds
+                </label>
+                <Input
+                  value={selectedGame.grounds || ""}
+                  onChange={(e) => handleEditField("grounds", e.target.value)}
+                />
               </div>
 
               <div className="flex justify-end gap-2 pt-4">

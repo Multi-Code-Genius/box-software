@@ -1,15 +1,14 @@
 import { api } from "@/lib/api";
-import { Game } from "@/types/auth";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import Cookies from "js-cookie";
 import { toast } from "sonner";
+import Cookies from "js-cookie";
 
 const token = Cookies.get("accessToken");
 
-const fetchBooking = async (data: { date: string; gameId: string }) => {
+const fetchBooking = async (data: { date: string; venueId: string }) => {
   try {
     const response = await api(
-      `/api/booking/game/${data.gameId}/${data.date}`,
+      `/api/booking/game/${data.venueId}/${data.date}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -24,9 +23,9 @@ const fetchBooking = async (data: { date: string; gameId: string }) => {
   }
 };
 
-export const useBookingInfo = (data: { date: string; gameId: string }) => {
+export const useBookingInfo = (data: { date: string; venueId: string }) => {
   return useQuery({
-    queryKey: ["booking", data.date, data.gameId],
+    queryKey: ["booking", data.date, data.venueId],
     queryFn: () => fetchBooking(data),
     staleTime: 0,
     refetchOnMount: true,
@@ -40,25 +39,42 @@ export const useBookingMutation = (
   onError?: () => void
 ) => {
   return useMutation({
-    mutationFn: (data: { date: string; gameId: string }) => fetchBooking(data),
+    mutationFn: (data: { date: string; venueId: string }) => fetchBooking(data),
     onSuccess,
     onError,
   });
 };
 
-const createBooking = async (data: { date: string; gameId: string }) => {
+interface BookingPayload {
+  name: string;
+  phone: string;
+  startTime: string;
+  endTime: string;
+  date: string;
+  totalAmount: number;
+  venueId: number;
+  bookedGrounds: number;
+}
+
+export const createBooking = async (data: BookingPayload) => {
   try {
-    const response = await api("/api/booking/create", {
+    const response = await api("/api/v2/booking/create-booking", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
       body: JSON.stringify(data),
     });
-    const resp = await response;
 
-    return resp;
+    if (!response.ok) {
+      const errorData = await response;
+      throw new Error(errorData.message || "Booking failed");
+    }
+
+    const res = await response;
+    console.log(res, "create bokking");
+    return res;
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Data Not Found");
+    throw new Error(error instanceof Error ? error.message : "Booking failed");
   }
 };
 
@@ -81,7 +97,7 @@ export const useCreateBooking = (
 
 const cancelBooking = async (id: string) => {
   try {
-    const response = await api(`/api/booking/cancel/${id}`, {
+    const response = await api(`/api/v2/booking/cancel/${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
@@ -188,12 +204,12 @@ export const useUpdateBokkingStatus = (
 
 const bookingById = async (id: string) => {
   try {
-    const response = await api(`/api/one-booking/${id}`, {
+    const response = await api(`/api/v2/booking/booking-id/${id}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
     });
-    const resp = await response;
+    const resp = await response.json();
     return resp;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Data Not Found");
@@ -212,28 +228,8 @@ export const useBookingById = (id: string) => {
   });
 };
 
-// const bookingByRange = async (
-//   gameId: string,
-//   range: { start: string; end: string }
-// ) => {
-//   try {
-//     const response = await api(
-//       `/api/booking/week/${gameId}/${range.start}/${range.end}`,
-//       {
-//         method: "GET",
-//         headers: { "Content-Type": "application/json" },
-//         cache: "no-store",
-//       }
-//     );
-//     const resp = await response;
-//     return resp;
-//   } catch (error) {
-//     throw new Error(error instanceof Error ? error.message : "Data Not Found");
-//   }
-// };
-
 const bookingByRange = async (
-  gameId: string,
+  venueId: string,
   range: { start: string; end: string }
 ) => {
   if (!range.start || !range.end) {
@@ -242,7 +238,7 @@ const bookingByRange = async (
 
   try {
     const response = await api(
-      `/api/booking/week/${gameId}/${range.start}/${range.end}`,
+      `/api/v2/booking/booking-week/${venueId}?startDate=${range.start}&endDate=${range.end}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -256,30 +252,15 @@ const bookingByRange = async (
   }
 };
 
-// export const useBookingByRange = (
-//   gameId: string,
-//   range: { start: string; end: string }
-// ) => {
-//   return useQuery({
-//     queryKey: ["booking", gameId, range],
-//     queryFn: () => bookingByRange(gameId, range),
-//     staleTime: 0,
-//     refetchOnMount: true,
-//     refetchOnWindowFocus: true,
-//     retry: 0,
-//     enabled: !!gameId && !!range,
-//   });
-// };
-
 export const useBookingByRange = (
-  gameId: string,
+  venueId: string,
   range: { start: string; end: string }
 ) => {
-  const isValid = !!gameId && !!range.start && !!range.end;
+  const isValid = !!venueId && !!range.start && !!range.end;
 
   return useQuery({
-    queryKey: ["booking", gameId, range],
-    queryFn: () => bookingByRange(gameId, range),
+    queryKey: ["booking", venueId, range],
+    queryFn: () => bookingByRange(venueId, range),
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
@@ -287,109 +268,3 @@ export const useBookingByRange = (
     enabled: isValid,
   });
 };
-
-export const getAllGames = async (): Promise<{ games: Game[] }> => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/game/all`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`status:${response.status}`);
-    }
-
-    const data = await response.json();
-
-    return { games: data.games };
-  } catch (error) {
-    console.error("Failed to fetch games", error);
-    throw error;
-  }
-};
-
-export const useGames = () => {
-  return useQuery<{ games: Game[] }, Error>({
-    queryKey: ["games"],
-    queryFn: () => getAllGames(),
-    enabled: !!token,
-  });
-};
-
-export const getGameById = async (
-  date?: string
-): Promise<{ games: Game[] }> => {
-  const id = localStorage.getItem("gameId");
-
-  if (!id || !token) {
-    throw new Error("Missing game ID or token");
-  }
-
-  const dateObj = date ? new Date(date) : new Date();
-  const day = String(dateObj.getDate()).padStart(2, "0");
-  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-  const year = String(dateObj.getFullYear());
-  const formattedDate = `${day}-${month}-${year}`;
-
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/game/${id}/${formattedDate}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`status:${response.status}`);
-    }
-
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch game by ID", error);
-    throw error;
-  }
-};
-
-// export const createBooking = async (data: BookingRequest) => {
-//   if (!token) throw new Error("No auth token found");
-
-//   try {
-//     const response = await fetch(
-//       `${process.env.NEXT_PUBLIC_BASE_URL}/api/booking/create`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify(data),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const error = await response.json();
-//       throw new Error(error.message || `Request failed: ${response.status}`);
-//     }
-
-//     const res = await response.json();
-//     console.log("Booking created:", res);
-//     return res;
-//   } catch (error: any) {
-//     console.error("Error creating booking:", error);
-//     throw new Error(
-//       error.message || "Unknown error occurred while creating booking"
-//     );
-//   }
-// };

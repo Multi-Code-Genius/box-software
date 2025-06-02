@@ -6,7 +6,7 @@ export interface Game {
 export interface Booking {
   id: string;
   userId: string;
-  gameId: string;
+  venueId: string;
   date: string;
   startTime: string;
   endTime: string;

@@ -6,7 +6,7 @@ import {
   useCreateBooking,
   useUpdateBooking,
 } from "@/api/booking";
-import { Game } from "@/types/auth";
+import { Venue } from "@/types/auth";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -16,15 +16,18 @@ const TuiCalendar = dynamic(() => import("../components/TuiCalendar"), {
   ssr: false,
 });
 
-const BookingPage = ({ game }: { game: Game }) => {
+const BookingPage = ({ venue }: { venue: Venue }) => {
   const [range, setRange] = useState<{ start: string; end: string }>(() => {
-    const start = moment().startOf("day").format("YYYY-MM-DD");
-    const end = moment().endOf("day").format("YYYY-MM-DD");
+    const start = moment().startOf("week").format("YYYY-MM-DD");
+    const end = moment().endOf("week").format("YYYY-MM-DD");
     return { start, end };
   });
 
-  const { refetch, isLoading } = useBookingByRange(game.id, range);
-
+  const { refetch, isLoading, data, error } = useBookingByRange(
+    venue.id,
+    range
+  );
+  console.log(data, "bookingbyrange");
   const [events, setEvents] = useState<ISchedule[]>([]);
 
   const updateEvents = (data: any) => {
@@ -32,22 +35,23 @@ const BookingPage = ({ game }: { game: Game }) => {
       data?.bookings?.map((item: any) => ({
         id: item.id,
         calendarId: item.id,
-        title: item?.user?.name,
+        title: item?.customer?.name,
         category: "time",
-        start: moment.utc(item.startTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment.utc(item.endTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+        start: item.start_time,
+        end: item.end_time,
       })) ?? [];
 
     setEvents(formatted);
+    console.log(events, "kjasfhjlad");
   };
 
   useEffect(() => {
-    if (game?.id && range.start && range.end) {
+    if (venue?.id && range.start && range.end) {
       refetch().then((res) => {
         updateEvents(res.data);
       });
     }
-  }, [game?.id, range.start, range.end]);
+  }, [venue?.id, range.start, range.end]);
 
   const { mutate: cancelBooking } = useCancelBooking(
     () => refetch(),
@@ -62,6 +66,7 @@ const BookingPage = ({ game }: { game: Game }) => {
   const { mutate: createBooking } = useCreateBooking(
     async () => {
       const newData = await refetch();
+      console.log(newData, "newData");
       updateEvents(newData.data);
     },
     async () => {
@@ -70,6 +75,7 @@ const BookingPage = ({ game }: { game: Game }) => {
     }
   );
 
+  console.log(events);
   return (
     <div>
       <TuiCalendar
@@ -87,3 +93,6 @@ const BookingPage = ({ game }: { game: Game }) => {
 };
 
 export default BookingPage;
+function mutate(): import("react").EffectCallback {
+  throw new Error("Function not implemented.");
+}

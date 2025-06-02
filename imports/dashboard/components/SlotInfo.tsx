@@ -18,8 +18,8 @@ const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("All");
   const { data } = useDashboardStore();
-  const { selectedGameId } = useDashboardStore();
-  const { isLoading } = useDashboardData(selectedGameId);
+  const { selectedvenueId } = useDashboardStore();
+  const { isLoading } = useDashboardData(selectedvenueId);
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {

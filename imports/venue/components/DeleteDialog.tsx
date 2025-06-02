@@ -1,4 +1,3 @@
-import { getAllGames, useGames } from "@/api/booking";
 import { useDeleteVenue } from "@/api/vanue";
 import {
   AlertDialog,
@@ -13,11 +12,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDashboardStore } from "@/store/dashboardStore";
 
-function DeleteDialog({ isOpen, selectedGameId, onClose }: any) {
+function DeleteDialog({ isOpen, selectedvenueId, onClose }: any) {
   if (!isOpen) return null;
 
   const { deleteVenueMutation } = useDeleteVenue();
-  const { setSelectedGameId, setDashboardData } = useDashboardStore();
+  const { setSelectedvenueId, setDashboardData } = useDashboardStore();
 
   const handleDelete = (id: string) => {
     if (!id) {
@@ -26,8 +25,8 @@ function DeleteDialog({ isOpen, selectedGameId, onClose }: any) {
     }
 
     deleteVenueMutation(id);
-    localStorage.removeItem("gameId");
-    setSelectedGameId(undefined);
+    localStorage.removeItem("venueId");
+    setSelectedvenueId(undefined);
     setDashboardData(null);
   };
 
@@ -54,7 +53,7 @@ function DeleteDialog({ isOpen, selectedGameId, onClose }: any) {
             <AlertDialogAction
               onClick={(e) => {
                 e.stopPropagation();
-                handleDelete(selectedGameId);
+                handleDelete(selectedvenueId);
               }}
             >
               Delete

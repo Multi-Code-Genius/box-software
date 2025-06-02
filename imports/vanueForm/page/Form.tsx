@@ -1,6 +1,6 @@
 "use client";
-import { getAllGames, useGames } from "@/api/booking";
-import { useAddGame } from "@/api/vanue";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,140 +13,70 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFormValidation } from "@/hooks/useFormValidation";
-import { useBookingStore } from "@/store/bookingStore";
-import { FormData as FormDataTypes } from "@/types/vanue";
+import { VenueFormData } from "@/types/vanue";
 import {
-  Building2,
   CircleAlert,
-  DollarSign,
   FileText,
-  Grid3X3,
   Home,
   ImageUp,
   IndianRupee,
-  Layers,
   MapPin,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useAddGame, useVenues } from "@/api/vanue";
+
+const initialFormData: VenueFormData = {
+  name: "",
+  description: "",
+  category: "",
+  hourlyPrice: 0,
+  location: {
+    city: "",
+    lat: 0,
+    lng: 0,
+  },
+  address: "",
+  gameInfo: {
+    type: "",
+    maxPlayers: 0,
+  },
+  grounds: 0,
+};
 
 const Form: React.FC = () => {
+  const [formData, setFormData] = useState<VenueFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
-
-  const [formData, setFormData] = useState<FormDataTypes>({
-    name: "",
-    description: "",
-    city: "Surat",
-    area: "Vesu",
-    address: "",
-    capacity: "",
-    category: "",
-    hourlyPrice: "",
-    turfType: "indoor",
-    surface: "",
-    net: "",
-    image: null,
-  });
-
-  const { validate, errors } = useFormValidation(formData);
-
-  const { mutate, isSuccess } = useAddGame();
-  const { setGames, games } = useBookingStore();
-  const { refetch } = useGames();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, files } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "file" ? (files ? files[0] : null) : value,
-    }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      category: value,
-    }));
-  };
-
-  const handleTurfTypeChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      turfType: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const formdata = new FormData();
-    formdata.append("name", formData.name);
-    formdata.append("category", formData.category);
-    formdata.append("description", formData.description);
-    formdata.append("hourlyPrice", formData.hourlyPrice);
-    formdata.append("capacity", formData.capacity);
-    formdata.append("location[city]", formData.city);
-    formdata.append("location[area]", formData.area);
-    formdata.append("address", formData.address);
-    formdata.append("gameInfo[surface]", formData.surface);
-    formdata.append("gameInfo[turfType]", formData.turfType);
-
-    formdata.append(
-      "gameInfo[indoor]",
-      formData.turfType === "indoor" ? "true" : "false"
-    );
-    formdata.append("gameInfo[equipment provided]", "true");
-    formdata.append("net", formData.net);
-
-    if (Array.isArray(formData.image)) {
-      formData.image.forEach((file: File) => {
-        formdata.append("game", file);
-      });
-    } else if (
-      formData.image &&
-      (formData.image as unknown as object) instanceof File
-    ) {
-      formdata.append("game", formData.image);
-    }
-    mutate(formdata, {
-      onSuccess: () => refetch(),
-      onSettled: () => setLoading(false),
-    });
-  };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setFormData({
-        name: "",
-        description: "",
-        city: "Surat",
-        area: "Vesu",
-        address: "",
-        capacity: "",
-        category: "",
-        hourlyPrice: "",
-        turfType: "indoor",
-        surface: "",
-        net: "",
-        image: null,
-      });
-      setPreview(null);
-    }
-  }, [isSuccess]);
-
   const [preview, setPreview] = useState<string | null>(null);
 
-  const handleChanges = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, files } = e.target;
+  const { errors, validate } = useFormValidation();
+  const { mutate } = useAddGame();
+  const { refetch } = useVenues();
 
-    if (type === "file" && files && files[0]) {
-      const file = files[0];
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    if (["lat", "lng"].includes(name)) {
       setFormData((prev) => ({
         ...prev,
-        [name]: file,
+        location: {
+          ...prev.location,
+          [name]: parseFloat(value),
+        },
       }));
-      setPreview(URL.createObjectURL(file));
+    } else if (["maxPlayers"].includes(name)) {
+      setFormData((prev) => ({
+        ...prev,
+        gameInfo: {
+          ...prev.gameInfo,
+          [name]: parseInt(value),
+        },
+      }));
+    } else if (name === "grounds" || name === "hourlyPrice") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: parseFloat(value),
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -155,147 +85,159 @@ const Form: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
-      }
-    };
-  }, [preview]);
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, category: value }));
+  };
+
+  const handleRadioChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: value,
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, image: file }));
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isValid = validate(formData);
+    if (!isValid) return;
+
+    setLoading(true);
+
+    mutate(formData, {
+      onSuccess: () => {
+        console.log("Venue added successfully!");
+        refetch();
+        setFormData(initialFormData);
+        setPreview(null);
+      },
+      onError: (error) => {
+        console.error("Error adding venue:", error);
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
+  };
+
+  const handleTurfTypeChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      gameInfo: {
+        ...prev.gameInfo,
+        type: value,
+      },
+    }));
+  };
 
   return (
-    <div className="h-[calc(100vh-75px)]  w-full flex justify-center items-center m-auto">
+    <div className="h-[calc(100vh-75px)] w-full flex justify-center items-center">
       <form
-        className="w-[60%] flex flex-col gap-6 border px-14 py-10 shadow-lg rounded-lg "
         onSubmit={handleSubmit}
+        className="w-[50%] flex flex-col gap-4 border px-10 py-8 shadow-lg rounded-lg"
       >
         <div className="flex gap-5">
-          <div className="space-y-2 w-[90%]">
+          <div className="space-y-2 w-full">
             <Label>Name</Label>
             <div className="flex items-center border rounded-md px-3">
               <User className="w-4 h-4 mr-2" />
               <Input
                 name="name"
-                type="text"
-                placeholder="Please Enter Name"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
                 value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter venue name"
+                className="border-none focus-visible:ring-0"
               />
             </div>
             {errors.name && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.name}</span>
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.name}
               </div>
             )}
           </div>
 
-          <div className="space-y-2 w-[90%]">
+          <div className="space-y-2 w-full">
             <Label>Description</Label>
             <div className="flex items-center border rounded-md px-3">
               <FileText className="w-4 h-4 mr-2" />
               <Input
                 name="description"
-                type="text"
-                placeholder="Please Enter Description"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
                 value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter description"
+                className="border-none focus-visible:ring-0"
               />
             </div>
             {errors.description && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">
-                  {errors.description}
-                </span>
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.description}
               </div>
             )}
           </div>
         </div>
 
         <div className="flex gap-5">
-          <div className="space-y-2 w-[90%]">
+          <div className="space-y-2 w-full">
             <Label>City</Label>
             <div className="flex items-center border rounded-md px-3">
               <MapPin className="w-4 h-4 mr-2" />
               <Input
                 name="city"
-                type="text"
-                placeholder="Please Enter City"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
-                value={formData.city}
-                readOnly
+                value={formData.location.city}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    location: {
+                      ...prev.location,
+                      city: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="Enter city"
+                className="border-none focus-visible:ring-0"
               />
             </div>
+            {errors.city && (
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.city}
+              </div>
+            )}
           </div>
-          <div className="space-y-2 w-[90%]">
-            <Label>Area</Label>
-            <div className="flex items-center border rounded-md px-3">
-              <Building2 className="w-4 h-4 mr-2" />
-              <Input
-                name="area"
-                type="text"
-                placeholder="Please Enter Area"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
-                value={formData.area}
-                readOnly
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-5">
-          <div className="space-y-2 w-[90%]">
+
+          <div className="space-y-2 w-full">
             <Label>Address</Label>
             <div className="flex items-center border rounded-md px-3">
               <Home className="w-4 h-4 mr-2" />
               <Input
                 name="address"
-                type="text"
-                placeholder="Please Enter Address"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
                 value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter address"
+                className="border-none focus-visible:ring-0"
               />
             </div>
             {errors.address && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.address}</span>
-              </div>
-            )}
-          </div>
-          <div className="space-y-2 w-[90%]">
-            <Label>Capacity</Label>
-            <div className="flex items-center border rounded-md px-3">
-              <Layers className="w-4 h-4 mr-2" />
-              <Input
-                name="capacity"
-                type="number"
-                placeholder="Please Enter Capacity"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
-                value={formData.capacity}
-              />
-            </div>
-            {errors.capacity && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.capacity}</span>
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.address}
               </div>
             )}
           </div>
         </div>
 
         <div className="flex gap-5">
-          <div className="space-y-2 w-[90%]">
+          <div className="space-y-2 w-full">
             <Label>Category</Label>
             <Select
-              onValueChange={handleSelectChange}
               value={formData.category}
+              onValueChange={handleSelectChange}
             >
               <SelectTrigger className="w-full flex items-center justify-between">
                 <SelectValue placeholder="Select category" />
@@ -307,32 +249,28 @@ const Form: React.FC = () => {
               </SelectContent>
             </Select>
             {errors.category && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.category}</span>
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.category}
               </div>
             )}
           </div>
 
-          <div className="space-y-2 w-[90%]">
+          <div className="space-y-2 w-full">
             <Label>Hourly Price</Label>
             <div className="flex items-center border rounded-md px-3">
               <IndianRupee className="w-4 h-4 mr-2" />
               <Input
                 name="hourlyPrice"
                 type="number"
-                placeholder="Please Enter Hourly Price"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
                 value={formData.hourlyPrice}
+                onChange={handleChange}
+                placeholder="Hourly price"
+                className="border-none focus-visible:ring-0"
               />
             </div>
             {errors.hourlyPrice && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">
-                  {errors.hourlyPrice}
-                </span>
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.hourlyPrice}
               </div>
             )}
           </div>
@@ -341,21 +279,24 @@ const Form: React.FC = () => {
         <div className="space-y-2">
           <Label className="text-sm">Turf Type</Label>
           <RadioGroup
-            value={formData.turfType}
-            onValueChange={handleTurfTypeChange}
             className="flex gap-4"
+            value={formData.gameInfo.type}
+            onValueChange={handleTurfTypeChange}
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="indoor" id="indoor" className="sr-only" />
               <label
                 htmlFor="indoor"
-                className={`cursor-pointer px-10 py-1 rounded-lg border text-gray-800 hover:bg-black hover:text-white ${
-                  formData.turfType === "indoor" ? "bg-black text-white" : ""
+                className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                  formData.gameInfo.type === "indoor"
+                    ? "bg-black text-white"
+                    : "text-gray-800 hover:bg-black hover:text-white"
                 }`}
               >
                 Indoor
               </label>
             </div>
+
             <div className="flex items-center space-x-2">
               <RadioGroupItem
                 value="outdoor"
@@ -364,19 +305,24 @@ const Form: React.FC = () => {
               />
               <label
                 htmlFor="outdoor"
-                className={`cursor-pointer px-10 py-1 rounded-lg border text-gray-800 hover:bg-black hover:text-white ${
-                  formData.turfType === "outdoor" ? "bg-black text-white" : ""
+                className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                  formData.gameInfo.type === "outdoor"
+                    ? "bg-black text-white"
+                    : "text-gray-800 hover:bg-black hover:text-white"
                 }`}
               >
                 Outdoor
               </label>
             </div>
+
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="roof" id="roof" className="sr-only" />
               <label
                 htmlFor="roof"
-                className={`cursor-pointer px-10 py-1 rounded-lg border text-gray-800 hover:bg-black hover:text-white ${
-                  formData.turfType === "roof" ? "bg-black text-white" : ""
+                className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                  formData.gameInfo.type === "roof"
+                    ? "bg-black text-white"
+                    : "text-gray-800 hover:bg-black hover:text-white"
                 }`}
               >
                 Roof
@@ -384,45 +330,59 @@ const Form: React.FC = () => {
             </div>
           </RadioGroup>
         </div>
+        <div className="flex gap-5">
+          <div className="space-y-2 w-full">
+            <Label>Latitude</Label>
+            <Input
+              name="lat"
+              type="number"
+              value={formData.location.lat}
+              onChange={handleChange}
+              placeholder="Latitude"
+            />
+          </div>
+
+          <div className="space-y-2 w-full">
+            <Label>Longitude</Label>
+            <Input
+              name="lng"
+              type="number"
+              value={formData.location.lng}
+              onChange={handleChange}
+              placeholder="Longitude"
+            />
+          </div>
+        </div>
 
         <div className="flex gap-5">
-          <div className="space-y-2 w-[90%]">
-            <Label>Surface</Label>
-            <div className="flex items-center border rounded-md px-3">
-              <Grid3X3 className="w-4 h-4 mr-2" />
-              <Input
-                name="surface"
-                type="text"
-                placeholder="Please Enter Surface"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
-                value={formData.surface}
-              />
-            </div>
-            {errors.surface && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.surface}</span>
+          <div className="space-y-2 w-full">
+            <Label>Max Players</Label>
+            <Input
+              name="maxPlayers"
+              type="number"
+              value={formData.gameInfo.maxPlayers}
+              onChange={handleChange}
+              placeholder="Max players"
+            />
+            {errors.maxPlayers && (
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.maxPlayers}
               </div>
             )}
           </div>
-          <div className="space-y-2 w-[90%]">
-            <Label>Net</Label>
-            <div className="flex items-center border rounded-md px-3">
-              <Layers className="w-4 h-4 mr-2" />
-              <Input
-                name="net"
-                type="number"
-                placeholder="Please Enter Net"
-                className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                onChange={handleChange}
-                value={formData.net}
-              />
-            </div>
-            {errors.net && (
-              <div className="flex gap-2 items-center">
-                <CircleAlert className="text-red-600" size={16} />
-                <span className="text-red-500 text-sm">{errors.net}</span>
+
+          <div className="space-y-2 w-full">
+            <Label>Grounds</Label>
+            <Input
+              name="grounds"
+              type="number"
+              value={formData.grounds}
+              onChange={handleChange}
+              placeholder="Number of grounds"
+            />
+            {errors.grounds && (
+              <div className="text-red-500 text-sm flex items-center gap-1">
+                <CircleAlert size={16} /> {errors.grounds}
               </div>
             )}
           </div>
@@ -430,44 +390,34 @@ const Form: React.FC = () => {
 
         <div className="space-y-3">
           <Label>Upload Image</Label>
-          <label className="flex items-center justify-center w-16">
-            <div className="flex flex-col items-center justify-center w-full h-16 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-              <div className="flex flex-col items-center justify-center ">
+          <div className="flex items-center space-x-4">
+            <label className="cursor-pointer">
+              <div className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg">
                 {preview ? (
                   <img
                     src={preview}
                     alt="Preview"
-                    className="w-16 h-16 object-contain rounded-md"
+                    className="w-full h-full object-cover rounded-md"
                   />
                 ) : (
                   <ImageUp />
                 )}
               </div>
               <input
-                id="dropzone-file"
                 type="file"
-                className="hidden"
-                name="image"
                 accept="image/*"
-                onChange={handleChanges}
+                className="hidden"
+                onChange={handleImageChange}
               />
-            </div>
-          </label>
-          {errors.image && (
-            <div className="flex gap-2 items-center">
-              <CircleAlert className="text-red-600" size={16} />
-              <span className="text-red-500 text-sm">{errors.image}</span>
-            </div>
-          )}
+            </label>
+            {errors.image && (
+              <span className="text-sm text-red-500">{errors.image}</span>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-center">
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-[50%]"
-            variant="default"
-          >
+          <Button type="submit" disabled={loading} className="w-1/2">
             {loading ? "Submitting..." : "Submit"}
           </Button>
         </div>

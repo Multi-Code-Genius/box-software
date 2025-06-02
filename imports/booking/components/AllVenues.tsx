@@ -1,6 +1,5 @@
 "use client";
 
-import { useVenues } from "@/api/vanue";
 import {
   Card,
   CardContent,
@@ -8,10 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useVenueStore } from "@/store/venueStore";
 import { IndianRupee, Loader2, Map, MapPinned, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useVenueStore } from "@/store/venueStore";
+import { useVenues } from "@/api/vanue";
 
 const AllVenues = () => {
   const [hasMounted, setHasMounted] = useState(false);
@@ -31,6 +31,8 @@ const AllVenues = () => {
 
   if (!hasMounted) return null;
 
+  console.log(venues);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-48">
@@ -40,10 +42,12 @@ const AllVenues = () => {
     );
   }
 
-  const handleGameClick = (game: { id: string; name: string }) => {
-    localStorage.setItem("gameId", game.id);
+  const handleGameClick = (venue: { id: string; name: string }) => {
+    localStorage.setItem("venueId", venue.id);
     router.push(
-      `/schedule/${game.id}?id=${game.id}&name=${encodeURIComponent(game.name)}`
+      `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(
+        venue.name
+      )}`
     );
   };
 
