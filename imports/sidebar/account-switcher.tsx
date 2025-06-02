@@ -29,8 +29,6 @@ export default function AccountSwitcher({
 }) {
   const [activeUser, setActiveUser] = useState(users[0]);
 
-  console.log("object", users);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

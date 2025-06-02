@@ -45,22 +45,19 @@ export const sidebarItems: NavGroup[] = [
     label: "Dashboards",
     items: [
       {
-        title: "Dashboards",
+        title: "Home",
         url: "/dashboard",
         icon: Home,
-        subItems: [
-          { title: "Default", url: `/dashboard`, icon: ChartPie },
-          {
-            title: "Bookings",
-            url: `/booking`,
-            icon: Calendar,
-          },
-          {
-            title: "Clients",
-            url: `/customer`,
-            icon: Users,
-          },
-        ],
+      },
+      {
+        title: "Bookings",
+        url: `/booking`,
+        icon: Calendar,
+      },
+      {
+        title: "Clients",
+        url: `/customer`,
+        icon: Users,
       },
     ],
   },
