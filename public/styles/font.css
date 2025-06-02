@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "Gilroy";
+  src: url("./fonts/gilroy-light.woff2") format("woff2"),
+    url("./fonts/gilroy-light.woff") format("woff");
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("./fonts/gilroy-regular.woff2") format("woff2"),
+    url("./fonts/gilroy-regular.woff") format("woff");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("./fonts/gilroy-medium.woff2") format("woff2"),
+    url("./fonts/gilroy-medium.woff") format("woff");
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("./fonts/gilroy-semibold.woff2") format("woff2"),
+    url("./fonts/gilroy-semibold.woff") format("woff");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("./fonts/gilroy-bold.woff2") format("woff2"),
+    url("./fonts/gilroy-bold.woff") format("woff");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "AktivGrotesk";
+  src: url("./fonts/aktivgrotesk-bold.woff2") format("woff2"),
+    url("./fonts/aktivgrotesk-bold.woff") format("woff");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "TTCommons";
+  src: url("./fonts/TTCommons-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "TTCommons";
+  src: url("./fonts/TTCommons-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("./fonts/Sora-Light.woff2") format("woff2");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("./fonts/Sora-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("./fonts/Sora-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("./fonts/Sora-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("./fonts/Sora-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Light.woff2") format("woff2");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Medium.woff2") format("woff2");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+}

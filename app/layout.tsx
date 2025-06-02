@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { Inter, Merriweather } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,10 +28,17 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${merriweather.variable}`}>
       <body className="font-sans">
         <Providers>
-          <div className="">
-            {children}
-            <Toaster position="top-right" expand={false} />
-          </div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            disableTransitionOnChange
+            enableSystem={false}
+          >
+            <div className="">
+              {children}
+              <Toaster position="top-right" expand={false} />
+            </div>{" "}
+          </ThemeProvider>
         </Providers>
       </body>
     </html>
