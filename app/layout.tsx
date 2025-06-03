@@ -25,7 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${merriweather.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${merriweather.variable}`}
+      suppressHydrationWarning // Add this as a temporary measure
+    >
       <body className="font-sans">
         <Providers>
           <ThemeProvider

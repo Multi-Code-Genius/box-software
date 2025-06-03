@@ -60,7 +60,6 @@ const TuiCalendar = ({
 
       calendarInstance.current.on("beforeCreateSchedule", (event: any) => {
         const { start, end, title, location } = event;
-        console.log(title);
 
         const newSchedule = {
           id: String(new Date().getTime()),
@@ -71,8 +70,6 @@ const TuiCalendar = ({
           end: end.toDate(),
           location,
         };
-
-        console.log(newSchedule, "newSchedule");
 
         const startTime = start.toDate().toISOString();
         const endTime = end.toDate().toISOString();

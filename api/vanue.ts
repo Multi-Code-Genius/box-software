@@ -68,7 +68,6 @@ export const getVenues = async (): Promise<{ venues: Venues[] }> => {
     });
 
     const data = await response;
-    console.log("venues", data);
     return { venues: data.venues };
   } catch (error) {
     console.error("Failed to fetch venues", error);

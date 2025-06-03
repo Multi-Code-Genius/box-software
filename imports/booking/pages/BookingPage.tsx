@@ -28,7 +28,6 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
     venue.id,
     range
   );
-  console.log(data, "bookingbyrange");
   const [events, setEvents] = useState<ISchedule[]>([]);
 
   const updateEvents = (data: any) => {
@@ -44,7 +43,6 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
       })) ?? [];
 
     setEvents(formatted);
-    console.log(events, "kjasfhjlad");
   };
 
   useEffect(() => {
@@ -68,7 +66,6 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
   const { mutate: createBooking } = useCreateBooking(
     async () => {
       const newData = await refetch();
-      console.log(newData, "newData");
       updateEvents(newData.data);
     },
     async () => {

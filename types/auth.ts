@@ -204,7 +204,7 @@ export interface DashboardData {
   thisMonthTotalAmount: number;
   thisWeekTotalAmount: number;
   todaysTotalAmount: number;
-  NewCustomers: number;
-  ThisMonthBookings: number;
+  NewCustomers: any[];
+  ThisMonthBookings: any[];
   thisMonthBookingsCount: number;
 }

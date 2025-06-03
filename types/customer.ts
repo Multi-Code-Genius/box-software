@@ -27,7 +27,7 @@ export interface CustomerData {
   userId: string;
   ownerId: string;
   createdById: string;
-  totalSpent: number;
+  total_spent: number;
   createdAt: string;
   updatedAt: string;
   bookings: Booking[];

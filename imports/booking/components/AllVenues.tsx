@@ -31,8 +31,6 @@ const AllVenues = () => {
 
   if (!hasMounted) return null;
 
-  console.log(venues);
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-full h-48">

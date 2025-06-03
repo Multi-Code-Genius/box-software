@@ -6,7 +6,6 @@ import {
   getSidebarCollapsible,
   getSidebarVariant,
 } from "@/lib/layout-preferences";
-import { users } from "@/data/users";
 import {
   SidebarInset,
   SidebarProvider,

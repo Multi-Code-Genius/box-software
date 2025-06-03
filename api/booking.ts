@@ -72,7 +72,6 @@ export const createBooking = async (data: BookingPayload) => {
     }
 
     const res = await response;
-    console.log(res, "create bokking");
     return res;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : "Booking failed");
@@ -106,7 +105,6 @@ const cancelBooking = async (id: string) => {
     const resp = await response;
     return resp;
   } catch (error) {
-    console.log("Bokking Response", error);
     throw new Error(error instanceof Error ? error.message : "Data Not Found");
   }
 };
@@ -138,10 +136,8 @@ const updateBooking = async (id: string, data: UpdateBooking) => {
     });
 
     const res = response;
-    console.log(res);
     return res;
   } catch (error) {
-    console.log("Booking Response", error);
     throw new Error(error instanceof Error ? error.message : "Data Not Found");
   }
 };
@@ -176,7 +172,6 @@ export const updateBookingStatus = async (id: string, status: string) => {
     const resp = await response;
     return resp;
   } catch (error) {
-    console.log("Booking response", error);
     throw new Error(error instanceof Error ? error.message : "Data Not Found");
   }
 };

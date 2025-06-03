@@ -82,7 +82,6 @@ const Edit: React.FC<FooterProfileProps> = ({
     setIsSaving(true);
 
     const userId = user?.id;
-    console.log(userId);
 
     if (!userId) {
       console.error("User ID not found");

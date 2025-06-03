@@ -54,6 +54,8 @@ const CustomerDetails = () => {
     );
   }
 
+  console.log(customers);
+
   return (
     <div className="flex justify-center items-center mt-20">
       <Card className="w-full max-w-7xl p-6 shadow-md rounded-xl flex flex-col max-h-[700px]">
@@ -82,7 +84,7 @@ const CustomerDetails = () => {
                     {customer.mobile}
                   </TableCell>
                   <TableCell className="text-center">
-                    ₹{customer.totalSpent?.toLocaleString() || "0"}
+                    ₹{customer.total_spent?.toLocaleString() || "0"}
                   </TableCell>
                   <TableCell className="text-center">
                     {customer.bookings?.length || 0}
