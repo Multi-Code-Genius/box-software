@@ -12,19 +12,33 @@ import {
 } from "@/components/ui/card";
 import { useDashboardData } from "@/api/dashboard";
 import { useEffect, useState } from "react";
+import { useVenueStore } from "@/store/venueStore";
+import { useVenues } from "@/api/vanue";
+import { useDashboardStore } from "@/store/dashboardStore";
 
 export function SectionCards() {
   const [venueId, setVenueId] = useState<string | undefined>(undefined);
+  const { data: venue, isLoading: venuesLoading } = useVenues();
+  const { venues, setVenues } = useVenueStore();
+  const { setDashboardData, selectedvenueId, setSelectedvenueId } =
+    useDashboardStore();
 
   useEffect(() => {
-    const storedVenueId = localStorage.getItem("venueId");
-    if (storedVenueId) {
-      setVenueId(storedVenueId);
+    if (venue?.venues?.length) {
+      setVenues(venue.venues);
+
+      if (!selectedvenueId) {
+        const defaultvenueId = venue.venues[0].id;
+        setSelectedvenueId(defaultvenueId);
+        localStorage.setItem("venueId", defaultvenueId);
+      }
     }
-  }, []);
-  const { data } = useDashboardData(venueId);
+  }, [venue, selectedvenueId]);
+
+  const { data } = useDashboardData(selectedvenueId);
 
   console.log(data);
+
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">

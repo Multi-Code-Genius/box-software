@@ -96,7 +96,7 @@ const LoginForm = () => {
       ) : (
         <form
           onSubmit={handleOTPSubmit}
-          className="space-y-4 border  shadow-md p-14 flex flex-col items-center rounded-md"
+          className="space-y-3 border  shadow-md p-10 flex flex-col items-center rounded-md w-[500px]"
         >
           <h1 className="text-2xl font-bold text-center">Verify</h1>
 
@@ -136,6 +136,7 @@ const LoginForm = () => {
             <p>
               Didn&apos;t receive code?
               <span className="text-blue-600 underline underline-offset-2">
+                {" "}
                 Request Again
               </span>
             </p>

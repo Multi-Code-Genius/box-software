@@ -96,6 +96,7 @@ const Edit: React.FC<FooterProfileProps> = ({
           setUser({
             ...formData,
             id: userId,
+            role: "",
           });
           setShowEditModal(false);
           setIsSaving(false);
