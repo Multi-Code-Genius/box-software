@@ -77,7 +77,6 @@ const TuiCalendar = ({
         const startTime = start.toDate().toISOString();
         const endTime = end.toDate().toISOString();
         const date = moment(start.toDate()).toISOString();
-        console.log(date);
 
         const venueId = Number(localStorage.getItem("venueId"));
 
@@ -114,13 +113,6 @@ const TuiCalendar = ({
           end: changes.end?.toDate?.() || schedule.end,
           location: changes.location || schedule.location,
         };
-
-        const startTime = moment(updatedSchedule.start).toISOString();
-        const endTime = moment(updatedSchedule.end).toISOString();
-        const date = moment(updatedSchedule.start)
-          .startOf("week")
-          .toISOString();
-
         setEvents(
           events.map((item) =>
             item.id === schedule.id ? { ...item, ...updatedSchedule } : item
@@ -145,9 +137,9 @@ const TuiCalendar = ({
         updateBooking({
           id: updatedSchedule.id,
           data: {
-            startTime: moment(updatedSchedule.start).toISOString(),
-            endTime: moment(updatedSchedule.end).toISOString(),
-            date: moment(updatedSchedule.start).startOf("day").toISOString(),
+            startTime: new Date(updatedSchedule.start).toISOString(),
+            endTime: new Date(updatedSchedule.end).toISOString(),
+            date: new Date(updatedSchedule.start).toISOString(),
             name: updatedSchedule.title,
             bookedGrounds: Number(bookedGround),
             totalAmount: hourlyPrice,

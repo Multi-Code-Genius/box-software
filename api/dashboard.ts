@@ -1,3 +1,4 @@
+import { api } from "@/lib/api";
 import { DashboardData } from "@/types/auth";
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -8,22 +9,14 @@ export const getDashboardData = async (
   venueId: string
 ): Promise<DashboardData> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard/game/${venueId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await api(`/api/v2/dashboard/data/${venueId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-    if (!response.ok) {
-      throw new Error(`status:${response.status}`);
-    }
-
-    const data = await response.json();
+    const data = await response;
 
     return data;
   } catch (error) {

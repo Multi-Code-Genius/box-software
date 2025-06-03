@@ -48,7 +48,7 @@ export default async function Layout({
                 collapsible={sidebarCollapsible}
               />
               <ThemeSwitcher />
-              <AccountSwitcher users={users} />
+              <AccountSwitcher />
             </div>
           </div>
         </header>

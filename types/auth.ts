@@ -97,6 +97,7 @@ export interface User {
   email: string;
   mobileNumber: string;
   profile_pic: string;
+  role: string;
 }
 
 export interface UserType {
@@ -197,10 +198,13 @@ export interface DashboardData {
   message: string;
   newBookings: any[];
   bookingsThisMonth: any[];
-  thisMonthBookingsCount: number;
+  MonthTotalBookingAmount: number;
   todaysBookingsCount: number;
   newUsersCount: number;
   thisMonthTotalAmount: number;
   thisWeekTotalAmount: number;
   todaysTotalAmount: number;
+  NewCustomers: number;
+  ThisMonthBookings: number;
+  thisMonthBookingsCount: number;
 }

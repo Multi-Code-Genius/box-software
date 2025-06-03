@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const getAllCustomers = async () => {
   try {
-    const response = await api("/api/booking/user-booking", {
+    const response = await api("/api/v2/customer/client", {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",

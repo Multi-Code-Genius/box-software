@@ -11,6 +11,7 @@ type User = {
   // mobileNumber: string;
   profile_pic: string;
   id: string;
+  role: string;
 };
 
 type UserStore = {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGetCustomers } from "@/api/customer";
 import {
   Table,
@@ -21,11 +21,17 @@ import {
 
 const CustomerDetails = () => {
   const { data, isLoading } = useGetCustomers();
-
+  const [customers, setCustomers] = useState<CustomerData[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
     null
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (data?.customer && Array.isArray(data.customer)) {
+      setCustomers(data.customer);
+    }
+  }, [data]);
 
   const handleRowClick = (id: string) => {
     setSelectedCustomerId(id);
@@ -40,7 +46,7 @@ const CustomerDetails = () => {
     );
   }
 
-  if (!data?.customers?.length) {
+  if (!customers.length) {
     return (
       <div className="p-4 text-center text-muted-foreground">
         No customers found.
@@ -55,7 +61,7 @@ const CustomerDetails = () => {
         <div className="overflow-y-auto border rounded-md flex-1">
           <Table className="w-full">
             <TableHeader>
-              <TableRow className="bg-gray-100 ">
+              <TableRow className="bg-gray-100">
                 <TableHead className="text-center">Name</TableHead>
                 <TableHead className="text-center">Mobile</TableHead>
                 <TableHead className="text-center">Total Spent</TableHead>
@@ -63,14 +69,12 @@ const CustomerDetails = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.customers.map((customer: CustomerData, index: number) => (
+              {customers.map((customer: CustomerData, index: number) => (
                 <TableRow
                   key={customer.id}
-                  className={
-                    index % 2 === 0
-                      ? "bg-white cursor-pointer"
-                      : "bg-gray-50 cursor-pointer"
-                  }
+                  className={`cursor-pointer ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  } hover:bg-gray-100`}
                   onClick={() => handleRowClick(customer.id)}
                 >
                   <TableCell className="text-center">{customer.name}</TableCell>
@@ -78,7 +82,7 @@ const CustomerDetails = () => {
                     {customer.mobile}
                   </TableCell>
                   <TableCell className="text-center">
-                    ₹{customer.totalSpent.toLocaleString()}
+                    ₹{customer.totalSpent?.toLocaleString() || "0"}
                   </TableCell>
                   <TableCell className="text-center">
                     {customer.bookings?.length || 0}

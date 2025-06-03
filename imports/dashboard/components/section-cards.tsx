@@ -1,3 +1,4 @@
+"use client";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -9,15 +10,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useDashboardData } from "@/api/dashboard";
+import { useEffect, useState } from "react";
 
 export function SectionCards() {
+  const [venueId, setVenueId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const storedVenueId = localStorage.getItem("venueId");
+    if (storedVenueId) {
+      setVenueId(storedVenueId);
+    }
+  }, []);
+  const { data } = useDashboardData(venueId);
+
+  console.log(data);
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            {data?.MonthTotalBookingAmount}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -39,7 +53,7 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>New Customers</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
+            {data?.NewCustomers?.length}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -59,9 +73,11 @@ export function SectionCards() {
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          {/* <CardDescription>Active Accounts</CardDescription> */}
+          <CardDescription>This month bookings</CardDescription>
+
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
+            {data?.ThisMonthBookings?.length}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">

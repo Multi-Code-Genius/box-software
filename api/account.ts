@@ -1,6 +1,6 @@
 import { api } from "@/lib/api";
 import { User } from "@/types/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 
@@ -22,6 +22,13 @@ export const fetchUserData = async (): Promise<User> => {
     console.error("Failed to fetch user data:", error);
     throw error;
   }
+};
+
+export const useUserData = () => {
+  return useQuery<User>({
+    queryKey: ["userData"],
+    queryFn: fetchUserData,
+  });
 };
 
 export const UpdateUserData = async (user: any, id: string): Promise<any> => {

@@ -18,8 +18,9 @@ const TuiCalendar = dynamic(() => import("../components/TuiCalendar"), {
 
 const BookingPage = ({ venue }: { venue: Venue }) => {
   const [range, setRange] = useState<{ start: string; end: string }>(() => {
-    const start = moment().startOf("week").format("YYYY-MM-DD");
-    const end = moment().endOf("week").format("YYYY-MM-DD");
+    const start = moment().startOf("week").utc().format();
+    const end = moment().endOf("week").utc().format();
+
     return { start, end };
   });
 
@@ -39,6 +40,7 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
         category: "time",
         start: item.start_time,
         end: item.end_time,
+        mobile: item?.customer?.mobile,
       })) ?? [];
 
     setEvents(formatted);
@@ -75,7 +77,6 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
     }
   );
 
-  console.log(events);
   return (
     <div>
       <TuiCalendar
