@@ -195,6 +195,7 @@ export interface BookingRequest {
 }
 
 export interface DashboardData {
+  date: string | number | Date;
   message: string;
   newBookings: any[];
   bookingsThisMonth: any[];
@@ -207,4 +208,8 @@ export interface DashboardData {
   NewCustomers: any[];
   ThisMonthBookings: any[];
   thisMonthBookingsCount: number;
+  revenueGroth: any[];
+  customerGrowth: any[];
+  bookingGrowth: any[];
+  lastThreeMonthBookings: any[];
 }

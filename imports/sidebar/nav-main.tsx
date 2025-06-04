@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { PlusCircleIcon, MailIcon, ChevronRight } from "lucide-react";
 
@@ -33,6 +33,9 @@ import {
   NavGroup,
   NavMainItem,
 } from "@/imports/navigation/sidebar/sidebar-items";
+import { useDashboardStore } from "@/store/dashboardStore";
+import { useVenues } from "@/api/vanue";
+import { useVenueStore } from "@/store/venueStore";
 
 interface NavMainProps {
   readonly items: readonly NavGroup[];
@@ -168,6 +171,8 @@ const NavItemCollapsed = ({
 export function NavMain({ items }: NavMainProps) {
   const path = usePathname();
   const { state, isMobile } = useSidebar();
+  const router = useRouter();
+  const { venue } = useVenueStore();
 
   const isItemActive = (url: string, subItems?: NavMainItem["subItems"]) => {
     if (subItems?.length) {
@@ -180,6 +185,15 @@ export function NavMain({ items }: NavMainProps) {
     return subItems?.some((sub) => path.startsWith(sub.url)) ?? false;
   };
 
+  const handleVenueClick = (venue: any) => {
+    localStorage.setItem("venueId", venue.id);
+    router.push(
+      `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(
+        venue.name
+      )}`
+    );
+  };
+
   return (
     <>
       <SidebarGroup>
@@ -187,6 +201,7 @@ export function NavMain({ items }: NavMainProps) {
           <SidebarMenu>
             <SidebarMenuItem className="flex items-center gap-2">
               <SidebarMenuButton
+                onClick={() => handleVenueClick(venue)}
                 tooltip="Quick Create"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
               >

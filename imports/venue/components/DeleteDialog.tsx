@@ -11,13 +11,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useDashboardStore } from "@/store/dashboardStore";
+import { useVenueStore } from "@/store/venueStore";
 
 function DeleteDialog({ isOpen, selectedvenueId, onClose }: any) {
   if (!isOpen) return null;
 
   const { deleteVenueMutation } = useDeleteVenue();
-  const { setSelectedvenueId, setDashboardData } = useDashboardStore();
-
+  const { setDashboardData } = useDashboardStore();
+  const { setSelectedvenueId } = useVenueStore();
   const handleDelete = (id: string) => {
     if (!id) {
       console.error("No ID provided for deletion");

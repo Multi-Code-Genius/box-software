@@ -12,28 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import { useDashboardStore } from "@/store/dashboardStore";
-import { useVenueStore } from "@/store/venueStore";
-import { useEffect } from "react";
 
 export function SectionCards() {
-  const { data: venue } = useVenues();
-  const { setVenues } = useVenueStore();
-  const { selectedvenueId, setSelectedvenueId } = useDashboardStore();
-
-  useEffect(() => {
-    if (venue?.venues?.length) {
-      setVenues(venue.venues);
-
-      if (!selectedvenueId) {
-        const defaultvenueId = venue.venues[0].id;
-        setSelectedvenueId(defaultvenueId);
-        localStorage.setItem("venueId", defaultvenueId);
-      }
-    }
-  }, [venue, selectedvenueId, setSelectedvenueId, setVenues]);
-
-  const { data } = useDashboardData(selectedvenueId);
+  const { data } = useDashboardStore();
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -46,7 +29,7 @@ export function SectionCards() {
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
-              +12.5%
+              {data?.revenueGroth}%
             </Badge>
           </CardAction>
         </CardHeader>
@@ -68,7 +51,7 @@ export function SectionCards() {
           <CardAction>
             <Badge variant="outline">
               <IconTrendingDown />
-              -20%
+              {data?.customerGrowth}%
             </Badge>
           </CardAction>
         </CardHeader>
@@ -92,7 +75,7 @@ export function SectionCards() {
           <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
-              +12.5%
+              {data?.bookingGrowth}%
             </Badge>
           </CardAction>
         </CardHeader>

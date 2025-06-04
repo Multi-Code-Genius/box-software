@@ -144,13 +144,19 @@ const VenueDetail = () => {
             className="w-[370px] gap-3 shadow-xl cursor-pointer"
             onClick={() => handleCardClick(venue)}
           >
-            <CardHeader className="gap-0">
+            <CardHeader className="grid grid-cols-[1fr_auto] items-center">
               <CardTitle className="text-lg">{venue.name}</CardTitle>
-              <CardDescription className="text-lg">
-                {venue.category}
-              </CardDescription>
+
+              <button
+                onClick={(e) => handleDeleteClick(e, venue.id)}
+                className=" hover:text-red-600 transition p-1"
+              >
+                <Trash2 size={18} />
+              </button>
             </CardHeader>
+
             <CardContent className="space-y-2">
+              <p className="text-lg"> {venue.category}</p>
               <p className="flex items-center gap-2">
                 <MapPinned size={18} />
                 Address: {venue.address}
