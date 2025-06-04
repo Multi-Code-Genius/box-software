@@ -1,6 +1,8 @@
 "use client";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
+import { useDashboardData } from "@/api/dashboard";
+import { useVenues } from "@/api/vanue";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -10,18 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDashboardData } from "@/api/dashboard";
-import { useEffect, useState } from "react";
-import { useVenueStore } from "@/store/venueStore";
-import { useVenues } from "@/api/vanue";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { Loader2 } from "lucide-react";
+import { useVenueStore } from "@/store/venueStore";
+import { useEffect } from "react";
 
 export function SectionCards() {
-  const { data: venue, isLoading } = useVenues();
-  const { venues, setVenues } = useVenueStore();
-  const { setDashboardData, selectedvenueId, setSelectedvenueId } =
-    useDashboardStore();
+  const { data: venue } = useVenues();
+  const { setVenues } = useVenueStore();
+  const { selectedvenueId, setSelectedvenueId } = useDashboardStore();
 
   useEffect(() => {
     if (venue?.venues?.length) {
@@ -33,7 +31,7 @@ export function SectionCards() {
         localStorage.setItem("venueId", defaultvenueId);
       }
     }
-  }, [venue, selectedvenueId]);
+  }, [venue, selectedvenueId, setSelectedvenueId, setVenues]);
 
   const { data } = useDashboardData(selectedvenueId);
 
