@@ -66,7 +66,7 @@ const AllVenues = () => {
           <Card
             key={venue.id}
             className="w-[370px] gap-3 shadow-xl cursor-pointer"
-            // onClick={() => handleGameClick(venue)}
+            onClick={() => handleGameClick(venue)}
           >
             <CardHeader className="gap-0">
               <CardTitle className="text-lg">{venue.name}</CardTitle>
@@ -89,7 +89,7 @@ const AllVenues = () => {
               </p>
               <p className="flex items-center gap-2">
                 <Map size={18} />
-                {venue.location.area}, {venue.location.city}
+                {venue.location.city}
               </p>
             </CardContent>
           </Card>
