@@ -13,12 +13,13 @@ import { useState, useEffect } from "react";
 import { format, differenceInMinutes } from "date-fns";
 import { useDashboardData } from "@/api/dashboard";
 import { IndianRupee, Loader2 } from "lucide-react";
+import { useVenueStore } from "@/store/venueStore";
 
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("All");
   const { data } = useDashboardStore();
-  const { selectedvenueId } = useDashboardStore();
+  const { selectedvenueId } = useVenueStore();
   const { isLoading } = useDashboardData(selectedvenueId);
   const [hasMounted, setHasMounted] = useState(false);
 

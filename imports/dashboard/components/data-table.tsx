@@ -105,13 +105,15 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export const schema = z.object({
   id: z.number(),
-  name: z.string(),
-  mobile: z.string(),
   status: z.string(),
-  total_amount: z.string(),
   date: z.string(),
   start_time: z.string(),
   end_time: z.string(),
+  customer: z.object({
+    name: z.string(),
+    mobile: z.string(),
+    total_spent: z.string(),
+  }),
 });
 
 // Create a separate component for the drag handle
@@ -170,7 +172,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
+      return (
+        <div className="flex items-center gap-2">
+          <TableCellViewer item={row.original} />
+          <div className="w-32">
+            <Badge variant="outline" className="text-muted-foreground px-1.5">
+              {row.original.customer?.name}
+            </Badge>
+          </div>
+        </div>
+      );
     },
     enableHiding: false,
   },
@@ -180,7 +191,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.mobile}
+          {row.original.customer.mobile}
         </Badge>
       </div>
     ),
@@ -203,13 +214,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "total_amount",
     header: "Total Amount",
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
+      <Badge
+        variant="outline"
+        className="text-muted-foreground px-1.5 flex items-center gap-1"
+      >
+        {row.original.status === "Done" && (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
         )}
-        {row.original.total_amount}
+        {row.original.customer.total_spent}
       </Badge>
     ),
   },
@@ -334,6 +346,8 @@ export function DataTable({
     () => data?.map(({ id }) => id) || [],
     [data]
   );
+
+  console.log(initialData, "1111111");
 
   const table = useReactTable({
     data,
@@ -623,12 +637,12 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.name}
+          {item.customer.name}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.name}</DrawerTitle>
+          <DrawerTitle> {item.customer.name}</DrawerTitle>
           <DrawerDescription>
             Showing total visitors for the last 6 months
           </DrawerDescription>
@@ -693,13 +707,35 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue={item.name} />
+              <Label htmlFor="header">Name</Label>
+              <Input id="header" defaultValue={item.customer.name} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="mobile">Mobile</Label>
-                <Input id="mobile" defaultValue={item.mobile} />
+                <Label htmlFor="type">Mobile</Label>
+                <Select defaultValue={item.customer.mobile}>
+                  <SelectTrigger id="type" className="w-full">
+                    <SelectValue placeholder="Select a type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Table of Contents">
+                      Table of Contents
+                    </SelectItem>
+                    <SelectItem value="Executive Summary">
+                      Executive Summary
+                    </SelectItem>
+                    <SelectItem value="Technical Approach">
+                      Technical Approach
+                    </SelectItem>
+                    <SelectItem value="Design">Design</SelectItem>
+                    <SelectItem value="Capabilities">Capabilities</SelectItem>
+                    <SelectItem value="Focus Documents">
+                      Focus Documents
+                    </SelectItem>
+                    <SelectItem value="Narrative">Narrative</SelectItem>
+                    <SelectItem value="Cover Page">Cover Page</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="status">Status</Label>
@@ -717,23 +753,28 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="total_amount">Total Amount</Label>
-                <Input id="total_amount" defaultValue={item.total_amount} />
+                <Label htmlFor="target">Total amount</Label>
+                <Input id="target" defaultValue={item.customer.total_spent} />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="date">Date</Label>
-                <Input id="date" defaultValue={item.date} />
+                <Label htmlFor="limit">Date</Label>
+                <Input id="limit" defaultValue={item.date} />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="start_time">Start Time</Label>
-                <Input id="start_time" defaultValue={item.start_time} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="end_time">End Time</Label>
-                <Input id="end_time" defaultValue={item.end_time} />
-              </div>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="reviewer">Start time</Label>
+              <Select defaultValue={item.start_time}>
+                <SelectTrigger id="reviewer" className="w-full">
+                  <SelectValue placeholder="Select a reviewer" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
+                  <SelectItem value="Jamik Tashpulatov">
+                    Jamik Tashpulatov
+                  </SelectItem>
+                  <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </form>
         </div>

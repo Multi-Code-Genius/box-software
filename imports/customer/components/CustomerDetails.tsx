@@ -63,7 +63,7 @@ const CustomerDetails = () => {
         <div className="overflow-y-auto border rounded-md flex-1">
           <Table className="w-full">
             <TableHeader>
-              <TableRow className="bg-gray-100">
+              <TableRow className="bg-card">
                 <TableHead className="text-center">Name</TableHead>
                 <TableHead className="text-center">Mobile</TableHead>
                 <TableHead className="text-center">Total Spent</TableHead>
@@ -75,8 +75,8 @@ const CustomerDetails = () => {
                 <TableRow
                   key={customer.id}
                   className={`cursor-pointer ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  } hover:bg-gray-100`}
+                    index % 2 === 0 ? "bg-card" : "bg-card"
+                  } hover:bg-secondary`}
                   onClick={() => handleRowClick(customer.id)}
                 >
                   <TableCell className="text-center">{customer.name}</TableCell>
