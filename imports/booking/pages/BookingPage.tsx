@@ -7,7 +7,7 @@ import {
   useUpdateBooking,
 } from "@/api/booking";
 import { Venue } from "@/types/auth";
-import moment from "moment";
+import moment from "moment-timezone";
 import { useEffect, useState } from "react";
 import { ISchedule } from "tui-calendar";
 import Calender from "../components/Calender";
@@ -25,8 +25,6 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
   const [events, setEvents] = useState<ISchedule[]>([]);
 
   const updateEvents = (data: any) => {
-    console.log("colors", colors);
-
     const formatted =
       data?.bookings?.map((item: any, index: number) => ({
         id: item.id,
@@ -34,16 +32,17 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
         allDay: false,
         title: item?.customer?.name,
         category: "time",
-        start: item.start_time,
-        end: item.end_time,
+        start: moment
+          .utc(item.start_time)
+          .tz("Asia/Kolkata")
+          .format("YYYY-MM-DD HH:mm:ss"),
+        end: moment
+          .utc(item.end_time)
+          .tz("Asia/Kolkata")
+          .format("YYYY-MM-DD HH:mm:ss"),
         mobile: item?.customer?.mobile,
         amount: item.total_amount,
       })) ?? [];
-
-    // recurring: {
-    //   repeat: "daily",
-    //   weekDays: "MO,TU,WE,TH,FR,SA,SU",
-    // },
 
     setEvents(formatted);
   };
@@ -84,22 +83,10 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
         createBooking={createBooking}
         cancelBooking={cancelBooking}
         updateBooking={updateBooking}
-      />
-      {/* <TuiCalendar
-        events={events}
-        setEvents={setEvents}
-        createBooking={createBooking}
-        refetch={refetch}
-        isLoading={false}
-        cancelBooking={cancelBooking}
-        updateBooking={updateBooking}
         setRange={setRange}
-      /> */}
+      />
     </div>
   );
 };
 
 export default BookingPage;
-function mutate(): import("react").EffectCallback {
-  throw new Error("Function not implemented.");
-}

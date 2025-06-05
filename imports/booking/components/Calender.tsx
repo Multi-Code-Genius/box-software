@@ -31,6 +31,7 @@ import {
   MbscEventDeletedEvent,
   MbscEventUpdateEvent,
   MbscEventUpdateFailedEvent,
+  MbscPageLoadingEvent,
   MbscPopupButton,
   MbscPopupOptions,
   MbscRecurrenceRule,
@@ -50,6 +51,7 @@ import {
   updateRecurringEvent,
 } from "@mobiscroll/react";
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
+import moment from "moment";
 import { useTheme } from "next-themes";
 import {
   ChangeEvent,
@@ -156,22 +158,6 @@ const Calender: FC = ({
   const [editFromPopup, setEditFromPopup] = useState<boolean>(false);
 
   const [undoEvent, setUndoEvent] = useState<MbscCalendarEvent | null>(null);
-  const [pendingTimeout, setPendingTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
-
-  const handleUndo = () => {
-    if (pendingTimeout) {
-      clearTimeout(pendingTimeout); // stop backend call
-    }
-
-    if (undoEvent) {
-      setMyEvents((prev) => [...prev, undoEvent]); // restore in UI
-    }
-
-    setUndoEvent(null);
-    setSnackbarOpen(false);
-  };
 
   const colorButtons = useMemo<(string | MbscPopupButton)[]>(
     () => [
@@ -188,6 +174,13 @@ const Calender: FC = ({
     ],
     [tempColor]
   );
+
+  const handlePageLoading = (args: MbscPageLoadingEvent) => {
+    const start = moment(args.firstDay).format("YYYY-MM-DD");
+    const end = moment(args.lastDay).format("YYYY-MM-DD");
+    console.log("Current view week:", start, "to", end);
+    setRange({ start, end });
+  };
 
   const handleEventCreateFailed = useCallback(
     (args: MbscEventCreateFailedEvent) => {
@@ -523,8 +516,6 @@ const Calender: FC = ({
       newEventList.splice(index, 1, newEv);
       setMyEvents(newEventList);
 
-      console.log("object=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-", tempEvent!.title);
-
       updateBooking({
         id: tempEvent!.id ? String(tempEvent!.id) : "",
         data: {
@@ -553,20 +544,22 @@ const Calender: FC = ({
         },
       });
     } else {
+      const localDate = new Date(popupEventDate[0]);
+      const result = moment(localDate).format("YYYY-MM-DD");
+      const utcMidnight = moment.utc(result).format("YYYY-MM-DD[T]00:00:00[Z]");
+
       createBooking({
         name: popupEventTitle,
         phone: popupEventDescription,
         startTime: popupEventDate[0],
         endTime: popupEventDate[1],
-        date: "2025-06-06T00:00:00Z",
+        date: utcMidnight,
         totalAmount: Number(popupEventAmount),
         venueId: 7,
         bookedGrounds: Number(2),
       });
-      // Add the new event to the list
+
       setMyEvents([...myEvents, newEv]);
-      // Here you can add the event to your storage as well
-      // ...
     }
 
     if (newEv.recurring && Object.keys(newEv.recurring).length === 0) {
@@ -594,19 +587,13 @@ const Calender: FC = ({
 
   const deleteEvent = useCallback(
     (event: MbscCalendarEvent) => {
-      setMyEvents((prev) => prev.filter((item) => item.id !== event.id));
+      setMyEvents(myEvents.filter((item) => item.id !== event.id));
       setUndoEvent(event);
-      setSnackbarOpen(true);
-
-      const timeout = setTimeout(() => {
-        cancelBooking(event.id);
-        setUndoEvent(null); // cleanup
-      }, 5000); // 5 seconds to undo
-
-      // 3. Save timeout so it can be cleared if user clicks Undo
-      setPendingTimeout(timeout);
+      setTimeout(() => {
+        setSnackbarOpen(true);
+      });
     },
-    [cancelBooking, setUndoEvent]
+    [myEvents]
   );
 
   const updateOptionDates = useCallback(
@@ -1001,7 +988,6 @@ const Calender: FC = ({
   const handleEventUpdated = useCallback((args: MbscEventUpdateEvent) => {
     const tempEvent = args.event;
 
-    console.log("object", tempEvent!.title);
     updateBooking({
       id: tempEvent!.id ? String(tempEvent!.id) : "",
       data: {
@@ -1224,6 +1210,7 @@ const Calender: FC = ({
         onEventCreateFailed={handleEventCreateFailed}
         onEventUpdateFailed={handleEventUpdateFailed}
         invalid={myInvalid}
+        onPageLoading={handlePageLoading}
       />
       <Toast
         isOpen={isToastOpen}

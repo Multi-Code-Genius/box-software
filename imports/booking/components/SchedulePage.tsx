@@ -37,7 +37,6 @@ const SchedulePage = () => {
       </div>
     );
   }
-  console.log(venues);
 
   if (!venue || isError) {
     return (

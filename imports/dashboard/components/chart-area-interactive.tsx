@@ -59,13 +59,10 @@ export function ChartAreaInteractive() {
       selectedData = data.lastThreeMonthBookings;
     }
 
-    console.log("Selected data for timeRange", timeRange, selectedData);
     setChartData(selectedData ?? []);
   }, [data, timeRange]);
 
-  React.useEffect(() => {
-    console.log("Selected timeRange:", timeRange);
-  }, [timeRange]);
+  React.useEffect(() => {}, [timeRange]);
 
   React.useEffect(() => {
     if (isMobile) {
@@ -85,7 +82,6 @@ export function ChartAreaInteractive() {
       .map(([date, count]) => ({ date, bookings: count }))
       .sort((a, b) => (a.date > b.date ? 1 : -1));
 
-    console.log("Filtered data:", timeRange, result);
     return result;
   }, [chartData, timeRange]);
 

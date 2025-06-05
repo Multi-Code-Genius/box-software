@@ -347,8 +347,6 @@ export function DataTable({
     [data]
   );
 
-  console.log(initialData, "1111111");
-
   const table = useReactTable({
     data,
     columns,

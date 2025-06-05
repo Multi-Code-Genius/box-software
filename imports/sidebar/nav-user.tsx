@@ -57,8 +57,6 @@ export function NavUser() {
     toast.success("Logout Successfully");
   };
 
-  console.log(user);
-
   return (
     <>
       <SidebarMenu>
