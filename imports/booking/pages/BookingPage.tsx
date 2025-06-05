@@ -8,39 +8,42 @@ import {
 } from "@/api/booking";
 import { Venue } from "@/types/auth";
 import moment from "moment";
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { ISchedule } from "tui-calendar";
-
-const TuiCalendar = dynamic(() => import("../components/TuiCalendar"), {
-  ssr: false,
-});
+import Calender from "../components/Calender";
+import { colors } from "@/constant/content";
 
 const BookingPage = ({ venue }: { venue: Venue }) => {
   const [range, setRange] = useState<{ start: string; end: string }>(() => {
-    const start = moment().startOf("week").utc().format();
-    const end = moment().endOf("week").utc().format();
+    const start = moment().startOf("week").format("YYYY-MM-DD");
+    const end = moment().endOf("week").format("YYYY-MM-DD");
 
     return { start, end };
   });
 
-  const { refetch, isLoading, data, error } = useBookingByRange(
-    venue.id,
-    range
-  );
+  const { refetch } = useBookingByRange(venue.id, range);
   const [events, setEvents] = useState<ISchedule[]>([]);
 
   const updateEvents = (data: any) => {
+    console.log("colors", colors);
+
     const formatted =
-      data?.bookings?.map((item: any) => ({
+      data?.bookings?.map((item: any, index: number) => ({
         id: item.id,
-        calendarId: item.id,
+        color: colors[index],
+        allDay: false,
         title: item?.customer?.name,
         category: "time",
         start: item.start_time,
         end: item.end_time,
         mobile: item?.customer?.mobile,
+        amount: item.total_amount,
       })) ?? [];
+
+    // recurring: {
+    //   repeat: "daily",
+    //   weekDays: "MO,TU,WE,TH,FR,SA,SU",
+    // },
 
     setEvents(formatted);
   };
@@ -51,7 +54,7 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
         updateEvents(res.data);
       });
     }
-  }, [venue?.id, range.start, range.end]);
+  }, [venue?.id, range.start, range.end, refetch]);
 
   const { mutate: cancelBooking } = useCancelBooking(
     () => refetch(),
@@ -76,16 +79,22 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
 
   return (
     <div>
-      <TuiCalendar
+      <Calender
+        events={events}
+        createBooking={createBooking}
+        cancelBooking={cancelBooking}
+        updateBooking={updateBooking}
+      />
+      {/* <TuiCalendar
         events={events}
         setEvents={setEvents}
         createBooking={createBooking}
         refetch={refetch}
-        isLoading={isLoading}
+        isLoading={false}
         cancelBooking={cancelBooking}
         updateBooking={updateBooking}
         setRange={setRange}
-      />
+      /> */}
     </div>
   );
 };

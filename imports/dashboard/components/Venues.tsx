@@ -1,10 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import { useDashboardStore } from "@/store/dashboardStore";
-import { Loader2 } from "lucide-react";
-import { getDashboardData, useDashboardData } from "@/api/dashboard";
-import { useVenueStore } from "@/store/venueStore";
+import { useDashboardData } from "@/api/dashboard";
 import { useVenues } from "@/api/vanue";
 import {
   Carousel,
@@ -13,12 +10,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useDashboardStore } from "@/store/dashboardStore";
+import { useVenueStore } from "@/store/venueStore";
+import { Loader2 } from "lucide-react";
 
 const Venues = () => {
   const { venues, setVenues } = useVenueStore();
   const { setDashboardData } = useDashboardStore();
-  const { selectedvenueId, setSelectedvenueId, setVenue, venue } =
-    useVenueStore();
+  const { selectedvenueId, setSelectedvenueId, setVenue } = useVenueStore();
 
   const {
     data: dashboardData,
@@ -26,7 +25,7 @@ const Venues = () => {
     refetch,
   } = useDashboardData(selectedvenueId);
 
-  const { data, isLoading: venuesLoading } = useVenues();
+  const { data } = useVenues();
 
   useEffect(() => {
     if (data?.venues?.length) {
@@ -39,12 +38,11 @@ const Venues = () => {
         localStorage.setItem("venueId", defaultvenueId);
       }
     }
-  }, [data, selectedvenueId]);
+  }, [data, selectedvenueId, setSelectedvenueId, setVenue, setVenues]);
 
   useEffect(() => {
     if (dashboardData) {
       setDashboardData(dashboardData);
-      console.log("Dashboard data for game:", selectedvenueId, dashboardData);
     }
   }, [dashboardData, setDashboardData, selectedvenueId]);
 
@@ -57,9 +55,7 @@ const Venues = () => {
   const handleSelectVenue = (venue: any) => {
     setSelectedvenueId(venue.id);
     localStorage.setItem("venueId", venue.id);
-    console.log("Selected venue ID:", venue.id);
     setVenue(venue);
-    console.log("Selected venue Data:", venue);
   };
 
   return (

@@ -1,8 +1,6 @@
 "use client";
 import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
-import { useDashboardData } from "@/api/dashboard";
-import { useVenues } from "@/api/vanue";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,

@@ -1,5 +1,18 @@
 "use client";
-
+import {
+  colors,
+  dateInputProps,
+  dayInputProps,
+  days,
+  monthInputProps,
+  months,
+  ordinalList,
+  repeatedData,
+  responsivePopup,
+  selectResponsive,
+  viewSettings,
+} from "@/constant/content";
+import { useGetWeekDayNum } from "@/hooks/useGetWeekDayNum";
 import {
   Button,
   Datepicker,
@@ -11,19 +24,19 @@ import {
   MbscDatepickerControl,
   MbscDatepickerOptions,
   MbscDateType,
-  MbscEventcalendarView,
   MbscEventClickEvent,
   MbscEventCreatedEvent,
   MbscEventCreateEvent,
+  MbscEventCreateFailedEvent,
   MbscEventDeletedEvent,
   MbscEventUpdateEvent,
+  MbscEventUpdateFailedEvent,
   MbscPopupButton,
   MbscPopupOptions,
   MbscRecurrenceRule,
   MbscResponsiveOptions,
   MbscSelectChangeEvent,
   MbscSelectedDateChangeEvent,
-  MbscSelectOptions,
   Popup,
   Radio,
   RadioGroup,
@@ -31,234 +44,68 @@ import {
   SegmentedItem,
   Select,
   setOptions,
-  Switch,
+  Snackbar,
   Textarea,
+  Toast,
   updateRecurringEvent,
 } from "@mobiscroll/react";
+import "@mobiscroll/react/dist/css/mobiscroll.min.css";
+import { useTheme } from "next-themes";
 import {
   ChangeEvent,
   FC,
+  MouseEvent,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
-setOptions({
-  theme: "ios",
-  themeVariant: "light",
-});
+declare module "@mobiscroll/react";
 
-const defaultEvents: MbscCalendarEvent[] = [
-  {
-    id: 1,
-    start: "10:00",
-    end: "12:00",
-    title: "Take vitamins",
-    allDay: false,
-    color: "#67ab0d",
-    recurring: {
-      repeat: "daily",
-      weekDays: "MO,TU,WE,TH,FR,SA,SU",
-    },
-  },
-  {
-    id: 2,
-    start: "18:00",
-    end: "20:00",
-    recurring: {
-      repeat: "weekly",
-      weekDays: "MO",
-    },
-    title: "Football training",
-    allDay: false,
-    color: "#fd966a",
-  },
-  {
-    id: 3,
-    start: "17:00",
-    end: "18:00",
-    recurring: {
-      repeat: "monthly",
-      day: 10,
-    },
-    title: "Rent payment",
-    allDay: false,
-    color: "#3ea39e",
-  },
-  {
-    id: 4,
-    recurring: {
-      repeat: "yearly",
-      day: 6,
-      month: 6,
-    },
-    title: "Dexter BD",
-    allDay: true,
-    color: "#d00f0f",
-  },
-];
+const now = new Date();
+const today = new Date(now.setMinutes(59));
+const yesterday = new Date(
+  now.getFullYear(),
+  now.getMonth(),
+  now.getDate() - 1
+);
 
-const viewSettings: MbscEventcalendarView = {
-  schedule: {
-    type: "week",
-  },
-};
+const getWeekDayNum = useGetWeekDayNum;
 
-const responsivePopup: MbscResponsiveOptions<MbscPopupOptions> = {
-  medium: {
-    display: "anchored",
-    width: 510,
-    fullScreen: false,
-    touchUi: false,
-  },
-};
+const Calender: FC = ({
+  events,
+  createBooking,
+  refetch,
+  isLoading,
+  setEvents,
+  cancelBooking,
+  updateBooking,
+  setRange,
+}: {
+  events: ISchedule[];
+  createBooking: (data: CreateBooking) => void;
+  refetch: () => void;
+  isLoading: boolean;
+  setEvents: (events: ISchedule[]) => void;
+  cancelBooking: (id: string) => void;
+  updateBooking: (input: { id: string; data: UpdateBooking }) => void;
+  setRange: (range: { start: string; end: string }) => void;
+}) => {
+  const [myEvents, setMyEvents] = useState<MbscCalendarEvent[]>([]);
+  const { resolvedTheme } = useTheme();
 
-const selectResponsive: MbscResponsiveOptions<MbscSelectOptions> = {
-  xsmall: {
-    touchUi: true,
-  },
-  small: {
-    touchUi: false,
-  },
-};
-
-const days = [
-  {
-    name: "Sunday",
-    short: "SU",
-    checked: true,
-  },
-  {
-    name: "Monday",
-    short: "MO",
-    checked: false,
-  },
-  {
-    name: "Tuesday",
-    short: "TU",
-    checked: false,
-  },
-  {
-    name: "Wednesday",
-    short: "WE",
-    checked: false,
-  },
-  {
-    name: "Thursday",
-    short: "TH",
-    checked: false,
-  },
-  {
-    name: "Friday",
-    short: "FR",
-    checked: false,
-  },
-  {
-    name: "Saturday",
-    short: "SA",
-    checked: false,
-  },
-];
-
-const months = [
-  {
-    value: 1,
-    text: "January",
-  },
-  {
-    value: 2,
-    text: "February",
-  },
-  {
-    value: 3,
-    text: "March",
-  },
-  {
-    value: 4,
-    text: "April",
-  },
-  {
-    value: 5,
-    text: "May",
-  },
-  {
-    value: 6,
-    text: "June",
-  },
-  {
-    value: 7,
-    text: "July",
-  },
-  {
-    value: 8,
-    text: "August",
-  },
-  {
-    value: 9,
-    text: "September",
-  },
-  {
-    value: 10,
-    text: "October",
-  },
-  {
-    value: 11,
-    text: "November",
-  },
-  {
-    value: 12,
-    text: "December",
-  },
-];
-
-const ordinalList: { [key: number]: string } = {
-  1: "first",
-  2: "second",
-  3: "third",
-  4: "fourth",
-};
-
-const dayInputProps = {
-  className: "custom-repeat-input custom-repeat-select-nr",
-  inputStyle: "outline",
-};
-
-const monthInputProps = {
-  className: "custom-repeat-input custom-repeat-select-month",
-  inputStyle: "outline",
-};
-
-const dateInputProps = {
-  className: "custom-repeat-input custom-specific-date",
-  inputStyle: "outline",
-};
-
-// Returns the weeknumber of the passed date
-function getWeekDayNum(date: Date): number {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const firstDayOfMonth = new Date(year, month, 1);
-  const lastDayOfMonth = new Date(year, month + 1, 0);
-  let count = 0;
-
-  for (
-    let d = firstDayOfMonth;
-    d < lastDayOfMonth;
-    d.setDate(d.getDate() + 7)
-  ) {
-    if (date >= d) {
-      count++;
-    } else {
-      break;
+  useEffect(() => {
+    if (events.length > 0) {
+      setMyEvents(events);
     }
-  }
+  }, [events]);
 
-  return Math.max(1, count);
-}
-
-const App: FC = () => {
-  const [myEvents, setMyEvents] = useState<MbscCalendarEvent[]>(defaultEvents);
+  setOptions({
+    theme: "ios",
+    themeVariant: resolvedTheme,
+  });
   const [tempEvent, setTempEvent] = useState<MbscCalendarEvent>();
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEdit, setEdit] = useState<boolean>(false);
@@ -266,50 +113,18 @@ const App: FC = () => {
   const [start, startRef] = useState<Input | null>(null);
   const [end, endRef] = useState<Input | null>(null);
   const [popupEventTitle, setTitle] = useState<string | undefined>("");
+  const [popupEventAmount, setAmount] = useState<string | undefined>("");
   const [popupEventDescription, setDescription] = useState<string>("");
   const [popupEventAllDay, setAllDay] = useState<boolean>(true);
   const [popupEventDate, setDate] = useState<MbscDateType[]>([]);
   const [mySelectedDate, setSelectedDate] = useState<MbscDateType>();
+  const [isSnackbarOpen, setSnackbarOpen] = useState(false);
+  const [isToastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  // Recurring editor data
-  const [repeatData, setRepeatData] = useState([
-    {
-      value: "norepeat",
-      text: "Does not repeat",
-    },
-    {
-      value: "daily",
-      text: "Daily",
-    },
-    {
-      value: "weekly",
-      text: "Weekly",
-    },
-    {
-      value: "monthly",
-      text: "Monthly",
-    },
-    {
-      value: "monthly-pos",
-      text: "Monthly",
-    },
-    {
-      value: "yearly",
-      text: "Yearly",
-    },
-    {
-      value: "yearly-pos",
-      text: "Yearly",
-    },
-    {
-      value: "weekday",
-      text: "Every weekday (Monday to Friday)",
-    },
-    {
-      value: "custom",
-      text: "Custom",
-    },
-  ]);
+  const colorPicker = useRef<Popup>(null);
+
+  const [repeatData, setRepeatData] = useState(repeatedData);
   const [selectedRepeat, setSelectedRepeat] = useState<string>("norepeat");
   const [repeatType, setRepeatType] = useState<
     "daily" | "weekly" | "monthly" | "yearly" | undefined
@@ -324,7 +139,10 @@ const App: FC = () => {
   const [yearlyDays, setYearlyDays] = useState<number[]>([1]);
   const [yearlyDay, setYearlyDay] = useState<number>(1);
   const [weekDays, setWeekDays] = useState<string[]>(["SU"]);
-
+  const [colorPickerOpen, setColorPickerOpen] = useState<boolean>(false);
+  const [colorAnchor, setColorAnchor] = useState<HTMLElement>();
+  const [selectedColor, setSelectedColor] = useState("");
+  const [tempColor, setTempColor] = useState<string>("");
   const [originalRecurringEvent, setOriginalRecurringEvent] =
     useState<MbscCalendarEvent>();
   const [eventOccurrence, setEventOccurrence] = useState<MbscCalendarEvent>();
@@ -336,6 +154,90 @@ const App: FC = () => {
     "all" | "current" | "following"
   >("current");
   const [editFromPopup, setEditFromPopup] = useState<boolean>(false);
+
+  const [undoEvent, setUndoEvent] = useState<MbscCalendarEvent | null>(null);
+  const [pendingTimeout, setPendingTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  const handleUndo = () => {
+    if (pendingTimeout) {
+      clearTimeout(pendingTimeout); // stop backend call
+    }
+
+    if (undoEvent) {
+      setMyEvents((prev) => [...prev, undoEvent]); // restore in UI
+    }
+
+    setUndoEvent(null);
+    setSnackbarOpen(false);
+  };
+
+  const colorButtons = useMemo<(string | MbscPopupButton)[]>(
+    () => [
+      "cancel",
+      {
+        text: "Set",
+        keyCode: "enter",
+        handler: () => {
+          setSelectedColor(tempColor);
+          setColorPickerOpen(false);
+        },
+        cssClass: "mbsc-popup-button-primary",
+      },
+    ],
+    [tempColor]
+  );
+
+  const handleEventCreateFailed = useCallback(
+    (args: MbscEventCreateFailedEvent) => {
+      if (!args.originEvent) {
+        setToastMessage("Can't create event in the past");
+        setToastOpen(true);
+      }
+    },
+    []
+  );
+
+  const handleEventUpdateFailed = useCallback(
+    (args: MbscEventUpdateFailedEvent) => {
+      if (!args.oldEventOccurrence) {
+        setToastMessage("Can't move event in the past");
+        setToastOpen(true);
+      }
+    },
+    []
+  );
+
+  const handleCloseToast = useCallback(() => {
+    setToastOpen(false);
+  }, []);
+  const myInvalid = useMemo(
+    () => [
+      {
+        recurring: {
+          repeat: "daily",
+          until: yesterday,
+        },
+      },
+      {
+        start: yesterday,
+        end: today,
+      },
+    ],
+    []
+  );
+
+  const colorResponsive: MbscResponsiveOptions<MbscPopupOptions> = useMemo(
+    () => ({
+      medium: {
+        display: "anchored",
+        touchUi: false,
+        buttons: [],
+      },
+    }),
+    []
+  );
 
   // Set custom values to default
   const resetCustomValues = useCallback(() => {
@@ -350,6 +252,20 @@ const App: FC = () => {
     setSelectedRepeat("norepeat");
     setRepeatData(repeatData.filter((item) => item.value !== "custom-value"));
   }, [repeatData]);
+
+  const snackbarButton = useMemo(
+    () => ({
+      action: () => {
+        setMyEvents((prevEvents) => [...prevEvents, undoEvent!]);
+      },
+      text: "Undo",
+    }),
+    [undoEvent]
+  );
+
+  const handleSnackbarClose = useCallback(() => {
+    setSnackbarOpen(false);
+  }, []);
 
   const navigateTo = useCallback(() => {
     const rec = tempEvent!.recurring;
@@ -368,6 +284,31 @@ const App: FC = () => {
       setSelectedDate(d);
     }
   }, [tempEvent]);
+
+  const selectColor = useCallback((color: string) => {
+    setTempColor(color);
+  }, []);
+
+  const changeColor = useCallback(
+    (ev: MouseEvent<HTMLDivElement>) => {
+      const color = ev.currentTarget.getAttribute("data-value")!;
+      selectColor(color);
+      if (!colorPicker.current!.s.buttons!.length) {
+        setSelectedColor(color);
+        setColorPickerOpen(false);
+      }
+    },
+    [selectColor, setSelectedColor]
+  );
+
+  const openColorPicker = useCallback(
+    (ev: MouseEvent<HTMLDivElement>) => {
+      selectColor(selectedColor || "");
+      setColorAnchor(ev.currentTarget);
+      setColorPickerOpen(true);
+    },
+    [selectColor, selectedColor]
+  );
 
   const deleteRecurringEvent = useCallback(() => {
     switch (recurringEditMode) {
@@ -563,13 +504,14 @@ const App: FC = () => {
 
   const saveEvent = useCallback(() => {
     const newEv = {
-      id: tempEvent!.id,
+      id: tempEvent!.id ? String(tempEvent!.id) : "",
       title: popupEventTitle,
+      amount: popupEventAmount,
       description: popupEventDescription,
       start: popupEventDate[0],
       end: popupEventDate[1],
       allDay: popupEventAllDay,
-      color: tempEvent!.color,
+      color: tempColor,
       recurring: getCustomRule(),
     };
 
@@ -580,16 +522,57 @@ const App: FC = () => {
 
       newEventList.splice(index, 1, newEv);
       setMyEvents(newEventList);
-      // Here you can update the event in your storage as well
-      // ...
+
+      console.log("object=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-", tempEvent!.title);
+
+      updateBooking({
+        id: tempEvent!.id ? String(tempEvent!.id) : "",
+        data: {
+          startTime:
+            tempEvent!.start &&
+            (typeof tempEvent!.start === "string" ||
+              tempEvent!.start instanceof Date)
+              ? new Date(tempEvent!.start).toISOString()
+              : "",
+          endTime:
+            tempEvent!.end &&
+            (typeof tempEvent!.end === "string" ||
+              tempEvent!.end instanceof Date)
+              ? new Date(tempEvent!.end).toISOString()
+              : "",
+          date:
+            tempEvent!.date &&
+            (typeof tempEvent!.date === "string" ||
+              tempEvent!.date instanceof Date)
+              ? new Date(tempEvent!.date).toISOString()
+              : "2025-06-06T00:00:00Z",
+          name: newEv!.title,
+          bookedGrounds: Number(2),
+          totalAmount: Number(tempEvent!.amount),
+          phone: tempEvent!.mobile,
+        },
+      });
     } else {
+      createBooking({
+        name: popupEventTitle,
+        phone: popupEventDescription,
+        startTime: popupEventDate[0],
+        endTime: popupEventDate[1],
+        date: "2025-06-06T00:00:00Z",
+        totalAmount: Number(popupEventAmount),
+        venueId: 7,
+        bookedGrounds: Number(2),
+      });
       // Add the new event to the list
       setMyEvents([...myEvents, newEv]);
       // Here you can add the event to your storage as well
       // ...
     }
 
-    // Navigate the calendar
+    if (newEv.recurring && Object.keys(newEv.recurring).length === 0) {
+      delete (newEv as any).recurring;
+    }
+
     navigateTo();
     // Close the popup
     setOpen(false);
@@ -603,13 +586,27 @@ const App: FC = () => {
     isEdit,
     navigateTo,
     myEvents,
+    tempColor,
+    popupEventAmount,
+    createBooking,
+    updateBooking,
   ]);
 
   const deleteEvent = useCallback(
     (event: MbscCalendarEvent) => {
-      setMyEvents(myEvents.filter((item) => item.id !== event.id));
+      setMyEvents((prev) => prev.filter((item) => item.id !== event.id));
+      setUndoEvent(event);
+      setSnackbarOpen(true);
+
+      const timeout = setTimeout(() => {
+        cancelBooking(event.id);
+        setUndoEvent(null); // cleanup
+      }, 5000); // 5 seconds to undo
+
+      // 3. Save timeout so it can be cleared if user clicks Undo
+      setPendingTimeout(timeout);
     },
-    [myEvents]
+    [cancelBooking, setUndoEvent]
   );
 
   const updateOptionDates = useCallback(
@@ -660,6 +657,7 @@ const App: FC = () => {
     (event: MbscCalendarEvent) => {
       const startDate = new Date(event.start as string);
       setTitle(event.title);
+      setAmount(event.amount);
       setDescription(event.description);
       setDate([startDate, new Date(event.end as string)]);
       setUntilDate(
@@ -791,13 +789,12 @@ const App: FC = () => {
   const titleChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
     setTitle(ev.target.value);
   }, []);
+  const amountChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
+    setAmount(ev.target.value);
+  }, []);
 
   const descriptionChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
     setDescription(ev.target.value);
-  }, []);
-
-  const allDayChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
-    setAllDay(ev.target.checked);
   }, []);
 
   const dateChange = useCallback(
@@ -909,6 +906,16 @@ const App: FC = () => {
 
   const handleEventClick = useCallback(
     (args: MbscEventClickEvent) => {
+      const oldEvent = args.originEvent;
+      const start = oldEvent && oldEvent.start ? oldEvent.start : null;
+
+      // Handle recurring events
+      if (start && start < now) {
+        setToastMessage("Can't move past event");
+        setToastOpen(true);
+        return false;
+      }
+
       const event = args.event;
 
       setEdit(true);
@@ -931,7 +938,20 @@ const App: FC = () => {
   );
 
   const handleEventUpdate = useCallback((args: MbscEventUpdateEvent) => {
+    const oldEvent = args.oldEvent;
+    const start = oldEvent && oldEvent.start ? oldEvent.start : null;
+    const oldEventOccurrence = args.oldEventOccurrence;
+    const occurrenceStart =
+      oldEventOccurrence && oldEventOccurrence.start
+        ? oldEventOccurrence.start
+        : null;
+
+    if ((start && start < now) || (occurrenceStart && occurrenceStart < now)) {
+      return false;
+    }
+
     const event = args.event;
+
     if (event.recurring) {
       setOriginalRecurringEvent(args.oldEvent);
       setTempEvent(event);
@@ -978,9 +998,36 @@ const App: FC = () => {
     [deleteEvent]
   );
 
-  const handleEventUpdated = useCallback(() => {
-    // Here you can update the event in your storage as well, after drag & drop or resize
-    // ...
+  const handleEventUpdated = useCallback((args: MbscEventUpdateEvent) => {
+    const tempEvent = args.event;
+
+    console.log("object", tempEvent!.title);
+    updateBooking({
+      id: tempEvent!.id ? String(tempEvent!.id) : "",
+      data: {
+        startTime:
+          tempEvent!.start &&
+          (typeof tempEvent!.start === "string" ||
+            tempEvent!.start instanceof Date)
+            ? new Date(tempEvent!.start).toISOString()
+            : "",
+        endTime:
+          tempEvent!.end &&
+          (typeof tempEvent!.end === "string" || tempEvent!.end instanceof Date)
+            ? new Date(tempEvent!.end).toISOString()
+            : "",
+        date:
+          tempEvent!.date &&
+          (typeof tempEvent!.date === "string" ||
+            tempEvent!.date instanceof Date)
+            ? new Date(tempEvent!.date).toISOString()
+            : "2025-06-06T00:00:00Z",
+        name: tempEvent!.title,
+        bookedGrounds: Number(2),
+        totalAmount: Number(tempEvent!.amount),
+        phone: tempEvent!.mobile,
+      },
+    });
   }, []);
 
   // Datepicker options
@@ -1014,7 +1061,7 @@ const App: FC = () => {
 
   // Popup options
   const headerText = useMemo(
-    () => (isEdit ? "Edit event" : "New Event"),
+    () => (isEdit ? "Edit Booking" : "New Booking"),
     [isEdit]
   );
   const popupButtons = useMemo<(string | MbscPopupButton)[]>(() => {
@@ -1072,6 +1119,8 @@ const App: FC = () => {
           } else {
             if (editFromPopup) {
               tempEvent!.title = popupEventTitle;
+              tempEvent!.title = popupEventAmount;
+
               tempEvent!.description = popupEventDescription;
               tempEvent!.start = popupEventDate[0];
               tempEvent!.end = popupEventDate[1];
@@ -1128,6 +1177,7 @@ const App: FC = () => {
       popupEventDate,
       popupEventDescription,
       popupEventTitle,
+      popupEventAmount,
       recurringDelete,
       recurringEditMode,
       tempEvent,
@@ -1156,6 +1206,7 @@ const App: FC = () => {
   return (
     <div>
       <Eventcalendar
+        className="md-disallow-past-event-creation"
         view={viewSettings}
         data={myEvents}
         clickToCreate="double"
@@ -1170,6 +1221,14 @@ const App: FC = () => {
         onEventCreated={handleEventCreated}
         onEventDeleted={handleEventDeleted}
         onEventUpdated={handleEventUpdated}
+        onEventCreateFailed={handleEventCreateFailed}
+        onEventUpdateFailed={handleEventUpdateFailed}
+        invalid={myInvalid}
+      />
+      <Toast
+        isOpen={isToastOpen}
+        message={toastMessage}
+        onClose={handleCloseToast}
       />
       <Popup
         display="bottom"
@@ -1185,20 +1244,19 @@ const App: FC = () => {
         responsive={responsivePopup}
         cssClass="md-recurring-event-editor-popup"
       >
-        <div className="mbsc-form-group">
-          <Input label="Title" value={popupEventTitle} onChange={titleChange} />
+        <div className="">
+          <Input
+            label="Name"
+            value={popupEventTitle === "New event" ? "" : popupEventTitle}
+            onChange={titleChange}
+          />
           <Textarea
-            label="Description"
+            label="Mobile No"
             value={popupEventDescription}
             onChange={descriptionChange}
           />
         </div>
-        <div className="mbsc-form-group">
-          <Switch
-            label="All-day"
-            checked={popupEventAllDay}
-            onChange={allDayChange}
-          />
+        <div className="">
           <Input ref={startRef} label="Starts" />
           <Input ref={endRef} label="Ends" />
           <Datepicker
@@ -1219,6 +1277,19 @@ const App: FC = () => {
             responsive={selectResponsive}
             onChange={repeatChange}
           />
+
+          <Input
+            label="Total Amount"
+            value={popupEventAmount}
+            onChange={amountChange}
+          />
+          <div onClick={openColorPicker} className="event-color-c">
+            <div className="event-color-label">Color</div>
+            <div
+              className="event-color"
+              style={{ background: selectedColor }}
+            ></div>
+          </div>
         </div>
         <div className="mbsc-form-group">
           {(selectedRepeat === "custom" ||
@@ -1433,6 +1504,7 @@ const App: FC = () => {
               </div>
             </div>
           )}
+
           {isEdit && (
             <div className="mbsc-button-group">
               <Button
@@ -1447,6 +1519,7 @@ const App: FC = () => {
           )}
         </div>
       </Popup>
+
       <Popup
         display="bottom"
         contentPadding={false}
@@ -1480,8 +1553,69 @@ const App: FC = () => {
           </RadioGroup>
         </div>
       </Popup>
+
+      <Popup
+        display="bottom"
+        contentPadding={false}
+        showArrow={false}
+        showOverlay={false}
+        anchor={colorAnchor}
+        isOpen={colorPickerOpen}
+        buttons={colorButtons}
+        responsive={colorResponsive}
+        ref={colorPicker}
+      >
+        <div className="crud-color-row">
+          {colors.map((color, index) => {
+            if (index < 5) {
+              return (
+                <div
+                  key={index}
+                  onClick={changeColor}
+                  className={
+                    "crud-color-c " + (tempColor === color ? "selected" : "")
+                  }
+                  data-value={color}
+                >
+                  <div
+                    className="crud-color mbsc-icon mbsc-font-icon mbsc-icon-material-check"
+                    style={{ background: color }}
+                  ></div>
+                </div>
+              );
+            } else return null;
+          })}
+        </div>
+        <div className="crud-color-row">
+          {colors.map((color, index) => {
+            if (index >= 5) {
+              return (
+                <div
+                  key={index}
+                  onClick={changeColor}
+                  className={
+                    "crud-color-c " + (tempColor === color ? "selected" : "")
+                  }
+                  data-value={color}
+                >
+                  <div
+                    className="crud-color mbsc-icon mbsc-font-icon mbsc-icon-material-check"
+                    style={{ background: color }}
+                  ></div>
+                </div>
+              );
+            } else return null;
+          })}
+        </div>
+      </Popup>
+
+      <Snackbar
+        isOpen={isSnackbarOpen}
+        message="Event deleted"
+        button={snackbarButton}
+        onClose={handleSnackbarClose}
+      />
     </div>
   );
 };
-
-export default App;
+export default Calender;

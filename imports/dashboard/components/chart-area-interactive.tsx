@@ -87,7 +87,7 @@ export function ChartAreaInteractive() {
 
     console.log("Filtered data:", timeRange, result);
     return result;
-  }, [chartData]);
+  }, [chartData, timeRange]);
 
   return (
     <Card className="@container/card">

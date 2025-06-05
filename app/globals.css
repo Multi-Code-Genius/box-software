@@ -173,4 +173,120 @@ body {
 
 .tui-full-calendar-timegrid-container {
   overflow: visible !important;
+  
+}
+
+
+.tui-full-calendar-timegrid-h-grid{background-color: white !important;}
+
+
+.md-recurring-event-editor-popup .md-recurrence-input .mbsc-textfield-wrapper {
+  display: inline-block;
+  margin: 3px;
+  z-index: 3;
+  line-height: normal;
+}
+
+.md-recurring-event-editor-popup .md-recurrence-input .mbsc-textfield {
+  width: 140px;
+  height: 32px;
+}
+
+.md-recurring-event-editor-popup .md-recurrence-input-nr .mbsc-textfield {
+  width: 90px;
+}
+
+.md-recurring-event-editor-popup .md-recurrence-input .mbsc-select-icon {
+  top: 50%;
+  height: 1.5em;
+  margin-top: -0.75em;
+}
+
+.md-recurrence-options {
+  padding: 0 1em;
+  margin: 1em 0;
+}
+
+.md-recurrence-ends {
+  padding: 0 1em;
+  margin: 1.25em 0 -1.25em 0;
+}
+
+.md-recurrence-desc {
+  font-size: 12px;
+  font-weight: normal;
+  color: #555;
+  margin: 1em 0;
+}
+
+.md-hide-elm {
+  display: none;
+}
+
+
+.event-color-c {
+  display: flex;
+  margin: 16px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.event-color-label {
+  flex: 1 0 auto;
+}
+
+.event-color {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  margin-right: 10px;
+  margin-left: 240px;
+  background: #5ac8fa;
+}
+
+.crud-color-row {
+  display: flex;
+  justify-content: center;
+  margin: 5px;
+}
+
+.crud-color-c {
+  padding: 3px;
+  margin: 2px;
+}
+
+.crud-color {
+  position: relative;
+  min-width: 46px;
+  min-height: 46px;
+  margin: 2px;
+  cursor: pointer;
+  border-radius: 23px;
+  background: #5ac8fa;
+}
+
+.crud-color-c.selected,
+.crud-color-c:hover {
+  box-shadow: inset 0 0 0 3px #007bff;
+  border-radius: 48px;
+}
+
+.crud-color:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  color: #f7f7f7;
+  font-size: 20px;
+  text-shadow: 0 0 3px #000;
+  display: none;
+}
+
+.crud-color-c.selected .crud-color:before {
+  display: block;
+}
+
+.md-disallow-past-event-creation .mbsc-readonly-event {
+  opacity: 0.6;
 }

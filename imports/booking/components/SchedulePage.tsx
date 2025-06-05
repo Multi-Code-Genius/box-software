@@ -50,7 +50,7 @@ const SchedulePage = () => {
   }
 
   return (
-    <div className="p-10">
+    <div className="p-[20px] overflow-hidden">
       <p className="font-bold text-3xl pb-2">Bookings</p>
       <p className="text-sm">Booking for: {venue.name}</p>
       <BookingPage venue={venue} />
