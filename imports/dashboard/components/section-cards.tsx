@@ -15,6 +15,7 @@ import { useDashboardStore } from "@/store/dashboardStore";
 
 export function SectionCards() {
   const { data } = useDashboardStore();
+
   const growthRate =
     data?.lastMonthTotal && data?.MonthTotalBookingAmount
       ? ((data.MonthTotalBookingAmount - data.lastMonthTotal) /

@@ -81,7 +81,7 @@ const AllVenues = () => {
               </p>
               <p className="flex items-center gap-2">
                 <Users size={18} />
-                Capacity: {venue.capacity}
+                Capacity: {venue?.game_info.maxPlayers}
               </p>
               <p className="flex items-center gap-2">
                 <IndianRupee size={18} />

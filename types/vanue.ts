@@ -67,6 +67,7 @@ export interface Venues {
   startDate: string;
   endDate: string;
   game_info: {
+    maxPlayers: ReactNode;
     type: string;
     max_players: number;
   };

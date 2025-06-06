@@ -48,10 +48,7 @@ export default function DashBoardPage() {
               <ChartAreaInteractive />
             </div>
 
-            {Array.isArray(data?.ThisMonthBookings) &&
-              data.ThisMonthBookings.length > 0 && (
-                <DataTable data={data.ThisMonthBookings} />
-              )}
+            <DataTable data={data?.ThisMonthBookings ?? []} />
           </div>
         </div>
       </div>

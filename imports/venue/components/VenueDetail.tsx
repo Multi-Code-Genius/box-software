@@ -163,7 +163,7 @@ const VenueDetail = () => {
               </p>
               <p className="flex items-center gap-2">
                 <Users size={18} />
-                Capacity: {venue.capacity}
+                Capacity: {venue?.game_info.maxPlayers}
               </p>
               <p className="flex items-center gap-2">
                 <IndianRupee size={18} />
@@ -171,7 +171,7 @@ const VenueDetail = () => {
               </p>
               <p className="flex items-center gap-2">
                 <Map size={18} />
-                {venue.location.area}, {venue.location.city}
+                {venue.location.city}
               </p>
             </CardContent>
           </Card>
@@ -194,18 +194,17 @@ const VenueDetail = () => {
 
           {selectedGame && (
             <div className="space-y-4 pt-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium ">Name</label>
                 <Input
                   value={selectedGame.name}
                   onChange={(e) => handleEditField("name", e.target.value)}
+                  className="border focus-visible:ring-0"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
+              <div className="space-y-1">
+                <label className="block text-sm font-medium ">
                   Description
                 </label>
                 <Input
@@ -213,45 +212,44 @@ const VenueDetail = () => {
                   onChange={(e) =>
                     handleEditField("description", e.target.value)
                   }
+                  className="border focus-visible:ring-0"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Address
-                </label>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium ">Address</label>
                 <Input
                   value={selectedGame.address}
                   onChange={(e) => handleEditField("address", e.target.value)}
+                  className="border focus-visible:ring-0"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  City
-                </label>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium ">City</label>
                 <Input
                   value={selectedGame.location?.city || ""}
                   onChange={(e) =>
                     handleEditField("city", e.target.value, true, "location")
                   }
+                  className="border focus-visible:ring-0"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Latitude
-                  </label>
+                <div className="space-y-1">
+                  <label className="block text-sm font-medium ">Latitude</label>
                   <Input
                     value={selectedGame.location?.lat || ""}
                     onChange={(e) =>
                       handleEditField("lat", e.target.value, true, "location")
                     }
+                    className="border focus-visible:ring-0"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+
+                <div className="space-y-1">
+                  <label className="block text-sm font-medium ">
                     Longitude
                   </label>
                   <Input
@@ -259,13 +257,14 @@ const VenueDetail = () => {
                     onChange={(e) =>
                       handleEditField("lng", e.target.value, true, "location")
                     }
+                    className="border focus-visible:ring-0"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                <div className="space-y-1">
+                  <label className="block text-sm font-medium ">
                     Game Type
                   </label>
                   <Input
@@ -273,14 +272,17 @@ const VenueDetail = () => {
                     onChange={(e) =>
                       handleEditField("type", e.target.value, true, "game_info")
                     }
+                    className="border focus-visible:ring-0"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
+
+                <div className="space-y-1">
+                  <label className="block text-sm font-medium ">
                     Max Players
                   </label>
                   <Input
                     value={selectedGame.game_info?.maxPlayers || ""}
+                    className="border focus-visible:ring-0"
                     onChange={(e) =>
                       handleEditField(
                         "maxPlayers",
@@ -293,13 +295,15 @@ const VenueDetail = () => {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Grounds
-                </label>
+              <div className="space-y-1">
+                <label className="block text-sm font-medium ">Grounds</label>
                 <Input
+                  type="number"
                   value={selectedGame.grounds || ""}
-                  onChange={(e) => handleEditField("grounds", e.target.value)}
+                  onChange={(e) =>
+                    handleEditField("grounds", parseInt(e.target.value) || 0)
+                  }
+                  className="border focus-visible:ring-0"
                 />
               </div>
 
