@@ -16,6 +16,7 @@ import {
   Fingerprint,
   SquareArrowUpRight,
   type LucideIcon,
+  Map,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -58,6 +59,11 @@ export const sidebarItems: NavGroup[] = [
         title: "Clients",
         url: `/customer`,
         icon: Users,
+      },
+      {
+        title: "Venues",
+        url: `/venues`,
+        icon: Map,
       },
     ],
   },

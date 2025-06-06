@@ -19,6 +19,7 @@ function DeleteDialog({ isOpen, selectedvenueId, onClose }: any) {
   const { deleteVenueMutation } = useDeleteVenue();
   const { setDashboardData } = useDashboardStore();
   const { setSelectedvenueId } = useVenueStore();
+
   const handleDelete = (id: string) => {
     if (!id) {
       console.error("No ID provided for deletion");
@@ -27,7 +28,7 @@ function DeleteDialog({ isOpen, selectedvenueId, onClose }: any) {
 
     deleteVenueMutation(id);
     localStorage.removeItem("venueId");
-    setSelectedvenueId(undefined);
+    setSelectedvenueId(null);
     setDashboardData(null);
   };
 

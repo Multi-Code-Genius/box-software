@@ -128,7 +128,7 @@ const VenueDetail = () => {
 
   if (!venues?.length) {
     return (
-      <div className="pt-10 text-center text-xl text-muted-foreground">
+      <div className="pt-10 text-center text-base text-muted-foreground">
         No Venues found.
       </div>
     );

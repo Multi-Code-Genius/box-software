@@ -51,7 +51,7 @@ const AllVenues = () => {
 
   if (!venues?.length) {
     return (
-      <div className="pt-10 text-xl text-center text-muted-foreground">
+      <div className="pt-10 text-base text-center text-muted-foreground">
         No Venues found.
       </div>
     );

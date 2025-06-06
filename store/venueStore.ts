@@ -4,8 +4,8 @@ import { Venues } from "@/types/vanue";
 interface VenueStore {
   venues: Venues[];
   venue: Venues | null;
-  selectedvenueId: string | undefined;
-  setSelectedvenueId: (id: string | undefined) => void;
+  selectedvenueId: string | null;
+  setSelectedvenueId: (id: string | null) => void;
   setVenues: (venues: Venues[]) => void;
   submittedVenue: Venues | null;
   addVenue: (venues: Venues) => void;
@@ -24,6 +24,6 @@ export const useVenueStore = create<VenueStore>((set) => ({
   clearVenue: () => set({ venues: [] }),
   setSubmittedVenue: (venue) => set({ submittedVenue: venue }),
   setVenue: (venue) => set({ venue }),
-  selectedvenueId: undefined,
+  selectedvenueId: null,
   setSelectedvenueId: (id) => set({ selectedvenueId: id }),
 }));

@@ -20,7 +20,7 @@ const LoginForm = () => {
   const [step, setStep] = useState(0);
 
   const { mutate, isPending, isSuccess } = useRequestOtp();
-  const { mutate: VerifyMutate } = useVerifyOtp();
+  const { mutate: VerifyMutate, isPending: isVerifying } = useVerifyOtp();
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,9 +130,24 @@ const LoginForm = () => {
           )}
 
           <div className="text-center text-sm flex flex-col gap-4 items-center">
-            <Button type="submit" className="w-[50%]">
-              Verify
+            <Button
+              type="submit"
+              className="w-[50%] flex justify-center items-center space-x-2"
+            >
+              {isVerifying ? (
+                <>
+                  <span
+                    className="loader spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <span>Verifying...</span>
+                </>
+              ) : (
+                <span>Verify</span>
+              )}
             </Button>
+
             <p>
               Didn&apos;t receive code?
               <span className="text-blue-600 underline underline-offset-2">

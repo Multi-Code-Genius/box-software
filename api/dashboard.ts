@@ -25,7 +25,7 @@ export const getDashboardData = async (
   }
 };
 
-export const useDashboardData = (venueId: string | undefined) => {
+export const useDashboardData = (venueId: string | null) => {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["dashboard-data", venueId],
     queryFn: () => {

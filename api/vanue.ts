@@ -116,7 +116,7 @@ export const useEditVenue = () => {
 
     onSuccess: (data: any) => {
       toast.success(data?.message || "Venue updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["games"] });
+      queryClient.invalidateQueries({ queryKey: ["venues"] });
     },
 
     onError: (error: any) => {
@@ -149,7 +149,7 @@ export const useDeleteVenue = () => {
     mutationFn: (id: string) => deleteVenue(id),
     onSuccess: (data) => {
       toast.success("Venue deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["games"] });
+      queryClient.invalidateQueries({ queryKey: ["venues"] });
     },
     onError: (error) => {
       toast.error("Failed to delete venue");
