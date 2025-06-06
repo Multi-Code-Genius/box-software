@@ -154,7 +154,7 @@ export const dateInputProps = {
 };
 
 
-export const repeatedData =[
+export const repeatedData = [
     {
       value: "norepeat",
       text: "Does not repeat",
@@ -191,4 +191,4 @@ export const repeatedData =[
       value: "custom",
       text: "Custom",
     },
-  ]);
+  ];

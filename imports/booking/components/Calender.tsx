@@ -53,6 +53,8 @@ import {
 import "@mobiscroll/react/dist/css/mobiscroll.min.css";
 import moment from "moment";
 import { useTheme } from "next-themes";
+import { ISchedule } from "tui-calendar";
+import { CreateBooking, UpdateBooking } from "@/types/vanue";
 import {
   ChangeEvent,
   FC,
@@ -76,16 +78,7 @@ const yesterday = new Date(
 
 const getWeekDayNum = useGetWeekDayNum;
 
-const Calender: FC = ({
-  events,
-  createBooking,
-  refetch,
-  isLoading,
-  setEvents,
-  cancelBooking,
-  updateBooking,
-  setRange,
-}: {
+interface CalendarProps {
   events: ISchedule[];
   createBooking: (data: CreateBooking) => void;
   refetch: () => void;
@@ -94,6 +87,17 @@ const Calender: FC = ({
   cancelBooking: (id: string) => void;
   updateBooking: (input: { id: string; data: UpdateBooking }) => void;
   setRange: (range: { start: string; end: string }) => void;
+}
+
+const Calender: FC<CalendarProps> = ({
+  events,
+  createBooking,
+  refetch,
+  isLoading,
+  setEvents,
+  cancelBooking,
+  updateBooking,
+  setRange,
 }) => {
   const [myEvents, setMyEvents] = useState<MbscCalendarEvent[]>([]);
   const { resolvedTheme } = useTheme();
@@ -158,6 +162,7 @@ const Calender: FC = ({
   const [editFromPopup, setEditFromPopup] = useState<boolean>(false);
 
   const [undoEvent, setUndoEvent] = useState<MbscCalendarEvent | null>(null);
+  const venueId = Number(localStorage.getItem("venueId"));
 
   const colorButtons = useMemo<(string | MbscPopupButton)[]>(
     () => [
@@ -537,25 +542,30 @@ const Calender: FC = ({
               tempEvent!.date instanceof Date)
               ? new Date(tempEvent!.date).toISOString()
               : "2025-06-06T00:00:00Z",
-          name: newEv!.title,
+          name: newEv!.title || "",
           bookedGrounds: Number(2),
           totalAmount: Number(tempEvent!.amount),
           phone: tempEvent!.mobile,
         },
       });
     } else {
-      const localDate = new Date(popupEventDate[0]);
+      const localDate = new Date(popupEventDate[0] as Date);
       const result = moment(localDate).format("YYYY-MM-DD");
       const utcMidnight = moment.utc(result).format("YYYY-MM-DD[T]00:00:00[Z]");
 
       createBooking({
-        name: popupEventTitle,
+        name: popupEventTitle || "",
         phone: popupEventDescription,
-        startTime: popupEventDate[0],
-        endTime: popupEventDate[1],
+        startTime: moment(popupEventDate[0] as Date)
+          .utc()
+          .format("YYYY-MM-DDTHH:mm:ss[Z]"),
+
+        endTime: moment(popupEventDate[1] as Date)
+          .utc()
+          .format("YYYY-MM-DDTHH:mm:ss[Z]"),
         date: utcMidnight,
         totalAmount: Number(popupEventAmount),
-        venueId: 7,
+        venueId: venueId,
         bookedGrounds: Number(2),
       });
 
@@ -583,6 +593,7 @@ const Calender: FC = ({
     popupEventAmount,
     createBooking,
     updateBooking,
+    venueId,
   ]);
 
   const deleteEvent = useCallback(
@@ -893,7 +904,7 @@ const Calender: FC = ({
 
   const handleEventClick = useCallback(
     (args: MbscEventClickEvent) => {
-      const oldEvent = args.originEvent;
+      const oldEvent = args.event;
       const start = oldEvent && oldEvent.start ? oldEvent.start : null;
 
       // Handle recurring events
@@ -1008,7 +1019,7 @@ const Calender: FC = ({
             tempEvent!.date instanceof Date)
             ? new Date(tempEvent!.date).toISOString()
             : "2025-06-06T00:00:00Z",
-        name: tempEvent!.title,
+        name: tempEvent!.title || "",
         bookedGrounds: Number(2),
         totalAmount: Number(tempEvent!.amount),
         phone: tempEvent!.mobile,
@@ -1477,7 +1488,6 @@ const Calender: FC = ({
                           inputStyle="outline"
                           value={occurrences.toString()}
                           onChange={occurrancesChange}
-                          onClick={() => setCondition("count")}
                         />
                         occurrences
                         <span className="mbsc-description">

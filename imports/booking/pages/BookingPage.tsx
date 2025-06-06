@@ -21,7 +21,7 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
     return { start, end };
   });
 
-  const { refetch } = useBookingByRange(venue.id, range);
+  const { refetch, isLoading } = useBookingByRange(venue.id, range);
   const [events, setEvents] = useState<ISchedule[]>([]);
 
   const updateEvents = (data: any) => {
@@ -84,6 +84,9 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
         cancelBooking={cancelBooking}
         updateBooking={updateBooking}
         setRange={setRange}
+        refetch={refetch}
+        isLoading={isLoading}
+        setEvents={setEvents}
       />
     </div>
   );
