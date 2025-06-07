@@ -176,9 +176,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         <div className="flex items-center gap-2">
           <TableCellViewer item={row.original} />
           <div className="w-32">
-            <Badge variant="outline" className="text-muted-foreground px-1.5">
+            {/* <Badge variant="outline" className="text-muted-foreground px-1.5">
               {row.original.customer?.name}
-            </Badge>
+            </Badge> */}
           </div>
         </div>
       );

@@ -18,7 +18,7 @@ import { useVenueStore } from "@/store/venueStore";
 const SlotInfo = () => {
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [selectedTimeFilter, setSelectedTimeFilter] = useState("All");
-  const { data } = useDashboardStore();
+  const { dashboardData } = useDashboardStore();
   const { selectedvenueId } = useVenueStore();
   const { isLoading } = useDashboardData(selectedvenueId);
   const [hasMounted, setHasMounted] = useState(false);
@@ -38,7 +38,7 @@ const SlotInfo = () => {
   };
 
   const slots =
-    data?.bookingsThisMonth?.map((slot: any) => {
+    dashboardData?.bookingsThisMonth?.map((slot: any) => {
       const start = new Date(slot.startTime);
       const end = new Date(slot.endTime);
       const duration = differenceInMinutes(end, start);

@@ -12,7 +12,7 @@ import { useDashboardStore } from "@/store/dashboardStore";
 import Venues from "./Venues";
 
 const DashboardCard = () => {
-  const { data } = useDashboardStore();
+  const { dashboardData } = useDashboardStore();
 
   return (
     <>
@@ -30,7 +30,7 @@ const DashboardCard = () => {
           </CardHeader>
           <CardContent>
             <h1 className="text-3xl font-bold">
-              {data?.thisMonthBookingsCount ?? 0}
+              {dashboardData?.thisMonthBookingsCount ?? 0}
             </h1>
           </CardContent>
         </Card>
@@ -48,7 +48,7 @@ const DashboardCard = () => {
           <CardContent>
             <h1 className="text-3xl font-bold">
               <IndianRupee className="inline mb-1" />
-              {data?.thisMonthTotalAmount ?? 0}
+              {dashboardData?.thisMonthTotalAmount ?? 0}
             </h1>
           </CardContent>
         </Card>
@@ -64,12 +64,14 @@ const DashboardCard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <h1 className="text-3xl font-bold">{data?.newUsersCount ?? 0}</h1>
+            <h1 className="text-3xl font-bold">
+              {dashboardData?.newUsersCount ?? 0}
+            </h1>
           </CardContent>
           <CardFooter className="font-semibold flex gap-3 items-center">
             New users
             <div className="h-5 w-5 bg-gray-200 rounded-full flex justify-center items-center text-xs">
-              {data?.newUsersCount ?? 0}
+              {dashboardData?.newUsersCount ?? 0}
             </div>
           </CardFooter>
         </Card>

@@ -7,10 +7,10 @@ import { format, formatDistanceToNow } from "date-fns";
 
 const BookingList = () => {
   const [showAll, setShowAll] = useState(false);
-  const { data } = useDashboardStore();
+  const { dashboardData } = useDashboardStore();
 
   const bookings =
-    data?.newBookings
+    dashboardData?.newBookings
       ?.filter((booking: any) => !booking.isCancel)
       .map((booking: any, index: number) => {
         const user = booking.user || {};

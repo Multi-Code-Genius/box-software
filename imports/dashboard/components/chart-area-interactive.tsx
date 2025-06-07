@@ -42,25 +42,25 @@ const chartConfig = {
 export function ChartAreaInteractive() {
   const [chartData, setChartData] = React.useState<DashboardData[]>([]);
 
-  const { data } = useDashboardStore();
+  const { dashboardData } = useDashboardStore();
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("90d");
 
   React.useEffect(() => {
-    if (!data) return;
+    if (!dashboardData) return;
 
     let selectedData = [];
 
-    if (timeRange === "7d" && data.lastSevenDaysBookings) {
-      selectedData = data.lastSevenDaysBookings;
-    } else if (timeRange === "30d" && data.lastThirtyDaysBookings) {
-      selectedData = data.lastThirtyDaysBookings;
-    } else if (timeRange === "90d" && data.lastThreeMonthBookings) {
-      selectedData = data.lastThreeMonthBookings;
+    if (timeRange === "7d" && dashboardData.lastSevenDaysBookings) {
+      selectedData = dashboardData.lastSevenDaysBookings;
+    } else if (timeRange === "30d" && dashboardData.lastThirtyDaysBookings) {
+      selectedData = dashboardData.lastThirtyDaysBookings;
+    } else if (timeRange === "90d" && dashboardData.lastThreeMonthBookings) {
+      selectedData = dashboardData.lastThreeMonthBookings;
     }
 
     setChartData(selectedData ?? []);
-  }, [data, timeRange]);
+  }, [dashboardData, timeRange]);
 
   React.useEffect(() => {}, [timeRange]);
 

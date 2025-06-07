@@ -14,12 +14,13 @@ import {
 import { useDashboardStore } from "@/store/dashboardStore";
 
 export function SectionCards() {
-  const { data } = useDashboardStore();
+  const { dashboardData } = useDashboardStore();
 
   const growthRate =
-    data?.lastMonthTotal && data?.MonthTotalBookingAmount
-      ? ((data.MonthTotalBookingAmount - data.lastMonthTotal) /
-          data.lastMonthTotal) *
+    dashboardData?.lastMonthTotal && dashboardData?.MonthTotalBookingAmount
+      ? ((dashboardData.MonthTotalBookingAmount -
+          dashboardData.lastMonthTotal) /
+          dashboardData.lastMonthTotal) *
         100
       : 0;
 
@@ -29,19 +30,19 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data?.MonthTotalBookingAmount}
+            {dashboardData?.MonthTotalBookingAmount}
           </CardTitle>
           <CardAction>
             <Badge
               variant="outline"
               className="flex items-center gap-1  px-1.5"
             >
-              {(data?.revenueGroth ?? 0) >= 0 ? (
+              {(dashboardData?.revenueGroth ?? 0) >= 0 ? (
                 <IconTrendingUp size={12} />
               ) : (
                 <IconTrendingDown size={12} />
               )}
-              <span>{data?.revenueGroth ?? 0}%</span>
+              <span>{dashboardData?.revenueGroth ?? 0}%</span>
             </Badge>
           </CardAction>
         </CardHeader>
@@ -58,19 +59,19 @@ export function SectionCards() {
         <CardHeader>
           <CardDescription>New Customers</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data?.NewCustomers?.length}
+            {dashboardData?.NewCustomers?.length}
           </CardTitle>
           <CardAction>
             <Badge
               variant="outline"
               className="flex items-center gap-1  px-1.5"
             >
-              {(data?.customerGrowth ?? 0) >= 0 ? (
+              {(dashboardData?.customerGrowth ?? 0) >= 0 ? (
                 <IconTrendingUp size={12} />
               ) : (
                 <IconTrendingDown size={12} />
               )}
-              <span>{data?.customerGrowth ?? 0}%</span>
+              <span>{dashboardData?.customerGrowth ?? 0}%</span>
             </Badge>
           </CardAction>
         </CardHeader>
@@ -89,19 +90,19 @@ export function SectionCards() {
           <CardDescription>This month bookings</CardDescription>
 
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data?.ThisMonthBookings?.length}
+            {dashboardData?.ThisMonthBookings?.length}
           </CardTitle>
           <CardAction>
             <Badge
               variant="outline"
               className="flex items-center gap-1  px-1.5"
             >
-              {(data?.bookingGrowth ?? 0) >= 0 ? (
+              {(dashboardData?.bookingGrowth ?? 0) >= 0 ? (
                 <IconTrendingUp size={12} />
               ) : (
                 <IconTrendingDown size={12} />
               )}
-              <span>{data?.bookingGrowth ?? 0}%</span>
+              <span>{dashboardData?.bookingGrowth ?? 0}%</span>
             </Badge>
           </CardAction>
         </CardHeader>

@@ -7,6 +7,8 @@ import { DataTable } from "@/imports/dashboard/components/data-table";
 import { SectionCards } from "@/imports/dashboard/components/section-cards";
 import Venues from "@/imports/dashboard/components/Venues";
 import { useDashboardStore } from "@/store/dashboardStore";
+import { Loader2 } from "lucide-react";
+
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -14,21 +16,11 @@ export default function DashBoardPage() {
   const router = useRouter();
 
   const { data: venues, isLoading } = useVenues();
-  const { data } = useDashboardStore();
+  const { dashboardData } = useDashboardStore();
 
   const handleClick = () => {
     router.push("/addVenues");
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
-          Loading venues...
-        </span>
-      </div>
-    );
-  }
 
   if (!venues?.venues?.length) {
     return (
@@ -67,7 +59,9 @@ export default function DashBoardPage() {
           <div className="px-4 lg:px-6">
             <ChartAreaInteractive />
           </div>
-          <DataTable data={data?.ThisMonthBookings ?? []} />
+          {dashboardData?.ThisMonthBookings && (
+            <DataTable data={dashboardData.ThisMonthBookings} />
+          )}
         </div>
       </div>
     </div>

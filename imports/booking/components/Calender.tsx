@@ -65,6 +65,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { Info } from "lucide-react";
 
 declare module "@mobiscroll/react";
 
@@ -500,7 +501,42 @@ const Calender: FC<CalendarProps> = ({
     occurrences,
   ]);
 
+  const [errors, setErrors] = useState({
+    name: "",
+    number: "",
+    amount: "",
+  });
+
   const saveEvent = useCallback(() => {
+    const validationErrors = { name: "", number: "", amount: "" };
+
+    const title = popupEventTitle ?? "";
+    const description = popupEventDescription ?? "";
+    const amount = popupEventAmount ?? "";
+
+    if (!title.trim()) {
+      validationErrors.name = "Name is required";
+    }
+
+    if (!description.trim()) {
+      validationErrors.number = "Mobile number is required";
+    } else if (!/^\d{10}$/.test(description.trim())) {
+      validationErrors.number = "Enter a valid 10-digit number";
+    }
+
+    if (!amount.trim()) {
+      validationErrors.amount = "Amount is required";
+    } else if (isNaN(Number(amount))) {
+      validationErrors.amount = "Amount must be a number";
+    }
+
+    const hasErrors = Object.values(validationErrors).some((e) => e);
+    if (hasErrors) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({ name: "", number: "", amount: "" });
     const newEv = {
       id: tempEvent!.id ? String(tempEvent!.id) : "",
       title: popupEventTitle,
@@ -1243,16 +1279,33 @@ const Calender: FC<CalendarProps> = ({
         cssClass="md-recurring-event-editor-popup"
       >
         <div className="">
-          <Input
-            label="Name"
-            value={popupEventTitle === "New event" ? "" : popupEventTitle}
-            onChange={titleChange}
-          />
-          <Textarea
-            label="Mobile No"
-            value={popupEventDescription}
-            onChange={descriptionChange}
-          />
+          <div className="relative">
+            <Input
+              label="Name"
+              value={popupEventTitle === "New event" ? "" : popupEventTitle}
+              onChange={titleChange}
+              className={errors.name ? "pr-10 border-red-500" : ""}
+            />
+            {errors.name && (
+              <span className="absolute right-3 top-3 text-red-500">
+                <Info className="w-4 h-4" />
+              </span>
+            )}
+          </div>
+
+          <div className="relative">
+            <Textarea
+              label="Mobile No"
+              value={popupEventDescription}
+              onChange={descriptionChange}
+              className={errors.number ? "pr-10 border-red-500" : ""}
+            />
+            {errors.number && (
+              <span className="absolute right-3 top-3 text-red-500">
+                <Info className="w-4 h-4" />
+              </span>
+            )}
+          </div>
         </div>
         <div className="">
           <Input ref={startRef} label="Starts" />
@@ -1276,11 +1329,20 @@ const Calender: FC<CalendarProps> = ({
             onChange={repeatChange}
           />
 
-          <Input
-            label="Total Amount"
-            value={popupEventAmount}
-            onChange={amountChange}
-          />
+          <div className="relative">
+            <Input
+              label="Total Amount"
+              value={popupEventAmount}
+              onChange={amountChange}
+              className={errors.amount ? "pr-10 border-red-500" : ""}
+            />
+            {errors.amount && (
+              <span className="absolute right-3 top-3 text-red-500">
+                <Info className="w-4 h-4" />
+              </span>
+            )}
+          </div>
+
           <div onClick={openColorPicker} className="event-color-c">
             <div className="event-color-label">Color</div>
             <div
