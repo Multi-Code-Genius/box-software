@@ -141,7 +141,7 @@ const Form: React.FC = () => {
     <div className="h-[calc(100vh-75px)] w-full flex justify-center items-center">
       <form
         onSubmit={handleSubmit}
-        className="w-[50%] flex flex-col gap-4 border px-10 py-8 shadow-lg rounded-lg"
+        className="w-[90%] flex flex-col gap-4 px-10 py-8 rounded-lg"
       >
         <div className="flex gap-5">
           <div className="space-y-2 w-full">
@@ -318,7 +318,7 @@ const Form: React.FC = () => {
             </div>
           </RadioGroup>
         </div>
-        <div className="flex gap-5">
+        {/* <div className="flex gap-5">
           <div className="space-y-2 w-full">
             <Label>Latitude</Label>
             <Input
@@ -342,7 +342,7 @@ const Form: React.FC = () => {
               className="border focus-visible:ring-0 border-border bg-card"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="flex gap-5">
           <div className="space-y-2 w-full">
@@ -380,7 +380,7 @@ const Form: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <Label>Upload Image</Label>
           <div className="flex items-center space-x-4 ">
             <label className="cursor-pointer">
@@ -406,9 +406,9 @@ const Form: React.FC = () => {
               <span className="text-sm text-red-500">{errors.image}</span>
             )}
           </div>
-        </div>
+        </div> */}
 
-        <div className="flex justify-center">
+        <div className="flex justify-start w-3xs">
           <Button type="submit" disabled={loading} className="w-1/2">
             {loading ? "Submitting..." : "Submit"}
           </Button>
