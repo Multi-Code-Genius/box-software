@@ -102,6 +102,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useDashboardStore } from "@/store/dashboardStore";
 
 export const schema = z.object({
   id: z.number(),
@@ -318,12 +319,16 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   );
 }
 
-export function DataTable({
-  data: initialData,
-}: {
-  data: z.infer<typeof schema>[];
-}) {
+export function DataTable() {
+  const { dashboardData } = useDashboardStore();
+
+  const initialData = dashboardData?.ThisMonthBookings || [];
   const [data, setData] = React.useState(() => initialData);
+
+  React.useEffect(() => {
+    setData(dashboardData?.ThisMonthBookings || []);
+  }, [dashboardData]);
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});

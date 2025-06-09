@@ -16,7 +16,7 @@ import { Loader2 } from "lucide-react";
 
 const Venues = () => {
   const { venues, setVenues } = useVenueStore();
-  const { setDashboardData } = useDashboardStore();
+
   const { selectedvenueId, setSelectedvenueId, setVenue } = useVenueStore();
 
   const {
@@ -24,33 +24,6 @@ const Venues = () => {
     isLoading: dashboardLoading,
     refetch,
   } = useDashboardData(selectedvenueId);
-
-  const { data } = useVenues();
-
-  useEffect(() => {
-    if (data?.venues?.length) {
-      setVenues(data.venues);
-
-      if (!selectedvenueId) {
-        const defaultvenueId = data.venues[0].id;
-        setVenue(data.venues[0]);
-        setSelectedvenueId(defaultvenueId);
-        localStorage.setItem("venueId", defaultvenueId);
-      }
-    }
-  }, [data, selectedvenueId, setSelectedvenueId, setVenue, setVenues]);
-
-  useEffect(() => {
-    if (dashboardData) {
-      setDashboardData(dashboardData);
-    }
-  }, [dashboardData, setDashboardData, selectedvenueId]);
-
-  useEffect(() => {
-    if (selectedvenueId) {
-      refetch();
-    }
-  }, [selectedvenueId, refetch]);
 
   const handleSelectVenue = (venue: any) => {
     setSelectedvenueId(venue.id);

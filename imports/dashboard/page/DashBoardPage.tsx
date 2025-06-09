@@ -11,18 +11,68 @@ import { Loader2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useDashboardData } from "@/api/dashboard";
+import { useVenueStore } from "@/store/venueStore";
 
 export default function DashBoardPage() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
 
-  const { data: venues, isLoading } = useVenues();
-  const { dashboardData } = useDashboardStore();
+  const { data, isLoading } = useVenues();
+
+  const { venues, setVenues } = useVenueStore();
+  const { setDashboardData } = useDashboardStore();
+  const { selectedvenueId, setSelectedvenueId, setVenue } = useVenueStore();
+
+  const {
+    data: dashboardData,
+    isLoading: dashboardLoading,
+    refetch,
+  } = useDashboardData(selectedvenueId);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (data?.venues?.length) {
+      setVenues(data.venues);
+
+      if (!selectedvenueId) {
+        const defaultvenueId = data.venues[0].id;
+        setVenue(data.venues[0]);
+        setSelectedvenueId(defaultvenueId);
+        localStorage.setItem("venueId", defaultvenueId);
+      }
+    }
+  }, [data, selectedvenueId, setSelectedvenueId, setVenue, setVenues]);
+
+  useEffect(() => {
+    if (dashboardData) {
+      setDashboardData(dashboardData);
+    }
+  }, [dashboardData, setDashboardData]);
+
+  useEffect(() => {
+    if (selectedvenueId) {
+      refetch();
+    }
+  }, [selectedvenueId, refetch]);
 
   const handleClick = () => {
     router.push("/addVenues");
   };
 
-  if (!venues?.venues?.length) {
+  if (!mounted || isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin w-6 h-6 mr-2" />
+        Loading...
+      </div>
+    );
+  }
+  if (!data?.venues?.length) {
     return (
       <div className="flex flex-col justify-center items-center h-[80vh] text-center px-4">
         <Image
@@ -59,9 +109,10 @@ export default function DashBoardPage() {
           <div className="px-4 lg:px-6">
             <ChartAreaInteractive />
           </div>
-          {dashboardData?.ThisMonthBookings && (
+          {/* {dashboardData?.ThisMonthBookings && (
             <DataTable data={dashboardData.ThisMonthBookings} />
-          )}
+          )} */}
+          <DataTable />
         </div>
       </div>
     </div>
