@@ -236,7 +236,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ) : (
           <IconLoader />
         )}
-        {row.original.date}
+        {new Date(row.original.date).toLocaleDateString()}
       </Badge>
     ),
   },
@@ -250,7 +250,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ) : (
           <IconLoader />
         )}
-        {row.original.start_time}
+        {new Date(row.original.start_time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
       </Badge>
     ),
   },
@@ -264,7 +267,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ) : (
           <IconLoader />
         )}
-        {row.original.end_time}
+        {new Date(row.original.end_time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
       </Badge>
     ),
   },
