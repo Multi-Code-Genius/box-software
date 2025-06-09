@@ -52,7 +52,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { toast } from "sonner";
 import { z } from "zod";
 
 import { Badge } from "@/components/ui/badge";
@@ -103,6 +102,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useDashboardStore } from "@/store/dashboardStore";
+import { Loader2 } from "lucide-react";
+import { useVenues } from "@/api/vanue";
+import { useDashboardData } from "@/api/dashboard";
+import { useVenueStore } from "@/store/venueStore";
 
 export const schema = z.object({
   id: z.number(),
@@ -217,12 +220,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <Badge
         variant="outline"
-        className="text-muted-foreground px-1.5 flex items-center gap-1"
+        className="text-muted-foreground px-1.5 flex items-center "
       >
         {row.original.status === "Done" && (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
         )}
-        {row.original.customer.total_spent}
+        ₹<span>{row.original.customer.total_spent}</span>
       </Badge>
     ),
   },
@@ -327,7 +330,9 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 
 export function DataTable() {
   const { dashboardData } = useDashboardStore();
-
+  const { selectedvenueId } = useVenueStore();
+  const { isLoading: dashboardLoading } = useDashboardData(selectedvenueId);
+  const { isLoading } = useVenues();
   const initialData = dashboardData?.ThisMonthBookings || [];
   const [data, setData] = React.useState(() => initialData);
 
@@ -499,7 +504,16 @@ export function DataTable() {
                 ))}
               </TableHeader>
               <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
+                {isLoading || dashboardLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      <Loader2 className="animate-spin mx-auto" />
+                    </TableCell>
+                  </TableRow>
+                ) : table.getRowModel().rows?.length ? (
                   <SortableContext
                     items={dataIds}
                     strategy={verticalListSortingStrategy}

@@ -29,6 +29,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DashboardData } from "@/types/auth";
 import { useDashboardStore } from "@/store/dashboardStore";
+import moment from "moment";
+import { useDashboardData } from "@/api/dashboard";
+import { useVenueStore } from "@/store/venueStore";
+import { useVenues } from "@/api/vanue";
+import { Loader, Loader2 } from "lucide-react";
 
 export const description = "An interactive area chart";
 
@@ -41,15 +46,19 @@ const chartConfig = {
 
 export function ChartAreaInteractive() {
   const [chartData, setChartData] = React.useState<DashboardData[]>([]);
-
+  const { selectedvenueId } = useVenueStore();
+  const { isLoading } = useVenues();
+  const { isLoading: dashboardLoading } = useDashboardData(selectedvenueId);
   const { dashboardData } = useDashboardStore();
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("90d");
 
+  console.log(dashboardData, "dashboardData");
+
   React.useEffect(() => {
     if (!dashboardData) return;
 
-    let selectedData = [];
+    let selectedData: any[] = [];
 
     if (timeRange === "7d" && dashboardData.lastSevenDaysBookings) {
       selectedData = dashboardData.lastSevenDaysBookings;
@@ -59,10 +68,14 @@ export function ChartAreaInteractive() {
       selectedData = dashboardData.lastThreeMonthBookings;
     }
 
-    setChartData(selectedData ?? []);
-  }, [dashboardData, timeRange]);
+    const today = moment();
 
-  React.useEffect(() => {}, [timeRange]);
+    const filteredData = selectedData.filter((item) =>
+      moment(item.date).isSameOrBefore(today, "day")
+    );
+
+    setChartData(filteredData ?? []);
+  }, [dashboardData, timeRange]);
 
   React.useEffect(() => {
     if (isMobile) {
@@ -129,7 +142,11 @@ export function ChartAreaInteractive() {
         </CardAction>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        {filteredData.length > 0 ? (
+        {isLoading || dashboardLoading ? (
+          <div className="flex  items-center justify-center text-sm">
+            <Loader2 className="animate-spin" />
+          </div>
+        ) : filteredData.length > 0 ? (
           <ChartContainer
             config={chartConfig}
             className="aspect-auto h-[250px] w-full"

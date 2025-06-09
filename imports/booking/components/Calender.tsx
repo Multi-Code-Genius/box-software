@@ -109,10 +109,13 @@ const Calender: FC<CalendarProps> = ({
     }
   }, [events]);
 
-  setOptions({
-    theme: "ios",
-    themeVariant: resolvedTheme,
-  });
+  useEffect(() => {
+    setOptions({
+      theme: "ios",
+      themeVariant: resolvedTheme,
+    });
+  }, [resolvedTheme]);
+
   const [tempEvent, setTempEvent] = useState<MbscCalendarEvent>();
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEdit, setEdit] = useState<boolean>(false);
@@ -185,7 +188,9 @@ const Calender: FC<CalendarProps> = ({
     const start = moment(args.firstDay).format("YYYY-MM-DD");
     const end = moment(args.lastDay).format("YYYY-MM-DD");
     console.log("Current view week:", start, "to", end);
-    setRange({ start, end });
+    setTimeout(() => {
+      setRange({ start, end });
+    }, 0);
   };
 
   const handleEventCreateFailed = useCallback(
@@ -524,7 +529,7 @@ const Calender: FC<CalendarProps> = ({
       validationErrors.number = "Enter a valid 10-digit number";
     }
 
-    if (!amount.trim()) {
+    if (!String(amount).trim()) {
       validationErrors.amount = "Amount is required";
     } else if (isNaN(Number(amount))) {
       validationErrors.amount = "Amount must be a number";
@@ -550,35 +555,32 @@ const Calender: FC<CalendarProps> = ({
     };
 
     if (isEdit) {
-      // Update the event in the list
       const index = myEvents.findIndex((x) => x.id === tempEvent!.id);
       const newEventList = [...myEvents];
 
       newEventList.splice(index, 1, newEv);
       setMyEvents(newEventList);
 
+      const eventStart = moment(tempEvent!.start as Date);
+      const utcMidnightDate = eventStart
+        .clone()
+        .startOf("day")
+        .utc()
+        .toISOString();
+
+      console.log(tempEvent, "tempEven12t");
+
       updateBooking({
-        id: tempEvent!.id ? String(tempEvent!.id) : "",
+        id: String(tempEvent!.id),
         data: {
-          startTime:
-            tempEvent!.start &&
-            (typeof tempEvent!.start === "string" ||
-              tempEvent!.start instanceof Date)
-              ? new Date(tempEvent!.start).toISOString()
-              : "",
-          endTime:
-            tempEvent!.end &&
-            (typeof tempEvent!.end === "string" ||
-              tempEvent!.end instanceof Date)
-              ? new Date(tempEvent!.end).toISOString()
-              : "",
-          date:
-            tempEvent!.date &&
-            (typeof tempEvent!.date === "string" ||
-              tempEvent!.date instanceof Date)
-              ? new Date(tempEvent!.date).toISOString()
-              : "2025-06-06T00:00:00Z",
-          name: newEv!.title || "",
+          startTime: tempEvent!.start
+            ? moment(tempEvent!.start).utc().format("YYYY-MM-DDTHH:mm:ss[Z]")
+            : "",
+          endTime: tempEvent!.end
+            ? moment(tempEvent!.end).utc().format("YYYY-MM-DDTHH:mm:ss[Z]")
+            : "",
+          date: utcMidnightDate,
+          name: newEv.title || "",
           bookedGrounds: Number(2),
           totalAmount: Number(tempEvent!.amount),
           phone: tempEvent!.mobile,
@@ -589,9 +591,11 @@ const Calender: FC<CalendarProps> = ({
       const result = moment(localDate).format("YYYY-MM-DD");
       const utcMidnight = moment.utc(result).format("YYYY-MM-DD[T]00:00:00[Z]");
 
+      console.log(popupEventDescription, "popupEventDescription");
+
       createBooking({
         name: popupEventTitle || "",
-        phone: popupEventDescription,
+        phone: popupEventDescription || "",
         startTime: moment(popupEventDate[0] as Date)
           .utc()
           .format("YYYY-MM-DDTHH:mm:ss[Z]"),
@@ -692,7 +696,7 @@ const Calender: FC<CalendarProps> = ({
       const startDate = new Date(event.start as string);
       setTitle(event.title);
       setAmount(event.amount);
-      setDescription(event.description);
+      setDescription(event.description ?? event.mobile ?? "");
       setDate([startDate, new Date(event.end as string)]);
       setUntilDate(
         formatDate(
@@ -840,16 +844,27 @@ const Calender: FC<CalendarProps> = ({
     [updateOptionDates]
   );
 
-  const onDeleteClick = useCallback(() => {
-    if (tempEvent!.recurring) {
+  const onDeleteClick = useCallback(async () => {
+    if (tempEvent?.recurring) {
       setRecurringText("Delete");
       setRecurringDelete(true);
       setRecurringEditOpen(true);
     } else {
-      deleteEvent(tempEvent!);
-      setOpen(false);
+      try {
+        if (tempEvent?.id != null) {
+          cancelBooking(String(tempEvent.id));
+        }
+
+        if (tempEvent) {
+          deleteEvent(tempEvent);
+        }
+
+        setOpen(false);
+      } catch (error) {
+        console.error("Cancel booking failed:", error);
+      }
     }
-  }, [deleteEvent, tempEvent]);
+  }, [cancelBooking, deleteEvent, tempEvent]);
 
   // Populate data for months
   const populateMonthDays = useCallback(
@@ -1036,29 +1051,21 @@ const Calender: FC<CalendarProps> = ({
     const tempEvent = args.event;
 
     updateBooking({
-      id: tempEvent!.id ? String(tempEvent!.id) : "",
+      id: String(tempEvent?.id ?? ""),
       data: {
-        startTime:
-          tempEvent!.start &&
-          (typeof tempEvent!.start === "string" ||
-            tempEvent!.start instanceof Date)
-            ? new Date(tempEvent!.start).toISOString()
-            : "",
-        endTime:
-          tempEvent!.end &&
-          (typeof tempEvent!.end === "string" || tempEvent!.end instanceof Date)
-            ? new Date(tempEvent!.end).toISOString()
-            : "",
-        date:
-          tempEvent!.date &&
-          (typeof tempEvent!.date === "string" ||
-            tempEvent!.date instanceof Date)
-            ? new Date(tempEvent!.date).toISOString()
-            : "2025-06-06T00:00:00Z",
-        name: tempEvent!.title || "",
-        bookedGrounds: Number(2),
-        totalAmount: Number(tempEvent!.amount),
-        phone: tempEvent!.mobile,
+        startTime: tempEvent?.start
+          ? moment(tempEvent.start).utc().toISOString()
+          : "",
+        endTime: tempEvent?.end
+          ? moment(tempEvent.end).utc().toISOString()
+          : "",
+        date: tempEvent?.start
+          ? moment(tempEvent.start).utc().startOf("day").toISOString()
+          : "2025-06-06T00:00:00Z",
+        name: tempEvent?.title ?? "",
+        bookedGrounds: 2,
+        totalAmount: Number(tempEvent?.amount ?? 0),
+        phone: tempEvent?.mobile ?? "",
       },
     });
   }, []);
@@ -1292,7 +1299,6 @@ const Calender: FC<CalendarProps> = ({
               </span>
             )}
           </div>
-
           <div className="relative">
             <Textarea
               label="Mobile No"
@@ -1300,6 +1306,7 @@ const Calender: FC<CalendarProps> = ({
               onChange={descriptionChange}
               className={errors.number ? "pr-10 border-red-500" : ""}
             />
+
             {errors.number && (
               <span className="absolute right-3 top-3 text-red-500">
                 <Info className="w-4 h-4" />
