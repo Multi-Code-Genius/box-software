@@ -18,6 +18,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const CustomerDetails = () => {
   const { data, isLoading } = useGetCustomers();
@@ -26,6 +29,12 @@ const CustomerDetails = () => {
     null
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/booking");
+  };
 
   useEffect(() => {
     if (data?.customer && Array.isArray(data.customer)) {
@@ -48,8 +57,28 @@ const CustomerDetails = () => {
 
   if (!customers.length) {
     return (
-      <div className="p-4 text-center text-muted-foreground">
-        No customers found.
+      <div className="flex flex-col justify-center items-center h-[80vh] text-center px-4">
+        <Image
+          src="/images/noval.svg"
+          alt="No Venues Found"
+          width={700}
+          height={700}
+          className="mb-6"
+          priority
+        />
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
+          No customers Found
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+          Looks like you haven&apos;t create any booking yet. Start by creating
+          your first booking to manage customers and info.
+        </p>
+        <Button
+          onClick={handleClick}
+          className="px-6 py-3 text-base rounded-md"
+        >
+          Create Your First Booking
+        </Button>
       </div>
     );
   }

@@ -74,6 +74,8 @@ export const api = async (
   try {
     const api_url = BASE_URL;
 
+    // const api_url = "http://localhost:1008";
+
     const response = await fetch(`${api_url}${endpoint}`, requestConfig);
 
     if (!response.ok) {

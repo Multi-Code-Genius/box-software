@@ -26,8 +26,9 @@ import {
   Users,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 const VenueDetail = () => {
   const { venues, setVenues } = useVenueStore();
@@ -39,6 +40,8 @@ const VenueDetail = () => {
   const { mutate: editVenue } = useEditVenue();
   const { isLoading } = useVenues();
   const [hasMounted, setHasMounted] = useState(false);
+
+  const router = useRouter();
 
   const handleEditField = (
     field: string,
@@ -64,6 +67,10 @@ const VenueDetail = () => {
         [field]: value,
       };
     });
+  };
+
+  const handleClick = () => {
+    router.push("/addVenues");
   };
 
   useEffect(() => {
@@ -120,16 +127,36 @@ const VenueDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-40 text-muted-foreground">
-        <Loader2 className="animate-spin mr-2" /> Loading Venues...
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin w-6 h-6 mr-2" />
+        Loading...
       </div>
     );
   }
-
-  if (!venues?.length) {
+  if (!data?.venues?.length) {
     return (
-      <div className="pt-10 text-center text-base text-muted-foreground">
-        No Venues found.
+      <div className="flex flex-col justify-center items-center h-[80vh] text-center px-4">
+        <Image
+          src="/images/nodata.svg"
+          alt="No Venues Found"
+          width={700}
+          height={700}
+          className="mb-6"
+          priority
+        />
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
+          No Venues Found
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+          Looks like you haven&apos;t added any venues yet. Start by creating
+          your first venue to manage bookings and availability.
+        </p>
+        <Button
+          onClick={handleClick}
+          className="px-6 py-3 text-base rounded-md"
+        >
+          Create Your First Venue
+        </Button>
       </div>
     );
   }

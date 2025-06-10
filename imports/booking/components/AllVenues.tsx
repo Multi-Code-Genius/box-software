@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useVenueStore } from "@/store/venueStore";
 import { useVenues } from "@/api/vanue";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const AllVenues = () => {
   const [hasMounted, setHasMounted] = useState(false);
@@ -22,6 +24,10 @@ const AllVenues = () => {
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  const handleClick = () => {
+    router.push("/addVenues");
+  };
 
   useEffect(() => {
     if (data?.venues) {
@@ -49,10 +55,38 @@ const AllVenues = () => {
     );
   };
 
-  if (!venues?.length) {
+  if (isLoading) {
     return (
-      <div className="pt-10 text-base text-center text-muted-foreground">
-        No Venues found.
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin w-6 h-6 mr-2" />
+        Loading...
+      </div>
+    );
+  }
+  if (!data?.venues?.length) {
+    return (
+      <div className="flex flex-col justify-center items-center h-[80vh] text-center px-4">
+        <Image
+          src="/images/nodata.svg"
+          alt="No Venues Found"
+          width={700}
+          height={700}
+          className="mb-6"
+          priority
+        />
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
+          No Venues Found
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
+          Looks like you haven&apos;t added any venues yet. Start by creating
+          your first venue to manage bookings and availability.
+        </p>
+        <Button
+          onClick={handleClick}
+          className="px-6 py-3 text-base rounded-md"
+        >
+          Create Your First Venue
+        </Button>
       </div>
     );
   }
