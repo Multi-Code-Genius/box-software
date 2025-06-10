@@ -13,43 +13,44 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFormValidation } from "@/hooks/useFormValidation";
-import { VenueFormData } from "@/types/vanue";
-import {
-  CircleAlert,
-  FileText,
-  Home,
-  ImageUp,
-  IndianRupee,
-  MapPin,
-  User,
-} from "lucide-react";
-import { useAddGame, useVenues } from "@/api/vanue";
+import { GroundDetails, VenueFormData } from "@/types/vanue";
+import { CircleAlert, CircleMinus, CirclePlus, ImageUp } from "lucide-react";
+import { useAddVenue, useVenues } from "@/api/vanue";
 
 const initialFormData: VenueFormData = {
   name: "",
   description: "",
   category: "",
-  hourlyPrice: 0,
   location: {
     city: "",
     lat: 0,
     lng: 0,
+    area: "",
   },
   address: "",
-  gameInfo: {
+  game_info: {
     type: "",
     maxPlayers: 0,
   },
-  grounds: 0,
+  ground_details: [
+    {
+      ground: 1,
+      hourly_price: 0,
+      capacity: 0,
+      width: 0,
+      height: 0,
+    },
+  ],
+  images: [],
 };
 
 const Form: React.FC = () => {
   const [formData, setFormData] = useState<VenueFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string[]>([]);
 
   const { errors, validate } = useFormValidation();
-  const { mutate } = useAddGame();
+  const { mutate } = useAddVenue();
   const { refetch } = useVenues();
 
   const handleChange = (
@@ -67,8 +68,8 @@ const Form: React.FC = () => {
     } else if (["maxPlayers"].includes(name)) {
       setFormData((prev) => ({
         ...prev,
-        gameInfo: {
-          ...prev.gameInfo,
+        game_info: {
+          ...prev.game_info,
           [name]: parseInt(value),
         },
       }));
@@ -89,21 +90,6 @@ const Form: React.FC = () => {
     setFormData((prev) => ({ ...prev, category: value }));
   };
 
-  const handleRadioChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      category: value,
-    }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, image: file }));
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -112,11 +98,38 @@ const Form: React.FC = () => {
 
     setLoading(true);
 
-    mutate(formData, {
+    const formdata = new FormData();
+
+    const data = {
+      name: formData.name,
+      description: formData.description,
+      category: formData.category,
+      location: {
+        city: formData.location.city,
+        lat: formData.location.lat,
+        lng: formData.location.lng,
+        area: formData.location.area,
+      },
+      address: formData.address,
+      gameInfo: {
+        type: formData.game_info.type,
+        maxPlayers: formData.game_info.maxPlayers,
+      },
+      ground_details: formData.ground_details,
+    };
+
+    formdata.append("data", JSON.stringify(data));
+
+    // Images
+    formData.images.forEach((file: File) => {
+      formdata.append("images", file);
+    });
+
+    mutate(formdata, {
       onSuccess: () => {
         refetch();
         setFormData(initialFormData);
-        setPreview(null);
+        setPreview([]);
       },
       onError: (error) => {
         console.error("Error adding venue:", error);
@@ -130,106 +143,241 @@ const Form: React.FC = () => {
   const handleTurfTypeChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      gameInfo: {
-        ...prev.gameInfo,
+      game_info: {
+        ...prev.game_info,
         type: value,
       },
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const selectedFiles = Array.from(files);
+
+      selectedFiles.forEach((file) => {
+        console.log("File name:", file.name);
+        console.log("File type:", file.type);
+        console.log("File size (bytes):", file.size);
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...selectedFiles],
+      }));
+
+      const newPreviews = selectedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
+      setPreview((prev) => [...prev, ...newPreviews]);
+    }
+  };
+
+  const handleAddGroundDetail = () => {
+    setFormData((prev) => ({
+      ...prev,
+      ground_details: [
+        ...prev.ground_details,
+        {
+          ground: 0,
+          hourly_price: 0,
+          capacity: 0,
+          width: 0,
+          height: 0,
+        },
+      ],
+    }));
+  };
+
+  const handleRemoveGroundDetail = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      ground_details: prev.ground_details.filter((_, i) => i !== indexToRemove),
+    }));
+  };
+
+  const handleGroundFieldChange = (
+    index: number,
+    field: keyof (typeof formData.ground_details)[0],
+    value: string
+  ) => {
+    const updated = [...formData.ground_details];
+    updated[index][field] =
+      field === "hourly_price" ? parseFloat(value) : parseInt(value);
+    setFormData((prev) => ({
+      ...prev,
+      ground_details: updated,
+    }));
+  };
+
   return (
-    <div className="h-[calc(100vh-75px)] w-full flex justify-center items-center">
+    <div className=" min-h-[calc(100vh-48px)]  w-full flex justify-center py-10">
       <form
         onSubmit={handleSubmit}
-        className="w-[90%] flex flex-col gap-4 px-10 py-8 rounded-lg"
+        className="w-[50%] border  overflow-y-auto flex flex-col gap-4 my-4 px-10 py-10 rounded-lg shadow-lg"
       >
         <div className="flex gap-5">
           <div className="space-y-2 w-full">
             <Label>Name</Label>
+            <div className="relative">
+              <Input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter venue name"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.description ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
 
-            <Input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter venue name"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.name && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.name}
-              </div>
-            )}
+              {errors.description && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2 w-full">
             <Label>Description</Label>
+            <div className="relative">
+              <Input
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Enter description"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.description ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
 
-            <Input
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Enter description"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.description && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.description}
-              </div>
-            )}
+              {errors.description && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="flex gap-5">
+          <div className="space-y-2 w-full">
+            <Label>Area</Label>
+            <div className="relative">
+              <Input
+                name="area"
+                value={formData.location.area}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    location: {
+                      ...prev.location,
+                      area: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="Enter area"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.area ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+
+              {errors.area && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="space-y-2 w-full">
             <Label>City</Label>
-            <Input
-              name="city"
-              value={formData.location.city}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  location: {
-                    ...prev.location,
-                    city: e.target.value,
-                  },
-                }))
-              }
-              placeholder="Enter city"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.city && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.city}
-              </div>
-            )}
-          </div>
+            <div className="relative">
+              <Input
+                name="city"
+                value={formData.location.city}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    location: {
+                      ...prev.location,
+                      city: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="Enter city"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.city ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
 
-          <div className="space-y-2 w-full">
-            <Label>Address</Label>
-
-            <Input
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Enter address"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.address && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.address}
-              </div>
-            )}
+              {errors.city && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="flex gap-5">
           <div className="space-y-2 w-full">
-            <Label>Category</Label>
+            <Label>Address</Label>
+            <div className="relative">
+              <Input
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter address"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.address ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+
+              {errors.address && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2 w-full">
+            <Label>Max Players</Label>
+            <div className="relative">
+              <Input
+                name="maxPlayers"
+                type="number"
+                value={formData.game_info.maxPlayers}
+                onChange={handleChange}
+                placeholder="Max players"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.maxPlayers ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+
+              {errors.maxPlayers && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2 w-full">
+          <Label>Turf Type</Label>
+          <div className="relative">
             <Select
-              value={formData.category}
-              onValueChange={handleSelectChange}
+              value={formData.game_info.type}
+              onValueChange={handleTurfTypeChange}
             >
-              <SelectTrigger className="w-full flex items-center justify-between border-border bg-card">
+              <SelectTrigger
+                className={`w-full flex items-center justify-between bg-card ${
+                  errors.type
+                    ? "border-red-500 ring-0 ring-red-500"
+                    : "border-border"
+                }`}
+              >
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -238,178 +386,310 @@ const Form: React.FC = () => {
                 <SelectItem value="Basketball">Basketball</SelectItem>
               </SelectContent>
             </Select>
-            {errors.category && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.category}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2 w-full">
-            <Label>Hourly Price</Label>
-
-            <Input
-              name="hourlyPrice"
-              type="number"
-              value={formData.hourlyPrice}
-              onChange={handleChange}
-              placeholder="Hourly price"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.hourlyPrice && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.hourlyPrice}
+            {errors.type && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                <CircleAlert size={16} />
               </div>
             )}
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm">Turf Type</Label>
-          <RadioGroup
-            className="flex gap-4"
-            value={formData.gameInfo.type}
-            onValueChange={handleTurfTypeChange}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="indoor" id="indoor" className="sr-only" />
-              <label
-                htmlFor="indoor"
-                className={`cursor-pointer px-10 py-1 rounded-lg border border-border bg-card${
-                  formData.gameInfo.type === "indoor"
-                    ? "border border-primary focus-visible:ring-0 border-border"
-                    : " "
-                }`}
-              >
-                Indoor
-              </label>
-            </div>
+        <div className="space-y-2 ">
+          <Label className="text-sm">Category</Label>
+          <div className="relative">
+            <RadioGroup
+              className="flex gap-4 "
+              value={formData.game_info.type}
+              onValueChange={handleSelectChange}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="indoor"
+                  id="indoor"
+                  className="sr-only"
+                />
+                <label
+                  htmlFor="indoor"
+                  className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                    formData.category === "indoor"
+                      ? "border-primary focus-visible:ring-0"
+                      : errors.category
+                      ? "border-red-500 ring-0 ring-red-500"
+                      : "border-border"
+                  } bg-card`}
+                >
+                  Indoor
+                </label>
+              </div>
 
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="outdoor"
-                id="outdoor"
-                className="sr-only"
-              />
-              <label
-                htmlFor="outdoor"
-                className={`cursor-pointer px-10 py-1 rounded-lg border-border bg-card ${
-                  formData.gameInfo.type === "outdoor"
-                    ? "border border-primary focus-visible:ring-0 bg-transparent"
-                    : "border "
-                }`}
-              >
-                Outdoor
-              </label>
-            </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="outdoor"
+                  id="outdoor"
+                  className="sr-only"
+                />
+                <label
+                  htmlFor="outdoor"
+                  className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                    formData.category === "outdoor"
+                      ? "border-primary focus-visible:ring-0"
+                      : errors.category
+                      ? "border-red-500 ring-0 ring-red-500"
+                      : "border-border"
+                  } bg-card`}
+                >
+                  Outdoor
+                </label>
+              </div>
 
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="roof" id="roof" className="sr-only" />
-              <label
-                htmlFor="roof"
-                className={`cursor-pointer px-10 py-1 rounded-lg border-border bg-card ${
-                  formData.gameInfo.type === "roof"
-                    ? "border border-primary focus-visible:ring-0 bg-transparent"
-                    : "border  "
-                }`}
-              >
-                Roof
-              </label>
-            </div>
-          </RadioGroup>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="roof" id="roof" className="sr-only" />
+                <label
+                  htmlFor="roof"
+                  className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                    formData.category === "roof"
+                      ? "border-primary focus-visible:ring-0"
+                      : errors.category
+                      ? "border-red-500 ring-0 ring-red-500"
+                      : "border-border"
+                  } bg-card`}
+                >
+                  Roof
+                </label>
+              </div>
+            </RadioGroup>
+          </div>
         </div>
-        {/* <div className="flex gap-5">
+
+        <div className="flex gap-5">
           <div className="space-y-2 w-full">
             <Label>Latitude</Label>
-            <Input
-              name="lat"
-              type="number"
-              value={formData.location.lat}
-              onChange={handleChange}
-              placeholder="Latitude"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
+            <div className="relative">
+              <Input
+                name="lat"
+                type="number"
+                value={formData.location.lat}
+                onChange={handleChange}
+                placeholder="Latitude"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.lat ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+
+              {errors.lat && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2 w-full">
             <Label>Longitude</Label>
-            <Input
-              name="lng"
-              type="number"
-              value={formData.location.lng}
-              onChange={handleChange}
-              placeholder="Longitude"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-          </div>
-        </div> */}
+            <div className="relative">
+              <Input
+                name="lng"
+                type="number"
+                value={formData.location.lng}
+                onChange={handleChange}
+                placeholder="Longitude"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.lng ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
 
-        <div className="flex gap-5">
-          <div className="space-y-2 w-full">
-            <Label>Max Players</Label>
-            <Input
-              name="maxPlayers"
-              type="number"
-              value={formData.gameInfo.maxPlayers}
-              onChange={handleChange}
-              placeholder="Max players"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.maxPlayers && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.maxPlayers}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-2 w-full">
-            <Label>Grounds</Label>
-            <Input
-              name="grounds"
-              type="number"
-              value={formData.grounds}
-              onChange={handleChange}
-              placeholder="Number of grounds"
-              className="border focus-visible:ring-0 border-border bg-card"
-            />
-            {errors.grounds && (
-              <div className="text-red-500 text-sm flex items-center gap-1">
-                <CircleAlert size={16} /> {errors.grounds}
-              </div>
-            )}
+              {errors.lng && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* <div className="space-y-3">
-          <Label>Upload Image</Label>
-          <div className="flex items-center space-x-4 ">
-            <label className="cursor-pointer">
-              <div className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg  bg-card">
-                {preview ? (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-full object-cover rounded-md"
+        <div className="w-full">
+          {formData.ground_details.map((ground, index) => (
+            <div key={index} className="flex gap-4 mb-4">
+              <div className="space-y-1 w-full">
+                <Label>Ground</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    placeholder="Ground #"
+                    value={ground.ground}
+                    onChange={(e) =>
+                      handleGroundFieldChange(index, "ground", e.target.value)
+                    }
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.ground ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
                   />
-                ) : (
-                  <ImageUp />
+
+                  {errors.ground && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1 w-full">
+                <Label>Hourly Price</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    placeholder="Hourly Price"
+                    value={ground.hourly_price}
+                    onChange={(e) =>
+                      handleGroundFieldChange(
+                        index,
+                        "hourly_price",
+                        e.target.value
+                      )
+                    }
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.hourly_price
+                        ? "ring-0 ring-red-500 border-red-500"
+                        : ""
+                    }`}
+                  />
+
+                  {errors.hourly_price && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1 w-full">
+                <Label>Capacity</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    placeholder="Capacity"
+                    value={ground.capacity}
+                    onChange={(e) =>
+                      handleGroundFieldChange(index, "capacity", e.target.value)
+                    }
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.capacity
+                        ? "ring-0 ring-red-500 border-red-500"
+                        : ""
+                    }`}
+                  />
+
+                  {errors.capacity && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1 w-full">
+                <Label>Width</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    placeholder="Width"
+                    value={ground.width}
+                    onChange={(e) =>
+                      handleGroundFieldChange(index, "width", e.target.value)
+                    }
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.width ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
+                  />
+
+                  {errors.width && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1 w-full">
+                <Label>Height</Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    placeholder="Height"
+                    value={ground.height}
+                    onChange={(e) =>
+                      handleGroundFieldChange(index, "height", e.target.value)
+                    }
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.width ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
+                  />
+
+                  {errors.height && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="bg-transparent my-auto pt-5 cursor-pointer"
+                  onClick={handleAddGroundDetail}
+                >
+                  <CirclePlus className="text-foreground" size={16} />
+                </button>
+
+                {formData.ground_details.length > 1 && (
+                  <button
+                    type="button"
+                    className="bg-transparent my-auto pt-5 cursor-pointer"
+                    onClick={() => handleRemoveGroundDetail(index)}
+                  >
+                    <CircleMinus className="text-foreground" size={16} />
+                  </button>
                 )}
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-            </label>
-            {errors.image && (
-              <span className="text-sm text-red-500">{errors.image}</span>
-            )}
-          </div>
-        </div> */}
+            </div>
+          ))}
 
-        <div className="flex justify-start w-3xs">
-          <Button type="submit" disabled={loading} className="w-1/2">
+          <div className="space-y-3 w-full">
+            <Label>Upload Images</Label>
+            <div className="flex items-center space-x-4 flex-wrap">
+              {preview.length > 0 &&
+                preview.map((src, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card overflow-hidden"
+                  >
+                    <img
+                      src={src}
+                      alt={`Preview ${index}`}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
+                ))}
+
+              <label className="cursor-pointer">
+                <div className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card">
+                  <ImageUp />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-start">
+          <Button type="submit" disabled={loading} className="w-1/4 mx-auto">
             {loading ? "Submitting..." : "Submit"}
           </Button>
         </div>

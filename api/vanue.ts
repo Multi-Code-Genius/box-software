@@ -30,26 +30,21 @@ const registerNewGame = async (data: unknown) => {
   try {
     const response = await api("/api/v2/venue/create-venue", {
       method: "POST",
-
       body: data,
     });
 
     const resp = await response;
     return resp;
-  } catch (error: unknown) {
-    if (error && typeof error === "object" && "message" in error) {
-      console.log("Game Error", (error as { message: string }).message);
-    } else {
-      console.log("Game Error", error);
-    }
+  } catch (error) {
+    console.error("Error registering game:", error);
   }
 };
 
-export const useAddGame = () => {
+export const useAddVenue = () => {
   return useMutation({
     mutationFn: (data: unknown) => registerNewGame(data),
     onSuccess: (data) => {
-      toast.success(data.message);
+      toast.success("Venue created successfully!");
     },
     onError: () => {
       toast.error("Something went wrong");

@@ -1,21 +1,36 @@
 import { ReactNode } from "react";
 
+export type GroundDetails = {
+  ground: number;
+  hourly_price: number;
+  capacity: number;
+  width: number;
+  height: number;
+};
+
 export type VenueFormData = {
   name: string;
   description: string;
-  address: string;
   category: string;
-  hourlyPrice: number;
   location: {
     city: string;
     lat: number;
     lng: number;
+    area: string;
   };
-  gameInfo: {
+  address: string;
+  game_info: {
     type: string;
     maxPlayers: number;
   };
-  grounds: number;
+  ground_details: {
+    ground: number;
+    hourly_price: number;
+    capacity: number;
+    width: number;
+    height: number;
+  }[];
+  images: File[];
 };
 
 export interface Errors {
