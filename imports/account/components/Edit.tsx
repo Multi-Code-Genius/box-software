@@ -132,7 +132,7 @@ const Edit: React.FC<FooterProfileProps> = ({
       <DialogContent className="max-w-lg w-full gap-0">
         <DialogHeader>
           <DialogTitle></DialogTitle>
-          <DialogClose className="absolute top-2 right-2 p-2 rounded-full hover:bg-muted" />
+          <DialogClose />
         </DialogHeader>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>

@@ -20,12 +20,14 @@ import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LogoutConfirmModal } from "../account/components/LogoutModel";
+import Edit from "../account/components/Edit";
 
 export default function AccountSwitcher() {
   const { user, setUser } = useUserStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
   const { logout } = useAuthStore();
+  const [showEditModal, setShowEditModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogoutConfirm = () => {
@@ -73,7 +75,12 @@ export default function AccountSwitcher() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setDropdownOpen(false);
+                setShowEditModal(true);
+              }}
+            >
               <BadgeCheck />
               Account
             </DropdownMenuItem>
@@ -110,6 +117,13 @@ export default function AccountSwitcher() {
           }}
           onConfirm={handleLogoutConfirm}
           onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
+
+      {showEditModal && (
+        <Edit
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
         />
       )}
     </>

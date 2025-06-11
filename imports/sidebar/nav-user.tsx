@@ -110,7 +110,7 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuItem
                   onClick={() => {
-                    setDropdownOpen(false); // ensure dropdown is closed
+                    setDropdownOpen(false);
                     setShowEditModal(true);
                   }}
                 >
