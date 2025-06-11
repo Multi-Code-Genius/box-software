@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { Pen } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -37,7 +37,7 @@ const Edit: React.FC<FooterProfileProps> = ({
     email: "",
     name: "",
     phone: "",
-    profile_pic: "/images/profile.jpg",
+    profile_pic: "/images/profile.png",
     address: "",
     city: "",
     state: "",
@@ -65,7 +65,7 @@ const Edit: React.FC<FooterProfileProps> = ({
       email: user.email ?? "",
       name: user.name ?? "",
       phone: user.phone ?? "",
-      profile_pic: user.profile_pic ?? "/images/profile.jpg",
+      profile_pic: user.profile_pic ?? "/images/profile.png",
       address: user.address ?? "",
       city: user.city ?? "",
       state: user.state ?? "",
@@ -135,13 +135,13 @@ const Edit: React.FC<FooterProfileProps> = ({
           <DialogClose className="absolute top-2 right-2 p-2 rounded-full hover:bg-muted" />
         </DialogHeader>
 
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex justify-center">
-            <div className="relative w-30 h-30">
+            <div className="relative w-30 h-30 ">
               <img
                 src={localImage ?? formData.profile_pic}
                 alt="profile"
-                className="rounded-full w-full h-full object-cover"
+                className="rounded-full w-full h-full object-cover bg-white border border-4 border-foreground "
               />
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">
@@ -151,9 +151,9 @@ const Edit: React.FC<FooterProfileProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-1 right-3 bg-white p-2 rounded-full shadow-md"
+                className="absolute bottom-0 right-3 bg-card p-2 rounded-full shadow-xl"
               >
-                <Pen size={16} />
+                <Pencil size={16} className="font-bolder" />
               </button>
             </div>
           </div>
@@ -170,7 +170,7 @@ const Edit: React.FC<FooterProfileProps> = ({
             Profile Information
           </Label>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label>Email</Label>
             <Input
               type="email"
@@ -181,7 +181,7 @@ const Edit: React.FC<FooterProfileProps> = ({
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label>Name</Label>
             <Input
               type="text"
@@ -192,7 +192,7 @@ const Edit: React.FC<FooterProfileProps> = ({
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label>Phone Number</Label>
             <Input
               type="tel"
@@ -202,7 +202,7 @@ const Edit: React.FC<FooterProfileProps> = ({
               placeholder="Enter Number"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label>City</Label>
             <Input
               type="tel"
@@ -212,7 +212,7 @@ const Edit: React.FC<FooterProfileProps> = ({
               placeholder="Enter City"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label>State</Label>
             <Input
               type="text"
@@ -222,7 +222,7 @@ const Edit: React.FC<FooterProfileProps> = ({
               placeholder="Enter Number"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label>Zip code</Label>
             <Input
               type="number"

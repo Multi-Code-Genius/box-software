@@ -32,6 +32,7 @@ import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { LogoutConfirmModal } from "../account/components/LogoutModel";
+import Edit from "../account/components/Edit";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -40,6 +41,7 @@ export function NavUser() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
   const { logout } = useAuthStore();
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -106,10 +108,16 @@ export function NavUser() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDropdownOpen(false); // ensure dropdown is closed
+                    setShowEditModal(true);
+                  }}
+                >
                   <IconUserCircle />
                   Account
                 </DropdownMenuItem>
+
                 <DropdownMenuItem>
                   <IconCreditCard />
                   Billing
@@ -145,6 +153,12 @@ export function NavUser() {
           }}
           onConfirm={handleLogoutConfirm}
           onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
+      {showEditModal && (
+        <Edit
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
         />
       )}
     </>

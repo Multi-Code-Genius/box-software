@@ -160,7 +160,6 @@ const VenueDetail = () => {
       </div>
     );
   }
-
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
@@ -176,7 +175,7 @@ const VenueDetail = () => {
 
               <button
                 onClick={(e) => handleDeleteClick(e, venue.id)}
-                className=" hover:text-red-600 transition p-1"
+                className=" hover:text-muted-foreground transition p-1 cursor-pointer"
               >
                 <Trash2 size={18} />
               </button>
@@ -329,7 +328,7 @@ const VenueDetail = () => {
                 <label className="block text-sm font-medium ">Grounds</label>
                 <Input
                   type="number"
-                  value={selectedGame.grounds || ""}
+                  value={selectedGame?.ground_details?.[0]?.ground ?? 0}
                   onChange={(e) =>
                     handleEditField("grounds", parseInt(e.target.value) || 0)
                   }
