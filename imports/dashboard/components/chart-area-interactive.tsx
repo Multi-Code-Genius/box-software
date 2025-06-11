@@ -53,8 +53,6 @@ export function ChartAreaInteractive() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("90d");
 
-  console.log(dashboardData, "dashboardData");
-
   React.useEffect(() => {
     if (!dashboardData) return;
 

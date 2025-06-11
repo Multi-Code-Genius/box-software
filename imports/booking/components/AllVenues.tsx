@@ -95,16 +95,16 @@ const AllVenues = () => {
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
 
-      <div className="flex gap-6 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {venues.map((venue) => (
           <Card
             key={venue.id}
-            className="w-[370px] gap-3 shadow-xl cursor-pointer"
+            className="gap-3 shadow-xl cursor-pointer"
             onClick={() => handleGameClick(venue)}
           >
             <CardHeader className="gap-0">
               <CardTitle className="text-lg">{venue.name}</CardTitle>
-              <CardDescription className="text-lg">
+              <CardDescription className="text-base">
                 {venue.category}
               </CardDescription>
             </CardHeader>
@@ -119,7 +119,7 @@ const AllVenues = () => {
               </p>
               <p className="flex items-center gap-2">
                 <IndianRupee size={18} />
-                Price: {venue.hourly_price}
+                Price: {venue?.ground_details[0]?.hourly_price || 0}
               </p>
               <p className="flex items-center gap-2">
                 <Map size={18} />

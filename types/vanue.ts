@@ -70,6 +70,7 @@ export interface UpdateBooking {
 }
 
 export interface Venues {
+  ground_details: any;
   id: string;
   name: string;
   category: string;

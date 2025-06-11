@@ -49,23 +49,27 @@ const Form: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string[]>([]);
 
-  const { errors, validate } = useFormValidation();
+  const { validate, errors, clearError } = useFormValidation();
+
   const { mutate } = useAddVenue();
   const { refetch } = useVenues();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
-    if (["lat", "lng"].includes(name)) {
+    const { name, value } = e.target;
+
+    clearError(name);
+
+    if (["lat", "lng", "city", "area"].includes(name)) {
       setFormData((prev) => ({
         ...prev,
         location: {
           ...prev.location,
-          [name]: parseFloat(value),
+          [name]: name === "lat" || name === "lng" ? parseFloat(value) : value,
         },
       }));
-    } else if (["maxPlayers"].includes(name)) {
+    } else if (name === "maxPlayers") {
       setFormData((prev) => ({
         ...prev,
         game_info: {
@@ -73,21 +77,12 @@ const Form: React.FC = () => {
           [name]: parseInt(value),
         },
       }));
-    } else if (name === "grounds" || name === "hourlyPrice") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: parseFloat(value),
-      }));
     } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, category: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -120,7 +115,6 @@ const Form: React.FC = () => {
 
     formdata.append("data", JSON.stringify(data));
 
-    // Images
     formData.images.forEach((file: File) => {
       formdata.append("images", file);
     });
@@ -141,6 +135,7 @@ const Form: React.FC = () => {
   };
 
   const handleTurfTypeChange = (value: string) => {
+    clearError("type");
     setFormData((prev) => ({
       ...prev,
       game_info: {
@@ -148,6 +143,11 @@ const Form: React.FC = () => {
         type: value,
       },
     }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    clearError("category");
+    setFormData((prev) => ({ ...prev, category: value }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,19 +195,26 @@ const Form: React.FC = () => {
       ground_details: prev.ground_details.filter((_, i) => i !== indexToRemove),
     }));
   };
-
   const handleGroundFieldChange = (
     index: number,
     field: keyof (typeof formData.ground_details)[0],
     value: string
   ) => {
     const updated = [...formData.ground_details];
-    updated[index][field] =
+
+    const parsedValue =
       field === "hourly_price" ? parseFloat(value) : parseInt(value);
+    updated[index][field] = isNaN(parsedValue) ? 0 : parsedValue;
+
     setFormData((prev) => ({
       ...prev,
       ground_details: updated,
     }));
+
+    if (!isNaN(parsedValue)) {
+      const errorKey = `${field}_${index}`;
+      clearError(errorKey);
+    }
   };
 
   return (
@@ -226,11 +233,10 @@ const Form: React.FC = () => {
                 onChange={handleChange}
                 placeholder="Enter venue name"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.description ? "ring-0 ring-red-500 border-red-500" : ""
+                  errors.name ? "ring-0 ring-red-500 border-red-500" : ""
                 }`}
               />
-
-              {errors.description && (
+              {errors.name && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
                   <CircleAlert size={16} />
                 </div>
@@ -250,7 +256,6 @@ const Form: React.FC = () => {
                   errors.description ? "ring-0 ring-red-500 border-red-500" : ""
                 }`}
               />
-
               {errors.description && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
                   <CircleAlert size={16} />
@@ -267,15 +272,7 @@ const Form: React.FC = () => {
               <Input
                 name="area"
                 value={formData.location.area}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    location: {
-                      ...prev.location,
-                      area: e.target.value,
-                    },
-                  }))
-                }
+                onChange={handleChange}
                 placeholder="Enter area"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                   errors.area ? "ring-0 ring-red-500 border-red-500" : ""
@@ -296,15 +293,7 @@ const Form: React.FC = () => {
               <Input
                 name="city"
                 value={formData.location.city}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    location: {
-                      ...prev.location,
-                      city: e.target.value,
-                    },
-                  }))
-                }
+                onChange={handleChange}
                 placeholder="Enter city"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                   errors.city ? "ring-0 ring-red-500 border-red-500" : ""
@@ -347,7 +336,12 @@ const Form: React.FC = () => {
               <Input
                 name="maxPlayers"
                 type="number"
-                value={formData.game_info.maxPlayers}
+                value={
+                  typeof formData.game_info.maxPlayers === "number" &&
+                  !isNaN(formData.game_info.maxPlayers)
+                    ? formData.game_info.maxPlayers
+                    : ""
+                }
                 onChange={handleChange}
                 placeholder="Max players"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
@@ -468,7 +462,12 @@ const Form: React.FC = () => {
               <Input
                 name="lat"
                 type="number"
-                value={formData.location.lat}
+                value={
+                  typeof formData.location.lat === "number" &&
+                  !isNaN(formData.location.lat)
+                    ? formData.location.lat
+                    : ""
+                }
                 onChange={handleChange}
                 placeholder="Latitude"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
@@ -490,7 +489,12 @@ const Form: React.FC = () => {
               <Input
                 name="lng"
                 type="number"
-                value={formData.location.lng}
+                value={
+                  typeof formData.location.lng === "number" &&
+                  !isNaN(formData.location.lng)
+                    ? formData.location.lng
+                    : ""
+                }
                 onChange={handleChange}
                 placeholder="Longitude"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
@@ -515,11 +519,16 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Ground #"
-                    value={ground.ground}
-                    onChange={(e) =>
-                      handleGroundFieldChange(index, "ground", e.target.value)
+                    placeholder="Ground "
+                    value={
+                      typeof ground.ground === "number" && !isNaN(ground.ground)
+                        ? ground.ground
+                        : ""
                     }
+                    onChange={(e) => {
+                      clearError("ground");
+                      handleGroundFieldChange(index, "ground", e.target.value);
+                    }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                       errors.ground ? "ring-0 ring-red-500 border-red-500" : ""
                     }`}
@@ -539,14 +548,21 @@ const Form: React.FC = () => {
                   <Input
                     type="number"
                     placeholder="Hourly Price"
-                    value={ground.hourly_price}
-                    onChange={(e) =>
+                    value={
+                      typeof ground.hourly_price === "number" &&
+                      !isNaN(ground.hourly_price)
+                        ? ground.hourly_price
+                        : ""
+                    }
+                    onChange={(e) => {
+                      clearError("hourly_price");
+
                       handleGroundFieldChange(
                         index,
                         "hourly_price",
                         e.target.value
-                      )
-                    }
+                      );
+                    }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                       errors.hourly_price
                         ? "ring-0 ring-red-500 border-red-500"
@@ -568,10 +584,21 @@ const Form: React.FC = () => {
                   <Input
                     type="number"
                     placeholder="Capacity"
-                    value={ground.capacity}
-                    onChange={(e) =>
-                      handleGroundFieldChange(index, "capacity", e.target.value)
+                    value={
+                      typeof ground.capacity === "number" &&
+                      !isNaN(ground.capacity)
+                        ? ground.capacity
+                        : ""
                     }
+                    onChange={(e) => {
+                      clearError("capacity");
+
+                      handleGroundFieldChange(
+                        index,
+                        "capacity",
+                        e.target.value
+                      );
+                    }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                       errors.capacity
                         ? "ring-0 ring-red-500 border-red-500"
@@ -593,10 +620,16 @@ const Form: React.FC = () => {
                   <Input
                     type="number"
                     placeholder="Width"
-                    value={ground.width}
-                    onChange={(e) =>
-                      handleGroundFieldChange(index, "width", e.target.value)
+                    value={
+                      typeof ground.width === "number" && !isNaN(ground.width)
+                        ? ground.width
+                        : ""
                     }
+                    onChange={(e) => {
+                      clearError("width");
+
+                      handleGroundFieldChange(index, "width", e.target.value);
+                    }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                       errors.width ? "ring-0 ring-red-500 border-red-500" : ""
                     }`}
@@ -616,10 +649,16 @@ const Form: React.FC = () => {
                   <Input
                     type="number"
                     placeholder="Height"
-                    value={ground.height}
-                    onChange={(e) =>
-                      handleGroundFieldChange(index, "height", e.target.value)
+                    value={
+                      typeof ground.height === "number" && !isNaN(ground.height)
+                        ? ground.height
+                        : ""
                     }
+                    onChange={(e) => {
+                      clearError("height");
+
+                      handleGroundFieldChange(index, "height", e.target.value);
+                    }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                       errors.width ? "ring-0 ring-red-500 border-red-500" : ""
                     }`}

@@ -71,5 +71,13 @@ export const useFormValidation = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  return { validate, errors };
+  const clearError = (field: string) => {
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      delete newErrors[field];
+      return newErrors;
+    });
+  };
+
+  return { validate, errors, clearError };
 };
