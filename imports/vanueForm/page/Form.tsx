@@ -16,6 +16,7 @@ import { useFormValidation } from "@/hooks/useFormValidation";
 import { VenueFormData, GroundDetail } from "@/types/vanue";
 import { CircleAlert, CircleMinus, CirclePlus, ImageUp } from "lucide-react";
 import { useAddVenue, useVenues } from "@/api/vanue";
+import { useVenueStore } from "@/store/venueStore";
 
 const initialFormData: VenueFormData = {
   name: "",
@@ -48,7 +49,7 @@ const Form: React.FC = () => {
   const [formData, setFormData] = useState<VenueFormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string[]>([]);
-
+  const { setVenue } = useVenueStore();
   const { validate, errors, clearError } = useFormValidation();
 
   const { mutate } = useAddVenue();
@@ -101,8 +102,7 @@ const Form: React.FC = () => {
       category: formData.category,
       location: {
         city: formData.location.city,
-        lat: formData.location.lat,
-        lng: formData.location.lng,
+
         area: formData.location.area,
       },
       address: formData.address,
@@ -120,7 +120,14 @@ const Form: React.FC = () => {
     });
 
     mutate(formdata, {
-      onSuccess: () => {
+      onSuccess: (response: any) => {
+        const createdVenue = response?.venue;
+
+        console.log(createdVenue);
+        if (createdVenue) {
+          setVenue(createdVenue);
+        }
+
         refetch();
         setFormData(initialFormData);
         setPreview([]);

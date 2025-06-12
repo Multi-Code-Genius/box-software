@@ -23,12 +23,6 @@ export const useFormValidation = () => {
     if (!formData.game_info.maxPlayers || isNaN(formData.game_info.maxPlayers))
       newErrors.maxPlayers = "Max players must be a valid number";
 
-    if (!formData.location.lat || isNaN(formData.location.lat))
-      newErrors.lat = "Latitude must be a valid number";
-
-    if (!formData.location.lng || isNaN(formData.location.lng))
-      newErrors.lng = "Longitude must be a valid number";
-
     if (!formData.game_info.type) {
       newErrors.type = "Turf type is required";
     }
