@@ -86,7 +86,7 @@ const CustomerDetails = () => {
   return (
     <div className="flex justify-center items-center mt-20">
       <Card className="w-full max-w-7xl p-6 shadow-md rounded-xl flex flex-col max-h-[700px]">
-        <h2 className="text-2xl font-semibold mb-4">Customer List</h2>
+        <h2 className="text-2xl font-semibold ">Customer List</h2>
         <div className="overflow-y-auto border rounded-md flex-1">
           <Table className="w-full">
             <TableHeader>

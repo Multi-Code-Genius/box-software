@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 
 import { useVenueStore } from "@/store/venueStore";
 import {
+  CircleAlert,
   IndianRupee,
   Loader2,
   Map,
@@ -40,6 +41,7 @@ const VenueDetail = () => {
   const { mutate: editVenue } = useEditVenue();
   const { isLoading } = useVenues();
   const [hasMounted, setHasMounted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const router = useRouter();
 
@@ -93,6 +95,26 @@ const VenueDetail = () => {
   const saveVenueChanges = () => {
     if (!selectedGame || !selectedGame.id) return;
 
+    const newErrors: Record<string, string> = {};
+
+    if (!selectedGame.name) newErrors.name = "Name is required";
+    if (!selectedGame.description)
+      newErrors.description = "Description is required";
+    if (!selectedGame.address) newErrors.address = "Address is required";
+    if (!selectedGame.location?.city) newErrors.city = "City is required";
+    if (!selectedGame.location?.lat) newErrors.lat = "Latitude is required";
+    if (!selectedGame.location?.lng) newErrors.lng = "Longitude is required";
+    if (!selectedGame.game_info?.type) newErrors.type = "Game type is required";
+    if (!selectedGame.game_info?.maxPlayers)
+      newErrors.maxPlayers = "Max players is required";
+    if (!selectedGame.ground_details?.[0]?.ground)
+      newErrors.ground = "Grounds are required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const { id, ...rest } = selectedGame;
 
     editVenue({
@@ -100,6 +122,7 @@ const VenueDetail = () => {
       data: rest,
     });
 
+    setErrors({});
     setShowModal(false);
   };
 
@@ -171,7 +194,7 @@ const VenueDetail = () => {
             onClick={() => handleCardClick(venue)}
           >
             <CardHeader className="grid grid-cols-[1fr_auto] items-center">
-              <CardTitle className="text-lg">{venue.name}</CardTitle>
+              <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
 
               <button
                 onClick={(e) => handleDeleteClick(e, venue.id)}
@@ -183,24 +206,23 @@ const VenueDetail = () => {
 
             <CardContent className="space-y-2">
               <p className="text-muted-foreground text-base">
-                {" "}
                 {venue.category}
               </p>
               <p className="flex items-center gap-2">
                 <MapPinned size={18} />
-                Address: {venue.address}
+                Address: {venue.address || ""}
               </p>
               <p className="flex items-center gap-2">
                 <Users size={18} />
-                Capacity: {venue?.game_info.maxPlayers}
+                Capacity: {venue?.game_info?.maxPlayers || ""}
               </p>
               <p className="flex items-center gap-2">
                 <IndianRupee size={18} />
-                Price: {venue?.ground_details[0]?.hourly_price || 0}
+                Price: ₹{venue?.ground_details?.[0]?.hourly_price || 0}
               </p>
               <p className="flex items-center gap-2">
                 <Map size={18} />
-                {venue.location.city}
+                {venue?.location?.city || ""}
               </p>
             </CardContent>
           </Card>
@@ -224,116 +246,184 @@ const VenueDetail = () => {
           {selectedGame && (
             <div className="space-y-4 pt-4">
               <div className="space-y-1">
-                <label className="block text-sm font-medium ">Name</label>
-                <Input
-                  value={selectedGame.name}
-                  onChange={(e) => handleEditField("name", e.target.value)}
-                  className="border focus-visible:ring-0"
-                />
+                <label className="block text-sm font-medium">Name</label>
+                <div className="relative">
+                  <Input
+                    value={selectedGame.name}
+                    onChange={(e) => handleEditField("name", e.target.value)}
+                    className="border focus-visible:ring-0"
+                  />
+                  {errors.name && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-sm font-medium ">
                   Description
                 </label>
-                <Input
-                  value={selectedGame.description}
-                  onChange={(e) =>
-                    handleEditField("description", e.target.value)
-                  }
-                  className="border focus-visible:ring-0"
-                />
+                <div className="relative">
+                  <Input
+                    value={selectedGame.description}
+                    onChange={(e) =>
+                      handleEditField("description", e.target.value)
+                    }
+                    className="border focus-visible:ring-0"
+                  />
+                  {errors.description && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-sm font-medium ">Address</label>
-                <Input
-                  value={selectedGame.address}
-                  onChange={(e) => handleEditField("address", e.target.value)}
-                  className="border focus-visible:ring-0"
-                />
+                <div className="relative">
+                  <Input
+                    value={selectedGame.address}
+                    onChange={(e) => handleEditField("address", e.target.value)}
+                    className="border focus-visible:ring-0"
+                  />
+                  {errors.address && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-sm font-medium ">City</label>
-                <Input
-                  value={selectedGame.location?.city || ""}
-                  onChange={(e) =>
-                    handleEditField("city", e.target.value, true, "location")
-                  }
-                  className="border focus-visible:ring-0"
-                />
+                <div className="relative">
+                  <Input
+                    value={selectedGame.location?.city || ""}
+                    onChange={(e) =>
+                      handleEditField("city", e.target.value, true, "location")
+                    }
+                    className="border focus-visible:ring-0"
+                  />
+                  {errors.address && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="block text-sm font-medium ">Latitude</label>
-                  <Input
-                    value={selectedGame.location?.lat || ""}
-                    onChange={(e) =>
-                      handleEditField("lat", e.target.value, true, "location")
-                    }
-                    className="border focus-visible:ring-0"
-                  />
+                  <div className="relative">
+                    <Input
+                      value={selectedGame.location?.lat || ""}
+                      onChange={(e) =>
+                        handleEditField("lat", e.target.value, true, "location")
+                      }
+                      className="border focus-visible:ring-0"
+                    />
+                    {errors.lat && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                        <CircleAlert size={16} />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-sm font-medium ">
                     Longitude
                   </label>
-                  <Input
-                    value={selectedGame.location?.lng || ""}
-                    onChange={(e) =>
-                      handleEditField("lng", e.target.value, true, "location")
-                    }
-                    className="border focus-visible:ring-0"
-                  />
+                  <div className="relative">
+                    <Input
+                      value={selectedGame.location?.lng || ""}
+                      onChange={(e) =>
+                        handleEditField("lng", e.target.value, true, "location")
+                      }
+                      className="border focus-visible:ring-0"
+                    />
+                    {errors.lng && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                        <CircleAlert size={16} />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium ">
-                    Game Type
-                  </label>
-                  <Input
-                    value={selectedGame.game_info?.type || ""}
-                    onChange={(e) =>
-                      handleEditField("type", e.target.value, true, "game_info")
-                    }
-                    className="border focus-visible:ring-0"
-                  />
+                  <div className="relative">
+                    <label className="block text-sm font-medium ">
+                      Game Type
+                    </label>
+                    <Input
+                      value={selectedGame.game_info?.type || ""}
+                      onChange={(e) =>
+                        handleEditField(
+                          "type",
+                          e.target.value,
+                          true,
+                          "game_info"
+                        )
+                      }
+                      className="border focus-visible:ring-0"
+                    />
+                    {errors.type && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                        <CircleAlert size={16} />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-sm font-medium ">
                     Max Players
                   </label>
-                  <Input
-                    value={selectedGame.game_info?.maxPlayers || ""}
-                    className="border focus-visible:ring-0"
-                    onChange={(e) =>
-                      handleEditField(
-                        "maxPlayers",
-                        e.target.value,
-                        true,
-                        "game_info"
-                      )
-                    }
-                  />
+                  <div className="relative">
+                    <Input
+                      value={selectedGame.game_info?.maxPlayers || ""}
+                      className="border focus-visible:ring-0"
+                      onChange={(e) =>
+                        handleEditField(
+                          "maxPlayers",
+                          e.target.value,
+                          true,
+                          "game_info"
+                        )
+                      }
+                    />
+                    {errors.maxPlayers && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                        <CircleAlert size={16} />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="space-y-1">
                 <label className="block text-sm font-medium ">Grounds</label>
-                <Input
-                  type="number"
-                  value={selectedGame?.ground_details?.[0]?.ground ?? 0}
-                  onChange={(e) =>
-                    handleEditField("grounds", parseInt(e.target.value) || 0)
-                  }
-                  className="border focus-visible:ring-0"
-                />
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={selectedGame?.ground_details?.[0]?.ground ?? 0}
+                    onChange={(e) =>
+                      handleEditField("grounds", parseInt(e.target.value) || 0)
+                    }
+                    className="border focus-visible:ring-0"
+                  />
+                  {errors.ground && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <CircleAlert size={16} />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-4">

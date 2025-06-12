@@ -36,6 +36,7 @@ import {
 import { useDashboardStore } from "@/store/dashboardStore";
 import { useVenues } from "@/api/vanue";
 import { useVenueStore } from "@/store/venueStore";
+import { toast } from "sonner";
 
 interface NavMainProps {
   readonly items: readonly NavGroup[];
@@ -186,6 +187,11 @@ export function NavMain({ items }: NavMainProps) {
   };
 
   const handleVenueClick = (venue: any) => {
+    if (!venue?.id) {
+      toast.warning("Please create a venue before creating a booking.");
+      return;
+    }
+
     localStorage.setItem("venueId", venue.id);
     router.push(
       `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(

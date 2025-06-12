@@ -103,7 +103,7 @@ const AllVenues = () => {
             onClick={() => handleGameClick(venue)}
           >
             <CardHeader className="gap-0">
-              <CardTitle className="text-lg">{venue.name}</CardTitle>
+              <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
               <CardDescription className="text-base">
                 {venue.category}
               </CardDescription>
@@ -111,11 +111,11 @@ const AllVenues = () => {
             <CardContent className="space-y-2">
               <p className="flex items-center gap-2">
                 <MapPinned size={18} />
-                Address: {venue.address}
+                Address: {venue.address || ""}
               </p>
               <p className="flex items-center gap-2">
                 <Users size={18} />
-                Capacity: {venue?.game_info.maxPlayers}
+                Capacity: {venue?.game_info.maxPlayers || ""}
               </p>
               <p className="flex items-center gap-2">
                 <IndianRupee size={18} />
@@ -123,7 +123,7 @@ const AllVenues = () => {
               </p>
               <p className="flex items-center gap-2">
                 <Map size={18} />
-                {venue.location.city}
+                {venue.location.city || ""}
               </p>
             </CardContent>
           </Card>

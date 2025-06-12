@@ -1,8 +1,6 @@
 "use client";
-import { useEffect } from "react";
 
 import { useDashboardData } from "@/api/dashboard";
-import { useVenues } from "@/api/vanue";
 import {
   Carousel,
   CarouselContent,
@@ -10,20 +8,15 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useDashboardStore } from "@/store/dashboardStore";
 import { useVenueStore } from "@/store/venueStore";
 import { Loader2 } from "lucide-react";
 
 const Venues = () => {
-  const { venues, setVenues } = useVenueStore();
+  const { venues } = useVenueStore();
 
   const { selectedvenueId, setSelectedvenueId, setVenue } = useVenueStore();
 
-  const {
-    data: dashboardData,
-    isLoading: dashboardLoading,
-    refetch,
-  } = useDashboardData(selectedvenueId);
+  const { isLoading: dashboardLoading } = useDashboardData(selectedvenueId);
 
   const handleSelectVenue = (venue: any) => {
     setSelectedvenueId(venue.id);
@@ -39,10 +32,10 @@ const Venues = () => {
           {venues?.map((venue) => (
             <CarouselItem
               key={venue.id}
-              className="pl-1 md:basis-1/2 lg:basis-1/5"
+              className="pl-3 md:basis-1/2 lg:basis-1/5"
             >
               <div
-                className={`border rounded-lg px-6 py-3  cursor-pointer shadow-md flex items-center justify-center gap-5 transition h-full ${
+                className={`border rounded-lg px-6 py-3 font-semibold  cursor-pointer shadow-md flex items-center justify-center gap-5 transition h-full ${
                   selectedvenueId === venue.id
                     ? "bg-accent text-accent-foreground"
                     : "hover:bg-accent bg-card hover:text-accent-foreground"
