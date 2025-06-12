@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { Pencil } from "lucide-react";
+import { CircleAlert, Pencil } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -32,6 +32,7 @@ const Edit: React.FC<FooterProfileProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [localImage, setLocalImage] = useState<string | null>(null);
   const { mutate: upateUser } = useUpdateUserMutation();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState({
     email: "",
@@ -74,15 +75,40 @@ const Edit: React.FC<FooterProfileProps> = ({
     setLocalImage(user.profile_pic ?? null);
   }, [user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setErrors((prevErrors) => {
+      if (prevErrors[name]) {
+        const { [name]: removed, ...rest } = prevErrors;
+        return rest;
+      }
+      return prevErrors;
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
 
-    const userId = user?.id;
+    const newErrors: { [key: string]: string } = {};
 
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
+    if (!formData.state.trim()) newErrors.state = "State is required";
+    if (!formData.zip_code.trim()) newErrors.zip_code = "Zip code is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setIsSaving(false);
+      return;
+    }
+
+    const userId = user?.id;
     if (!userId) {
       console.error("User ID not found");
       return;
@@ -92,13 +118,10 @@ const Edit: React.FC<FooterProfileProps> = ({
       { data: formData, id: userId },
       {
         onSuccess: () => {
-          setUser({
-            ...formData,
-            id: userId,
-            role: "",
-          });
+          setUser({ ...formData, id: userId, role: "" });
           setShowEditModal(false);
           setIsSaving(false);
+          setErrors({});
         },
         onError: (err: any) => {
           console.error("Update failed:", err);
@@ -172,65 +195,126 @@ const Edit: React.FC<FooterProfileProps> = ({
 
           <div className="space-y-1">
             <Label>Email</Label>
-            <Input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter Email"
-            />
+            <div className="relative">
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter Email"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.email ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+              {errors.email && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="space-y-1">
             <Label>Name</Label>
-            <Input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter Name"
-            />
+            <div className="relative">
+              <Input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Name"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.name ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+              {errors.name && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="space-y-1">
             <Label>Phone Number</Label>
-            <Input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="Enter Number"
-            />
+            <div className="relative">
+              <Input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Enter Number"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.phone ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+              {errors.phone && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
           <div className="space-y-1">
             <Label>City</Label>
-            <Input
-              type="tel"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              placeholder="Enter City"
-            />
+            <div className="relative">
+              <Input
+                type="tel"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="Enter City"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.city ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+              {errors.city && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
+
           <div className="space-y-1">
             <Label>State</Label>
-            <Input
-              type="text"
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              placeholder="Enter Number"
-            />
+            <div className="relative">
+              <Input
+                type="text"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                placeholder="Enter Number"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.state ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+              {errors.state && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
           <div className="space-y-1">
             <Label>Zip code</Label>
-            <Input
-              type="number"
-              name="zip_code"
-              value={formData.zip_code}
-              onChange={handleChange}
-              placeholder="Enter Zip code"
-            />
+            <div className="relative">
+              <Input
+                type="number"
+                name="zip_code"
+                value={formData.zip_code}
+                onChange={handleChange}
+                placeholder="Enter Zip code"
+                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                  errors.zip_code ? "ring-0 ring-red-500 border-red-500" : ""
+                }`}
+              />
+              {errors.zip_code && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                  <CircleAlert size={16} />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-center">

@@ -69,6 +69,14 @@ const VenueDetail = () => {
         [field]: value,
       };
     });
+
+    setErrors((prevErrors) => {
+      if (prevErrors[field]) {
+        const { [field]: _, ...rest } = prevErrors;
+        return rest;
+      }
+      return prevErrors;
+    });
   };
 
   const handleClick = () => {
@@ -251,7 +259,9 @@ const VenueDetail = () => {
                   <Input
                     value={selectedGame.name}
                     onChange={(e) => handleEditField("name", e.target.value)}
-                    className="border focus-visible:ring-0"
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.name ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
                   />
                   {errors.name && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -271,7 +281,11 @@ const VenueDetail = () => {
                     onChange={(e) =>
                       handleEditField("description", e.target.value)
                     }
-                    className="border focus-visible:ring-0"
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.description
+                        ? "ring-0 ring-red-500 border-red-500"
+                        : ""
+                    }`}
                   />
                   {errors.description && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -287,7 +301,9 @@ const VenueDetail = () => {
                   <Input
                     value={selectedGame.address}
                     onChange={(e) => handleEditField("address", e.target.value)}
-                    className="border focus-visible:ring-0"
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.address ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
                   />
                   {errors.address && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -305,9 +321,11 @@ const VenueDetail = () => {
                     onChange={(e) =>
                       handleEditField("city", e.target.value, true, "location")
                     }
-                    className="border focus-visible:ring-0"
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.city ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
                   />
-                  {errors.address && (
+                  {errors.city && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
                       <CircleAlert size={16} />
                     </div>
@@ -324,7 +342,9 @@ const VenueDetail = () => {
                       onChange={(e) =>
                         handleEditField("lat", e.target.value, true, "location")
                       }
-                      className="border focus-visible:ring-0"
+                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                        errors.lat ? "ring-0 ring-red-500 border-red-500" : ""
+                      }`}
                     />
                     {errors.lat && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -344,7 +364,9 @@ const VenueDetail = () => {
                       onChange={(e) =>
                         handleEditField("lng", e.target.value, true, "location")
                       }
-                      className="border focus-visible:ring-0"
+                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                        errors.lng ? "ring-0 ring-red-500 border-red-500" : ""
+                      }`}
                     />
                     {errors.lng && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
@@ -371,10 +393,12 @@ const VenueDetail = () => {
                           "game_info"
                         )
                       }
-                      className="border focus-visible:ring-0"
+                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                        errors.type ? "ring-0 ring-red-500 border-red-500" : ""
+                      }`}
                     />
                     {errors.type && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                      <div className="absolute right-3 top-2/3 -translate-y-1/2 text-red-500">
                         <CircleAlert size={16} />
                       </div>
                     )}
@@ -388,7 +412,11 @@ const VenueDetail = () => {
                   <div className="relative">
                     <Input
                       value={selectedGame.game_info?.maxPlayers || ""}
-                      className="border focus-visible:ring-0"
+                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                        errors.maxPlayers
+                          ? "ring-0 ring-red-500 border-red-500"
+                          : ""
+                      }`}
                       onChange={(e) =>
                         handleEditField(
                           "maxPlayers",
@@ -416,7 +444,9 @@ const VenueDetail = () => {
                     onChange={(e) =>
                       handleEditField("grounds", parseInt(e.target.value) || 0)
                     }
-                    className="border focus-visible:ring-0"
+                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                      errors.ground ? "ring-0 ring-red-500 border-red-500" : ""
+                    }`}
                   />
                   {errors.ground && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">

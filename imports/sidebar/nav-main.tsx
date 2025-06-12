@@ -187,12 +187,26 @@ export function NavMain({ items }: NavMainProps) {
   };
 
   const handleVenueClick = (venue: any) => {
-    localStorage.setItem("venueId", venue.id);
-    router.push(
-      `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(
-        venue.name
-      )}`
-    );
+    const storedVenueId = localStorage.getItem("venueId");
+    const storedVenueName = localStorage.getItem("venueName");
+
+    if (venue?.id) {
+      localStorage.setItem("venueId", venue.id);
+      localStorage.setItem("venueName", venue.name);
+      router.push(
+        `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(
+          venue.name
+        )}`
+      );
+    } else if (storedVenueId && storedVenueName) {
+      router.push(
+        `/schedule/${storedVenueId}?id=${storedVenueId}&name=${encodeURIComponent(
+          storedVenueName
+        )}`
+      );
+    } else {
+      toast.error("Venue not found");
+    }
   };
 
   return (

@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-
 import {
   Card,
   CardAction,
@@ -95,6 +93,8 @@ export function ChartAreaInteractive() {
 
     return result;
   }, [chartData, timeRange]);
+
+  // console.log(dashboardData, "dashboardData");
 
   return (
     <Card className="@container/card">

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { VenueFormData, GroundDetail } from "@/types/vanue";
-import { CircleAlert, CircleMinus, CirclePlus, ImageUp } from "lucide-react";
+import { CircleAlert, CircleMinus, CirclePlus, ImageUp, X } from "lucide-react";
 import { useAddVenue, useVenues } from "@/api/vanue";
 import { useVenueStore } from "@/store/venueStore";
 
@@ -227,6 +227,9 @@ const Form: React.FC = () => {
       clearError(`${field}_${index}`);
     }
   };
+  const handleRemoveImage = (index: number) => {
+    setPreview((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="h-[calc(100vh-75px)] w-full flex justify-center items-center">
@@ -354,7 +357,7 @@ const Form: React.FC = () => {
                     : ""
                 }
                 onChange={handleChange}
-                placeholder="Max players"
+                placeholder="Enter Max players"
                 className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
                   errors.maxPlayers ? "ring-0 ring-red-500 border-red-500" : ""
                 }`}
@@ -474,7 +477,7 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Ground "
+                    placeholder="Enter ground "
                     value={
                       typeof ground.ground === "number" && !isNaN(ground.ground)
                         ? ground.ground
@@ -502,7 +505,7 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Hourly Price"
+                    placeholder="Enter hourly Price"
                     value={ground.hourly_price}
                     onChange={(e) => {
                       clearError("hourly_price");
@@ -533,7 +536,7 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Capacity"
+                    placeholder="Enter capacity"
                     value={
                       typeof ground.capacity === "number" &&
                       !isNaN(ground.capacity)
@@ -569,7 +572,7 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Width"
+                    placeholder="Enter width"
                     value={
                       typeof ground.width === "number" && !isNaN(ground.width)
                         ? ground.width
@@ -598,7 +601,7 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Height"
+                    placeholder=" Enter Height"
                     value={
                       typeof ground.height === "number" && !isNaN(ground.height)
                         ? ground.height
@@ -651,13 +654,20 @@ const Form: React.FC = () => {
                 preview.map((src, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card overflow-hidden"
+                    className="relative flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card overflow-hidden"
                   >
                     <img
                       src={src}
                       alt={`Preview ${index}`}
                       className="w-full h-full object-cover rounded-md"
                     />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-[0] right-[0] cursor-pointer p-1 rounded-full bg-black text-white rounded-full  transition"
+                    >
+                      <X size={10} />
+                    </button>
                   </div>
                 ))}
 
