@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 
-export type GroundDetails = {
-  ground: number;
-  hourly_price: number;
-  capacity: number;
-  width: number;
-  height: number;
+export type GroundDetail = {
+  ground: number | "";
+  hourly_price: number | "";
+  capacity: number | "";
+  width: number | "";
+  height: number | "";
 };
 
 export type VenueFormData = {

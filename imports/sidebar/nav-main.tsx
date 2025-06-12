@@ -187,11 +187,6 @@ export function NavMain({ items }: NavMainProps) {
   };
 
   const handleVenueClick = (venue: any) => {
-    if (!venue?.id) {
-      toast.warning("Please create a venue before creating a booking.");
-      return;
-    }
-
     localStorage.setItem("venueId", venue.id);
     router.push(
       `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(

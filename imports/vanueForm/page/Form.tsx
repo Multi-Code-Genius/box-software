@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFormValidation } from "@/hooks/useFormValidation";
-import { GroundDetails, VenueFormData } from "@/types/vanue";
+import { VenueFormData, GroundDetail } from "@/types/vanue";
 import { CircleAlert, CircleMinus, CirclePlus, ImageUp } from "lucide-react";
 import { useAddVenue, useVenues } from "@/api/vanue";
 
@@ -197,31 +197,35 @@ const Form: React.FC = () => {
   };
   const handleGroundFieldChange = (
     index: number,
-    field: keyof (typeof formData.ground_details)[0],
+    field: keyof GroundDetail,
     value: string
   ) => {
     const updated = [...formData.ground_details];
 
-    const parsedValue =
-      field === "hourly_price" ? parseFloat(value) : parseInt(value);
-    updated[index][field] = isNaN(parsedValue) ? 0 : parsedValue;
+    if (value === "") {
+      updated[index][field] = "" as never;
+    } else {
+      const parsedValue =
+        field === "hourly_price" ? parseFloat(value) : parseInt(value, 10);
+
+      updated[index][field] = isNaN(parsedValue) ? 0 : parsedValue;
+    }
 
     setFormData((prev) => ({
       ...prev,
       ground_details: updated,
     }));
 
-    if (!isNaN(parsedValue)) {
-      const errorKey = `${field}_${index}`;
-      clearError(errorKey);
+    if (value !== "") {
+      clearError(`${field}_${index}`);
     }
   };
 
   return (
-    <div className=" min-h-[calc(100vh-48px)]  w-full flex justify-center py-10">
+    <div className="h-[calc(100vh-75px)] w-full flex justify-center items-center">
       <form
         onSubmit={handleSubmit}
-        className="w-[50%] border  overflow-y-auto flex flex-col gap-4 my-4 px-10 py-10 rounded-lg shadow-lg"
+        className="w-[50%] flex flex-col gap-4 px-10 py-8 rounded-lg border"
       >
         <div className="flex gap-5">
           <div className="space-y-2 w-full">
@@ -358,36 +362,6 @@ const Form: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-2 w-full">
-          <Label>Turf Type</Label>
-          <div className="relative">
-            <Select
-              value={formData.game_info.type}
-              onValueChange={handleTurfTypeChange}
-            >
-              <SelectTrigger
-                className={`w-full flex items-center justify-between bg-card ${
-                  errors.type
-                    ? "border-red-500 ring-0 ring-red-500"
-                    : "border-border"
-                }`}
-              >
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Football">Football</SelectItem>
-                <SelectItem value="Cricket">Cricket</SelectItem>
-                <SelectItem value="Basketball">Basketball</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors.type && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                <CircleAlert size={16} />
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="space-y-2 ">
           <Label className="text-sm">Category</Label>
           <div className="relative">
@@ -455,59 +429,33 @@ const Form: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex gap-5">
-          <div className="space-y-2 w-full">
-            <Label>Latitude</Label>
-            <div className="relative">
-              <Input
-                name="lat"
-                type="number"
-                value={
-                  typeof formData.location.lat === "number" &&
-                  !isNaN(formData.location.lat)
-                    ? formData.location.lat
-                    : ""
-                }
-                onChange={handleChange}
-                placeholder="Latitude"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.lat ? "ring-0 ring-red-500 border-red-500" : ""
+        <div className="space-y-2 w-full">
+          <Label>Turf Type</Label>
+          <div className="relative">
+            <Select
+              value={formData.game_info.type}
+              onValueChange={handleTurfTypeChange}
+            >
+              <SelectTrigger
+                className={`w-full flex items-center justify-between bg-card ${
+                  errors.type
+                    ? "border-red-500 ring-0 ring-red-500"
+                    : "border-border"
                 }`}
-              />
-
-              {errors.lat && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-2 w-full">
-            <Label>Longitude</Label>
-            <div className="relative">
-              <Input
-                name="lng"
-                type="number"
-                value={
-                  typeof formData.location.lng === "number" &&
-                  !isNaN(formData.location.lng)
-                    ? formData.location.lng
-                    : ""
-                }
-                onChange={handleChange}
-                placeholder="Longitude"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.lng ? "ring-0 ring-red-500 border-red-500" : ""
-                }`}
-              />
-
-              {errors.lng && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
-            </div>
+              >
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Football">Football</SelectItem>
+                <SelectItem value="Cricket">Cricket</SelectItem>
+                <SelectItem value="Basketball">Basketball</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.type && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
+                <CircleAlert size={16} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -548,12 +496,7 @@ const Form: React.FC = () => {
                   <Input
                     type="number"
                     placeholder="Hourly Price"
-                    value={
-                      typeof ground.hourly_price === "number" &&
-                      !isNaN(ground.hourly_price)
-                        ? ground.hourly_price
-                        : ""
-                    }
+                    value={ground.hourly_price}
                     onChange={(e) => {
                       clearError("hourly_price");
 
