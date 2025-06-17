@@ -9,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
 import { CustomerData } from "@/types/customer";
 import CustomerDetailsByID from "./Modal/CustomerDetailsByID";
 import {
@@ -21,6 +20,7 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Mosaic } from "react-loading-indicators";
 
 const CustomerDetails = () => {
   const { data, isLoading } = useGetCustomers();
@@ -49,11 +49,12 @@ const CustomerDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-40 text-muted-foreground">
-        <Loader2 className="animate-spin mr-2" /> Loading customers...
-      </div>
+      <div className="flex justify-center items-center h-screen">
+      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
+   </div>
     );
   }
+
 
   if (!customers.length) {
     return (

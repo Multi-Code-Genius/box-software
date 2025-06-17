@@ -14,6 +14,7 @@ import { useVenueStore } from "@/store/venueStore";
 import { useVenues } from "@/api/vanue";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Mosaic } from "react-loading-indicators";
 
 const AllVenues = () => {
   const [hasMounted, setHasMounted] = useState(false);
@@ -37,14 +38,6 @@ const AllVenues = () => {
 
   if (!hasMounted) return null;
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center w-full h-48">
-        <Loader2 className="animate-spin text-gray-500 mx-2" size={32} />
-        Loading Venues...
-      </div>
-    );
-  }
 
   const handleGameClick = (venue: { id: string; name: string }) => {
     localStorage.setItem("venueId", venue.id);
@@ -58,8 +51,7 @@ const AllVenues = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin w-6 h-6 mr-2" />
-        Loading...
+         <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
       </div>
     );
   }

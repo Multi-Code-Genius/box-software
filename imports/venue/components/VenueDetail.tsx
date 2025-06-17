@@ -20,7 +20,6 @@ import { useVenueStore } from "@/store/venueStore";
 import {
   CircleAlert,
   IndianRupee,
-  Loader2,
   Map,
   MapPinned,
   Trash2,
@@ -30,6 +29,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { Mosaic } from "react-loading-indicators";
 
 const VenueDetail = () => {
   const { venues, setVenues } = useVenueStore();
@@ -159,9 +159,8 @@ const VenueDetail = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin w-6 h-6 mr-2" />
-        Loading...
-      </div>
+      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
+   </div>
     );
   }
   if (!data?.venues?.length) {

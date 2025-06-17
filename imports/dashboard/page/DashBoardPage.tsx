@@ -7,7 +7,7 @@ import { DataTable } from "@/imports/dashboard/components/data-table";
 import { SectionCards } from "@/imports/dashboard/components/section-cards";
 import Venues from "@/imports/dashboard/components/Venues";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { Loader2 } from "lucide-react";
+import {  Mosaic } from "react-loading-indicators";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -21,13 +21,13 @@ export default function DashBoardPage() {
 
   const { data, isLoading } = useVenues();
 
-  const { venues, setVenues } = useVenueStore();
+  const { setVenues } = useVenueStore();
   const { setDashboardData } = useDashboardStore();
   const { selectedvenueId, setSelectedvenueId, setVenue } = useVenueStore();
 
   const {
     data: dashboardData,
-    isLoading: dashboardLoading,
+    isLoading : inPending,
     refetch,
   } = useDashboardData(selectedvenueId);
 
@@ -64,11 +64,11 @@ export default function DashBoardPage() {
     router.push("/addVenues");
   };
 
-  if (!mounted || isLoading) {
+  if (!mounted || isLoading || inPending) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin w-6 h-6 mr-2" />
-        Loading...
+      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
+
       </div>
     );
   }
