@@ -15,6 +15,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
 
 import { useVenueStore } from "@/store/venueStore";
 import {
@@ -49,10 +57,24 @@ const VenueDetail = () => {
     field: string,
     value: any,
     isNested = false,
-    nestedKey = ""
+    nestedKey = "",
+    index: number | null = null
   ) => {
     setSelectedGame((prev: any) => {
       if (!prev) return prev;
+
+      if (isNested && nestedKey && typeof index === "number") {
+        const updatedArray = [...prev[nestedKey]];
+        updatedArray[index] = {
+          ...updatedArray[index],
+          [field]: value,
+        };
+
+        return {
+          ...prev,
+          [nestedKey]: updatedArray,
+        };
+      }
 
       if (isNested && nestedKey) {
         return {
@@ -110,14 +132,20 @@ const VenueDetail = () => {
       newErrors.description = "Description is required";
     if (!selectedGame.address) newErrors.address = "Address is required";
     if (!selectedGame.location?.city) newErrors.city = "City is required";
-    if (!selectedGame.location?.lat) newErrors.lat = "Latitude is required";
-    if (!selectedGame.location?.lng) newErrors.lng = "Longitude is required";
+
     if (!selectedGame.game_info?.type) newErrors.type = "Game type is required";
     if (!selectedGame.game_info?.maxPlayers)
       newErrors.maxPlayers = "Max players is required";
     if (!selectedGame.ground_details?.[0]?.ground)
       newErrors.ground = "Grounds are required";
-
+    if (!selectedGame.ground_details?.[0]?.hourly_price)
+      newErrors.price = "Price are required";
+    if (!selectedGame.ground_details?.[0]?.width)
+      newErrors.width = "Width are required";
+    if (!selectedGame.ground_details?.[0]?.height)
+      newErrors.height = "Height are required";
+    if (!selectedGame.ground_details?.[0]?.capacity)
+      newErrors.capacity = "Capacity are required";
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -159,8 +187,8 @@ const VenueDetail = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
-   </div>
+        <Mosaic color={["#3d4293", "#4e54b5", "#7277c4", "#2e326f"]} />
+      </div>
     );
   }
   if (!data?.venues?.length) {
@@ -190,6 +218,8 @@ const VenueDetail = () => {
       </div>
     );
   }
+
+  console.log(selectedGame, "selectedGame");
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
@@ -254,168 +284,202 @@ const VenueDetail = () => {
             <div className="space-y-4 pt-4">
               <div className="space-y-1">
                 <label className="block text-sm font-medium">Name</label>
-                <div className="relative">
+                <div>
                   <Input
                     value={selectedGame.name}
                     onChange={(e) => handleEditField("name", e.target.value)}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.name ? "ring-0 ring-red-500 border-red-500" : ""
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.name ? "border-red-500" : ""
                     }`}
                   />
+
                   {errors.name && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.name}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-sm font-medium ">
-                  Description
-                </label>
+                <label className="block text-sm font-medium">Description</label>
                 <div className="relative">
                   <Input
                     value={selectedGame.description}
                     onChange={(e) =>
                       handleEditField("description", e.target.value)
                     }
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.description
-                        ? "ring-0 ring-red-500 border-red-500"
-                        : ""
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.description ? "border-red-500" : ""
                     }`}
                   />
+
                   {errors.description && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className=" text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.description}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-sm font-medium ">Address</label>
+                <label className="block text-sm font-medium">Category</label>
+
+                <div className="relative">
+                  <RadioGroup
+                    className="flex gap-4"
+                    value={selectedGame?.category || ""}
+                    onValueChange={(value) =>
+                      handleEditField("category", value)
+                    }
+                  >
+                    {["indoor", "outdoor", "roof"].map((type) => (
+                      <div key={type} className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={type}
+                          id={type}
+                          className="sr-only"
+                        />
+                        <label
+                          htmlFor={type}
+                          className={`cursor-pointer px-10 py-1 rounded-lg border bg-card ${
+                            selectedGame?.category === type
+                              ? "border-primary"
+                              : errors.category
+                              ? "border-red-500"
+                              : "border-border"
+                          }`}
+                        >
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+
+                  {errors.category && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.category}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-sm font-medium">Address</label>
                 <div className="relative">
                   <Input
                     value={selectedGame.address}
                     onChange={(e) => handleEditField("address", e.target.value)}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.address ? "ring-0 ring-red-500 border-red-500" : ""
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.address ? "border-red-500" : ""
                     }`}
                   />
+
                   {errors.address && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.address}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="block text-sm font-medium ">City</label>
-                <div className="relative">
-                  <Input
-                    value={selectedGame.location?.city || ""}
-                    onChange={(e) =>
-                      handleEditField("city", e.target.value, true, "location")
-                    }
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.city ? "ring-0 ring-red-500 border-red-500" : ""
-                    }`}
-                  />
-                  {errors.city && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium ">Latitude</label>
+              <div className="flex gap-4">
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">City</label>
                   <div className="relative">
                     <Input
-                      value={selectedGame.location?.lat || ""}
-                      onChange={(e) =>
-                        handleEditField("lat", e.target.value, true, "location")
-                      }
-                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                        errors.lat ? "ring-0 ring-red-500 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.lat && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                        <CircleAlert size={16} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium ">
-                    Longitude
-                  </label>
-                  <div className="relative">
-                    <Input
-                      value={selectedGame.location?.lng || ""}
-                      onChange={(e) =>
-                        handleEditField("lng", e.target.value, true, "location")
-                      }
-                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                        errors.lng ? "ring-0 ring-red-500 border-red-500" : ""
-                      }`}
-                    />
-                    {errors.lng && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                        <CircleAlert size={16} />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <div className="relative">
-                    <label className="block text-sm font-medium ">
-                      Game Type
-                    </label>
-                    <Input
-                      value={selectedGame.game_info?.type || ""}
+                      value={selectedGame.location?.city || ""}
                       onChange={(e) =>
                         handleEditField(
-                          "type",
+                          "city",
                           e.target.value,
                           true,
-                          "game_info"
+                          "location"
                         )
                       }
-                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                        errors.type ? "ring-0 ring-red-500 border-red-500" : ""
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.city ? "border-red-500" : ""
                       }`}
                     />
+
+                    {errors.city && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.city}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Price</label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      value={selectedGame.ground_details[0].hourly_price}
+                      onChange={(e) =>
+                        handleEditField(
+                          "hourly_price",
+                          parseInt(e.target.value) || 0,
+                          true,
+                          "ground_details",
+                          0
+                        )
+                      }
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.price ? "border-red-500" : ""
+                      }`}
+                    />
+
+                    {errors.price && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.price}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Turf Type</label>
+                  <div className="relative">
+                    <Select
+                      value={selectedGame.game_info.type}
+                      onValueChange={(value) =>
+                        handleEditField("type", value, true, "game_info")
+                      }
+                    >
+                      <SelectTrigger
+                        className={`w-full flex items-center justify-between bg-card ${
+                          errors.type
+                            ? "border-red-500 ring-0"
+                            : "border-border"
+                        }`}
+                      >
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Football">Football</SelectItem>
+                        <SelectItem value="Cricket">Cricket</SelectItem>
+                        <SelectItem value="Basketball">Basketball</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                     {errors.type && (
-                      <div className="absolute right-3 top-2/3 -translate-y-1/2 text-red-500">
-                        <CircleAlert size={16} />
+                      <div className=" text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.type}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium ">
+                  <label className="block text-sm font-medium">
                     Max Players
                   </label>
                   <div className="relative">
                     <Input
                       value={selectedGame.game_info?.maxPlayers || ""}
-                      className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                        errors.maxPlayers
-                          ? "ring-0 ring-red-500 border-red-500"
-                          : ""
-                      }`}
                       onChange={(e) =>
                         handleEditField(
                           "maxPlayers",
@@ -424,36 +488,129 @@ const VenueDetail = () => {
                           "game_info"
                         )
                       }
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.maxPlayers ? "border-red-500" : ""
+                      }`}
                     />
+
                     {errors.maxPlayers && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                        <CircleAlert size={16} />
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.maxPlayers}</span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="block text-sm font-medium ">Grounds</label>
-                <div className="relative">
+              <div className="flex gap-3">
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Grounds</label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      value={selectedGame?.ground_details?.[0]?.ground ?? 0}
+                      onChange={(e) =>
+                        handleEditField(
+                          "ground",
+                          parseInt(e.target.value) || 0,
+                          true,
+                          "ground_details",
+                          0
+                        )
+                      }
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.ground ? "border-red-500" : ""
+                      }`}
+                    />
+
+                    {errors.ground && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.ground}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Capacity</label>
                   <Input
                     type="number"
-                    value={selectedGame?.ground_details?.[0]?.ground ?? 0}
+                    value={selectedGame?.ground_details?.[0]?.capacity ?? ""}
                     onChange={(e) =>
-                      handleEditField("grounds", parseInt(e.target.value) || 0)
+                      handleEditField(
+                        "capacity",
+                        parseInt(e.target.value) || 0,
+                        true,
+                        "ground_details",
+                        0
+                      )
                     }
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.ground ? "ring-0 ring-red-500 border-red-500" : ""
+                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.capacity ? "border-red-500" : ""
                     }`}
                   />
-                  {errors.ground && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+
+                  {errors.capacity && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.capacity}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Width</label>
+                  <Input
+                    type="number"
+                    value={selectedGame?.ground_details?.[0]?.width ?? ""}
+                    onChange={(e) =>
+                      handleEditField(
+                        "width",
+                        parseInt(e.target.value) || 0,
+                        true,
+                        "ground_details",
+                        0
+                      )
+                    }
+                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.width ? "border-red-500" : ""
+                    }`}
+                  />
+
+                  {errors.width && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.width}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Height</label>
+                  <Input
+                    type="number"
+                    value={selectedGame?.ground_details?.[0]?.height ?? ""}
+                    onChange={(e) =>
+                      handleEditField(
+                        "height",
+                        parseInt(e.target.value) || 0,
+                        true,
+                        "ground_details",
+                        0
+                      )
+                    }
+                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.height ? "border-red-500" : ""
+                    }`}
+                  />
+
+                  {errors.height && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.height}</span>
                     </div>
                   )}
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-3 "></div>
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={closeModal}>

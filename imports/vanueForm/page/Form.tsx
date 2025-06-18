@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { VenueFormData, GroundDetail } from "@/types/vanue";
 import { CircleAlert, CircleMinus, CirclePlus, ImageUp, X } from "lucide-react";
@@ -246,33 +247,35 @@ const Form: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter venue name"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.name ? "ring-0 ring-red-500 border-red-500" : ""
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.name ? "border-red-500" : ""
                 }`}
               />
+
               {errors.name && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className="text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.name}</span>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="space-y-2 w-full">
-            <Label>Description</Label>
+          <div className="space-y-1 w-full">
+            <Label className="block text-sm font-medium">Description</Label>
             <div className="relative">
               <Input
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Enter description"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.description ? "ring-0 ring-red-500 border-red-500" : ""
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.description ? "border-red-500" : ""
                 }`}
               />
+
               {errors.description && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.description}</span>
                 </div>
               )}
             </div>
@@ -280,43 +283,41 @@ const Form: React.FC = () => {
         </div>
 
         <div className="flex gap-5">
-          <div className="space-y-2 w-full">
-            <Label>Area</Label>
+          <div className="space-y-1 w-full">
+            <Label className="block text-sm font-medium">Area</Label>
             <div className="relative">
               <Input
                 name="area"
                 value={formData.location.area}
                 onChange={handleChange}
                 placeholder="Enter area"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.area ? "ring-0 ring-red-500 border-red-500" : ""
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.area ? "border-red-500" : ""
                 }`}
               />
-
               {errors.area && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.area}</span>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="space-y-2 w-full">
-            <Label>City</Label>
+          <div className="space-y-1 w-full">
+            <Label className="block text-sm font-medium">City</Label>
             <div className="relative">
               <Input
                 name="city"
                 value={formData.location.city}
                 onChange={handleChange}
                 placeholder="Enter city"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.city ? "ring-0 ring-red-500 border-red-500" : ""
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.city ? "border-red-500" : ""
                 }`}
               />
-
               {errors.city && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.city}</span>
                 </div>
               )}
             </div>
@@ -324,28 +325,28 @@ const Form: React.FC = () => {
         </div>
 
         <div className="flex gap-5">
-          <div className="space-y-2 w-full">
-            <Label>Address</Label>
+          <div className="space-y-1 w-full">
+            <Label className="block text-sm font-medium">Address</Label>
             <div className="relative">
               <Input
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="Enter address"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.address ? "ring-0 ring-red-500 border-red-500" : ""
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.address ? "border-red-500" : ""
                 }`}
               />
-
               {errors.address && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.address}</span>
                 </div>
               )}
             </div>
           </div>
-          <div className="space-y-2 w-full">
-            <Label>Max Players</Label>
+
+          <div className="space-y-1 w-full">
+            <Label className="block text-sm font-medium">Max Players</Label>
             <div className="relative">
               <Input
                 name="maxPlayers"
@@ -357,26 +358,25 @@ const Form: React.FC = () => {
                     : ""
                 }
                 onChange={handleChange}
-                placeholder="Enter Max players"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.maxPlayers ? "ring-0 ring-red-500 border-red-500" : ""
+                placeholder="Enter max players"
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.maxPlayers ? "border-red-500" : ""
                 }`}
               />
-
               {errors.maxPlayers && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.maxPlayers}</span>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="space-y-2 ">
-          <Label className="text-sm">Category</Label>
+        <div className="space-y-1">
+          <Label className="text-sm font-medium">Category</Label>
           <div className="relative">
             <RadioGroup
-              className="flex gap-4 "
+              className="flex gap-4"
               value={formData.game_info.type}
               onValueChange={handleSelectChange}
             >
@@ -388,54 +388,60 @@ const Form: React.FC = () => {
                 />
                 <label
                   htmlFor="indoor"
-                  className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                  className={`cursor-pointer px-10 py-1 rounded-lg border bg-card ${
                     formData.category === "indoor"
-                      ? "border-primary focus-visible:ring-0"
+                      ? "border-primary"
                       : errors.category
-                      ? "border-red-500 ring-0 ring-red-500"
+                      ? "border-red-500"
                       : "border-border"
-                  } bg-card`}
+                  }`}
                 >
                   Indoor
                 </label>
-              </div>
 
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value="outdoor"
-                  id="outdoor"
-                  className="sr-only"
-                />
-                <label
-                  htmlFor="outdoor"
-                  className={`cursor-pointer px-10 py-1 rounded-lg border ${
-                    formData.category === "outdoor"
-                      ? "border-primary focus-visible:ring-0"
-                      : errors.category
-                      ? "border-red-500 ring-0 ring-red-500"
-                      : "border-border"
-                  } bg-card`}
-                >
-                  Outdoor
-                </label>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="outdoor"
+                    id="outdoor"
+                    className="sr-only"
+                  />
+                  <label
+                    htmlFor="outdoor"
+                    className={`cursor-pointer px-10 py-1 rounded-lg border bg-card ${
+                      formData.category === "outdoor"
+                        ? "border-primary"
+                        : errors.category
+                        ? "border-red-500"
+                        : "border-border"
+                    }`}
+                  >
+                    Outdoor
+                  </label>
+                </div>
               </div>
 
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="roof" id="roof" className="sr-only" />
                 <label
                   htmlFor="roof"
-                  className={`cursor-pointer px-10 py-1 rounded-lg border ${
+                  className={`cursor-pointer px-10 py-1 rounded-lg border bg-card ${
                     formData.category === "roof"
-                      ? "border-primary focus-visible:ring-0"
+                      ? "border-primary"
                       : errors.category
-                      ? "border-red-500 ring-0 ring-red-500"
+                      ? "border-red-500"
                       : "border-border"
-                  } bg-card`}
+                  }`}
                 >
                   Roof
                 </label>
               </div>
             </RadioGroup>
+
+            {errors.category && (
+              <div className=" text-xs text-red-500 pt-1 pl-1">
+                <span>{errors.category}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -448,9 +454,7 @@ const Form: React.FC = () => {
             >
               <SelectTrigger
                 className={`w-full flex items-center justify-between bg-card ${
-                  errors.type
-                    ? "border-red-500 ring-0 ring-red-500"
-                    : "border-border"
+                  errors.type ? "border-red-500 ring-0" : "border-border"
                 }`}
               >
                 <SelectValue placeholder="Select category" />
@@ -461,9 +465,10 @@ const Form: React.FC = () => {
                 <SelectItem value="Basketball">Basketball</SelectItem>
               </SelectContent>
             </Select>
+
             {errors.type && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                <CircleAlert size={16} />
+              <div className=" text-xs text-red-500 pt-1 pl-1">
+                <span>{errors.type}</span>
               </div>
             )}
           </div>
@@ -493,8 +498,8 @@ const Form: React.FC = () => {
                   />
 
                   {errors.ground && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.ground}</span>
                     </div>
                   )}
                 </div>
@@ -509,7 +514,6 @@ const Form: React.FC = () => {
                     value={ground.hourly_price}
                     onChange={(e) => {
                       clearError("hourly_price");
-
                       handleGroundFieldChange(
                         index,
                         "hourly_price",
@@ -517,15 +521,13 @@ const Form: React.FC = () => {
                       );
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.hourly_price
-                        ? "ring-0 ring-red-500 border-red-500"
-                        : ""
+                      errors.hourly_price ? "border-red-500" : ""
                     }`}
                   />
 
                   {errors.hourly_price && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.hourly_price}</span>
                     </div>
                   )}
                 </div>
@@ -545,7 +547,6 @@ const Form: React.FC = () => {
                     }
                     onChange={(e) => {
                       clearError("capacity");
-
                       handleGroundFieldChange(
                         index,
                         "capacity",
@@ -553,15 +554,13 @@ const Form: React.FC = () => {
                       );
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.capacity
-                        ? "ring-0 ring-red-500 border-red-500"
-                        : ""
+                      errors.capacity ? "border-red-500" : ""
                     }`}
                   />
 
                   {errors.capacity && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.capacity}</span>
                     </div>
                   )}
                 </div>
@@ -580,17 +579,16 @@ const Form: React.FC = () => {
                     }
                     onChange={(e) => {
                       clearError("width");
-
                       handleGroundFieldChange(index, "width", e.target.value);
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.width ? "ring-0 ring-red-500 border-red-500" : ""
+                      errors.width ? "border-red-500" : ""
                     }`}
                   />
 
                   {errors.width && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.width}</span>
                     </div>
                   )}
                 </div>
@@ -601,7 +599,7 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder=" Enter Height"
+                    placeholder="Enter Height"
                     value={
                       typeof ground.height === "number" && !isNaN(ground.height)
                         ? ground.height
@@ -609,17 +607,15 @@ const Form: React.FC = () => {
                     }
                     onChange={(e) => {
                       clearError("height");
-
                       handleGroundFieldChange(index, "height", e.target.value);
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.width ? "ring-0 ring-red-500 border-red-500" : ""
+                      errors.height ? "border-red-500" : ""
                     }`}
                   />
-
                   {errors.height && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                      <CircleAlert size={16} />
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.height}</span>
                     </div>
                   )}
                 </div>
@@ -628,7 +624,7 @@ const Form: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="bg-transparent my-auto pt-5 cursor-pointer"
+                  className="bg-transparent my-auto  cursor-pointer"
                   onClick={handleAddGroundDetail}
                 >
                   <CirclePlus className="text-foreground" size={16} />
@@ -637,7 +633,7 @@ const Form: React.FC = () => {
                 {formData.ground_details.length > 1 && (
                   <button
                     type="button"
-                    className="bg-transparent my-auto pt-5 cursor-pointer"
+                    className="bg-transparent my-auto  cursor-pointer"
                     onClick={() => handleRemoveGroundDetail(index)}
                   >
                     <CircleMinus className="text-foreground" size={16} />
@@ -647,19 +643,19 @@ const Form: React.FC = () => {
             </div>
           ))}
 
-          <div className="space-y-3 w-full">
+          <div className="space-y-3 w-full ">
             <Label>Upload Images</Label>
-            <div className="flex items-center space-x-4 flex-wrap">
+            <div className="flex items-center space-x-4 flex-wrap ">
               {preview.length > 0 &&
                 preview.map((src, index) => (
                   <div
                     key={index}
-                    className="relative flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card overflow-hidden"
+                    className="relative  flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card overflow-hidden"
                   >
                     <img
                       src={src}
                       alt={`Preview ${index}`}
-                      className="w-full h-full object-cover rounded-md"
+                      className=" h-full object-contain  "
                     />
                     <button
                       type="button"

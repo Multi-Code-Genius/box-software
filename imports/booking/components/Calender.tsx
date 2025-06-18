@@ -66,6 +66,7 @@ import {
   useState,
 } from "react";
 import { Info } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 declare module "@mobiscroll/react";
 
@@ -123,9 +124,10 @@ const Calender: FC<CalendarProps> = ({
   const [start, startRef] = useState<Input | null>(null);
   const [end, endRef] = useState<Input | null>(null);
   const [popupEventTitle, setTitle] = useState<string | undefined>("");
-  const [popupEventAmount, setAmount] = useState<string | undefined>("");
+  const [popupEventAmount, setAmount] = useState<string>("");
   const [popupEventDescription, setDescription] = useState<string>("");
   const [popupEventAllDay, setAllDay] = useState<boolean>(true);
+
   const [popupEventDate, setDate] = useState<MbscDateType[]>([]);
   const [mySelectedDate, setSelectedDate] = useState<MbscDateType>();
   const [isSnackbarOpen, setSnackbarOpen] = useState(false);
@@ -167,6 +169,41 @@ const Calender: FC<CalendarProps> = ({
 
   const [undoEvent, setUndoEvent] = useState<MbscCalendarEvent | null>(null);
   const venueId = Number(localStorage.getItem("venueId"));
+  const searchParams = useSearchParams();
+  const priceFromUrl = searchParams.get("price");
+  const groundFromUrl = searchParams.get("grounds");
+  const [hasSetInitialValues, setHasSetInitialValues] = useState(false);
+  const [popupEventGrounds, setGrounds] = useState<number>(0);
+
+  useEffect(() => {
+    if (isOpen && isEdit && tempEvent?.amount && !hasSetInitialValues) {
+      setAmount(String(tempEvent.amount));
+      setTitle(tempEvent.title);
+      setGrounds(tempEvent.ground);
+      setHasSetInitialValues(true);
+    }
+  }, [isOpen, isEdit, tempEvent, hasSetInitialValues]);
+
+  useEffect(() => {
+    if (isOpen && !isEdit && !hasSetInitialValues) {
+      if (priceFromUrl) {
+        setAmount(priceFromUrl);
+      }
+      if (groundFromUrl) {
+        setGrounds(Number(groundFromUrl));
+      }
+      setHasSetInitialValues(true);
+    }
+  }, [isOpen, isEdit, hasSetInitialValues, priceFromUrl, groundFromUrl]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setHasSetInitialValues(false);
+      setAmount("");
+      setTitle("");
+      setGrounds(0);
+    }
+  }, [isOpen]);
 
   const colorButtons = useMemo<(string | MbscPopupButton)[]>(
     () => [
@@ -518,6 +555,7 @@ const Calender: FC<CalendarProps> = ({
     const title = popupEventTitle ?? "";
     const description = popupEventDescription ?? "";
     const amount = popupEventAmount ?? "";
+    const grounds = popupEventGrounds ?? 0;
 
     if (!title.trim()) {
       validationErrors.name = "Name is required";
@@ -542,33 +580,31 @@ const Calender: FC<CalendarProps> = ({
     }
 
     setErrors({ name: "", number: "", amount: "" });
+
     const newEv = {
       id: tempEvent!.id ? String(tempEvent!.id) : "",
-      title: popupEventTitle,
-      amount: popupEventAmount,
-      description: popupEventDescription,
+      title,
+      amount,
+      description,
       start: popupEventDate[0],
       end: popupEventDate[1],
       allDay: popupEventAllDay,
       color: tempColor,
       recurring: getCustomRule(),
+      grounds,
     };
 
     if (isEdit) {
       const index = myEvents.findIndex((x) => x.id === tempEvent!.id);
       const newEventList = [...myEvents];
-
       newEventList.splice(index, 1, newEv);
       setMyEvents(newEventList);
-
       const eventStart = moment(tempEvent!.start as Date);
       const utcMidnightDate = eventStart
         .clone()
         .startOf("day")
         .utc()
         .toISOString();
-
-      console.log(tempEvent, "tempEven12t");
 
       updateBooking({
         id: String(tempEvent!.id),
@@ -581,9 +617,9 @@ const Calender: FC<CalendarProps> = ({
             : "",
           date: utcMidnightDate,
           name: newEv.title || "",
-          bookedGrounds: Number(2),
-          totalAmount: Number(tempEvent!.amount),
-          phone: tempEvent!.mobile,
+          bookedGrounds: Number(grounds),
+          totalAmount: Number(amount),
+          phone: Number(newEv.description),
         },
       });
     } else {
@@ -591,22 +627,19 @@ const Calender: FC<CalendarProps> = ({
       const result = moment(localDate).format("YYYY-MM-DD");
       const utcMidnight = moment.utc(result).format("YYYY-MM-DD[T]00:00:00[Z]");
 
-      console.log(popupEventDescription, "popupEventDescription");
-
       createBooking({
-        name: popupEventTitle || "",
-        phone: popupEventDescription || "",
+        name: title || "",
+        phone: description || "",
         startTime: moment(popupEventDate[0] as Date)
           .utc()
           .format("YYYY-MM-DDTHH:mm:ss[Z]"),
-
         endTime: moment(popupEventDate[1] as Date)
           .utc()
           .format("YYYY-MM-DDTHH:mm:ss[Z]"),
         date: utcMidnight,
-        totalAmount: Number(popupEventAmount),
+        totalAmount: Number(amount),
         venueId: venueId,
-        bookedGrounds: Number(2),
+        bookedGrounds: Number(grounds),
       });
 
       setMyEvents([...myEvents, newEv]);
@@ -617,7 +650,6 @@ const Calender: FC<CalendarProps> = ({
     }
 
     navigateTo();
-    // Close the popup
     setOpen(false);
   }, [
     tempEvent,
@@ -634,6 +666,7 @@ const Calender: FC<CalendarProps> = ({
     createBooking,
     updateBooking,
     venueId,
+    popupEventGrounds,
   ]);
 
   const deleteEvent = useCallback(
@@ -696,6 +729,7 @@ const Calender: FC<CalendarProps> = ({
       const startDate = new Date(event.start as string);
       setTitle(event.title);
       setAmount(event.amount);
+      setGrounds(event.ground);
       setDescription(event.description ?? event.mobile ?? "");
       setDate([startDate, new Date(event.end as string)]);
       setUntilDate(
@@ -827,9 +861,20 @@ const Calender: FC<CalendarProps> = ({
   const titleChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
     setTitle(ev.target.value);
   }, []);
-  const amountChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
-    setAmount(ev.target.value);
-  }, []);
+
+  const amountChange = useCallback(
+    (ev: React.ChangeEvent<HTMLInputElement>) => {
+      setAmount(ev.target.value);
+    },
+    []
+  );
+
+  const groundChange = useCallback(
+    (ev: React.ChangeEvent<HTMLInputElement>) => {
+      setGrounds(Number(ev.target.value));
+    },
+    []
+  );
 
   const descriptionChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
     setDescription(ev.target.value);
@@ -1049,7 +1094,6 @@ const Calender: FC<CalendarProps> = ({
 
   const handleEventUpdated = useCallback((args: MbscEventUpdateEvent) => {
     const tempEvent = args.event;
-
     updateBooking({
       id: String(tempEvent?.id ?? ""),
       data: {
@@ -1063,7 +1107,7 @@ const Calender: FC<CalendarProps> = ({
           ? moment(tempEvent.start).utc().startOf("day").toISOString()
           : "2025-06-06T00:00:00Z",
         name: tempEvent?.title ?? "",
-        bookedGrounds: 2,
+        bookedGrounds: Number(tempEvent?.ground),
         totalAmount: Number(tempEvent?.amount ?? 0),
         phone: tempEvent?.mobile ?? "",
       },
@@ -1159,8 +1203,8 @@ const Calender: FC<CalendarProps> = ({
           } else {
             if (editFromPopup) {
               tempEvent!.title = popupEventTitle;
-              tempEvent!.title = popupEventAmount;
-
+              tempEvent!.amount = popupEventAmount;
+              tempEvent!.ground = popupEventGrounds;
               tempEvent!.description = popupEventDescription;
               tempEvent!.start = popupEventDate[0];
               tempEvent!.end = popupEventDate[1];
@@ -1218,6 +1262,7 @@ const Calender: FC<CalendarProps> = ({
       popupEventDescription,
       popupEventTitle,
       popupEventAmount,
+      popupEventGrounds,
       recurringDelete,
       recurringEditMode,
       tempEvent,
@@ -1339,7 +1384,7 @@ const Calender: FC<CalendarProps> = ({
           <div className="relative">
             <Input
               label="Total Amount"
-              value={popupEventAmount}
+              value={popupEventAmount || ""}
               onChange={amountChange}
               className={errors.amount ? "pr-10 border-red-500" : ""}
             />
@@ -1348,6 +1393,14 @@ const Calender: FC<CalendarProps> = ({
                 <Info className="w-4 h-4" />
               </span>
             )}
+          </div>
+          <div className="space-y-1">
+            <Input
+              label="Ground"
+              type="number"
+              value={String(popupEventGrounds)}
+              onChange={groundChange}
+            />
           </div>
 
           <div onClick={openColorPicker} className="event-color-c">

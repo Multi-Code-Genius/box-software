@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import { CircleAlert, Pencil } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
 import {
   Dialog,
   DialogClose,
@@ -180,7 +179,6 @@ const Edit: React.FC<FooterProfileProps> = ({
               </button>
             </div>
           </div>
-
           <input
             ref={fileInputRef}
             type="file"
@@ -188,14 +186,12 @@ const Edit: React.FC<FooterProfileProps> = ({
             onChange={handleFileChange}
             className="hidden"
           />
-
           <Label className="text-center mx-auto text-xl font-bold">
             Profile Information
           </Label>
-
-          <div className="space-y-1">
-            <Label>Email</Label>
-            <div className="relative">
+          <div>
+            <div className="space-y-2">
+              <Label className="text-[13px] font-normal">Email</Label>
               <Input
                 type="email"
                 name="email"
@@ -206,99 +202,106 @@ const Edit: React.FC<FooterProfileProps> = ({
                   errors.email ? "ring-0 ring-red-500 border-red-500" : ""
                 }`}
               />
-              {errors.email && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
+            </div>
+
+            {errors.email && (
+              <div className=" text-xs text-red-500 pl-1 pt-1">
+                <span>{errors.email}</span>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-4 w-full">
+            <div className="space-y-2 w-full">
+              <Label className="text-[13px] font-normal">Name</Label>
+              <div className="relative">
+                <Input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter Name"
+                  className={`border bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                    errors.name ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.name && (
+                  <div className=" text-xs text-red-500 pt-1 pl-1">
+                    <span>{errors.name}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2 w-full">
+              <Label className="text-[13px] font-normal">Phone Number</Label>
+              <div className="relative">
+                <Input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter Number"
+                  className={`w-full border bg-card border-border focus:outline-none focus-visible:ring-0 ${
+                    errors.phone ? "border-red-500" : ""
+                  }`}
+                />
+
+                {errors.phone && (
+                  <div className=" text-xs text-red-500 pt-1 pl-1">
+                    <span>{errors.phone}</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-1">
-            <Label>Name</Label>
-            <div className="relative">
-              <Input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter Name"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.name ? "ring-0 ring-red-500 border-red-500" : ""
-                }`}
-              />
-              {errors.name && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
+          <div className="flex w-full gap-3">
+            <div className="space-y-2 w-full">
+              <Label className="text-[13px] font-normal">City</Label>
+              <div className="relative">
+                <Input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Enter City"
+                  className={`w-full border bg-card border-border focus:outline-none focus-visible:ring-0 ${
+                    errors.city ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.city && (
+                  <div className=" text-xs text-red-500 pt-1 pl-1">
+                    <span>{errors.city}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2 w-full">
+              <Label className="text-[13px] font-normal">State</Label>
+              <div>
+                <Input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  placeholder="Enter State"
+                  className={`w-full border bg-card border-border focus:outline-none focus-visible:ring-0 ${
+                    errors.state ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.state && (
+                  <div className=" text-xs text-red-500 pt-1 pl-1">
+                    <span>{errors.state}</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-1">
-            <Label>Phone Number</Label>
-            <div className="relative">
-              <Input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Enter Number"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.phone ? "ring-0 ring-red-500 border-red-500" : ""
-                }`}
-              />
-              {errors.phone && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="space-y-1">
-            <Label>City</Label>
-            <div className="relative">
-              <Input
-                type="tel"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="Enter City"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.city ? "ring-0 ring-red-500 border-red-500" : ""
-                }`}
-              />
-              {errors.city && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <Label>State</Label>
-            <div className="relative">
-              <Input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                placeholder="Enter Number"
-                className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                  errors.state ? "ring-0 ring-red-500 border-red-500" : ""
-                }`}
-              />
-              {errors.state && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="space-y-1">
-            <Label>Zip code</Label>
-            <div className="relative">
+          <div className="space-y-2">
+            <Label className="text-[13px] font-normal">Zip code</Label>
+            <div>
               <Input
                 type="number"
                 name="zip_code"
@@ -310,13 +313,12 @@ const Edit: React.FC<FooterProfileProps> = ({
                 }`}
               />
               {errors.zip_code && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                  <CircleAlert size={16} />
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.zip_code}</span>
                 </div>
               )}
             </div>
           </div>
-
           <div className="flex justify-center">
             <Button type="submit" disabled={isSaving}>
               {isSaving ? "Saving…" : "Save"}

@@ -39,12 +39,20 @@ const AllVenues = () => {
   if (!hasMounted) return null;
 
 
-  const handleGameClick = (venue: { id: string; name: string }) => {
+  const handleGameClick = (venue: {
+    id: string;
+    name: string;
+    ground_details: { hourly_price: number; ground: number }[];
+  }) => {
+    const hourlyPrice = venue?.ground_details?.[0]?.hourly_price ?? 0;
+    const ground = venue?.ground_details?.[0]?.ground ?? 0;
+
     localStorage.setItem("venueId", venue.id);
+
     router.push(
       `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(
         venue.name
-      )}`
+      )}&price=${hourlyPrice}&grounds=${ground}`
     );
   };
 
