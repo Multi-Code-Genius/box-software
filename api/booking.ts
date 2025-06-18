@@ -220,6 +220,7 @@ export const useBookingById = (id: string) => {
 
 const bookingByRange = async (
   venueId: string,
+  ground: string,
   range: { start: string; end: string }
 ) => {
   if (!range.start || !range.end) {
@@ -228,7 +229,7 @@ const bookingByRange = async (
 
   try {
     const response = await api(
-      `/api/v2/booking/booking-week/${venueId}?startDate=${range.start}&endDate=${range.end}`,
+      `/api/v2/booking/booking-week/${venueId}/${ground}?startDate=${range.start}&endDate=${range.end}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -244,13 +245,14 @@ const bookingByRange = async (
 
 export const useBookingByRange = (
   venueId: string,
+  ground: string,
   range: { start: string; end: string }
 ) => {
   const isValid = !!venueId && !!range.start && !!range.end;
 
   return useQuery({
-    queryKey: ["booking", venueId, range],
-    queryFn: () => bookingByRange(venueId, range),
+    queryKey: ["booking", venueId, ground, range],
+    queryFn: () => bookingByRange(venueId, ground, range),
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,

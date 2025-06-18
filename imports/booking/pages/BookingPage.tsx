@@ -13,7 +13,7 @@ import { ISchedule } from "tui-calendar";
 import Calender from "../components/Calender";
 import { colors } from "@/constant/content";
 
-const BookingPage = ({ venue }: { venue: Venue }) => {
+const BookingPage = ({ venue, ground }: { venue: Venue; ground: string }) => {
   const [range, setRange] = useState<{ start: string; end: string }>(() => {
     const start = moment().startOf("week").format("YYYY-MM-DD");
     const end = moment().endOf("week").format("YYYY-MM-DD");
@@ -21,7 +21,7 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
     return { start, end };
   });
 
-  const { refetch, isLoading } = useBookingByRange(venue.id, range);
+  const { refetch, isLoading } = useBookingByRange(venue.id, ground, range);
   const [events, setEvents] = useState<ISchedule[]>([]);
 
   const updateEvents = (data: any) => {

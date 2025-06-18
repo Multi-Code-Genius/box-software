@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import BookingPage from "@/imports/booking/pages/BookingPage";
 import { useVenues } from "@/api/vanue";
@@ -11,6 +11,10 @@ const SchedulePage = () => {
   const params = useParams();
   const id = params?.id;
   const { data: venues, isLoading, isError } = useVenues();
+
+  const searchParams = useSearchParams();
+
+  const ground = searchParams.get("grounds") ?? "";
 
   const [venue, setVenue] = useState<Venue | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -52,7 +56,7 @@ const SchedulePage = () => {
     <div className="p-[20px] overflow-hidden">
       <p className="font-bold text-3xl pb-2">Bookings</p>
       <p className="text-sm">Booking for: {venue.name}</p>
-      <BookingPage venue={venue} />
+      <BookingPage venue={venue} ground={ground} />
     </div>
   );
 };

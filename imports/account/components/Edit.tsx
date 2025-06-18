@@ -117,11 +117,11 @@ const Edit: React.FC<FooterProfileProps> = ({
       { data: formData, id: userId },
       {
         onSuccess: () => {
-          setUser({ 
-            ...formData, 
-            profile: formData.profile_pic, 
-            id: userId, 
-            role: "" 
+          setUser({
+            ...formData,
+            profile: formData.profile_pic,
+            id: userId,
+            role: "",
           });
           setShowEditModal(false);
           setIsSaving(false);
