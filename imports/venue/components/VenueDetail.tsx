@@ -57,10 +57,24 @@ const VenueDetail = () => {
     field: string,
     value: any,
     isNested = false,
-    nestedKey = ""
+    nestedKey = "",
+    index: number | null = null
   ) => {
     setSelectedGame((prev: any) => {
       if (!prev) return prev;
+
+      if (isNested && nestedKey && typeof index === "number") {
+        const updatedArray = [...prev[nestedKey]];
+        updatedArray[index] = {
+          ...updatedArray[index],
+          [field]: value,
+        };
+
+        return {
+          ...prev,
+          [nestedKey]: updatedArray,
+        };
+      }
 
       if (isNested && nestedKey) {
         return {
@@ -118,14 +132,20 @@ const VenueDetail = () => {
       newErrors.description = "Description is required";
     if (!selectedGame.address) newErrors.address = "Address is required";
     if (!selectedGame.location?.city) newErrors.city = "City is required";
-    if (!selectedGame.location?.lat) newErrors.lat = "Latitude is required";
-    if (!selectedGame.location?.lng) newErrors.lng = "Longitude is required";
+
     if (!selectedGame.game_info?.type) newErrors.type = "Game type is required";
     if (!selectedGame.game_info?.maxPlayers)
       newErrors.maxPlayers = "Max players is required";
     if (!selectedGame.ground_details?.[0]?.ground)
       newErrors.ground = "Grounds are required";
-
+    if (!selectedGame.ground_details?.[0]?.hourly_price)
+      newErrors.price = "Price are required";
+    if (!selectedGame.ground_details?.[0]?.width)
+      newErrors.width = "Width are required";
+    if (!selectedGame.ground_details?.[0]?.height)
+      newErrors.height = "Height are required";
+    if (!selectedGame.ground_details?.[0]?.capacity)
+      newErrors.capacity = "Capacity are required";
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -167,8 +187,8 @@ const VenueDetail = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
-   </div>
+        <Mosaic color={["#3d4293", "#4e54b5", "#7277c4", "#2e326f"]} />
+      </div>
     );
   }
   if (!data?.venues?.length) {
@@ -199,6 +219,7 @@ const VenueDetail = () => {
     );
   }
 
+  console.log(selectedGame, "selectedGame");
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
@@ -362,65 +383,56 @@ const VenueDetail = () => {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="block text-sm font-medium">City</label>
-                <div className="relative">
-                  <Input
-                    value={selectedGame.location?.city || ""}
-                    onChange={(e) =>
-                      handleEditField("city", e.target.value, true, "location")
-                    }
-                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.city ? "border-red-500" : ""
-                    }`}
-                  />
-
-                  {errors.city && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.city}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium">Latitude</label>
+              <div className="flex gap-4">
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">City</label>
                   <div className="relative">
                     <Input
-                      value={selectedGame.location?.lat || ""}
+                      value={selectedGame.location?.city || ""}
                       onChange={(e) =>
-                        handleEditField("lat", e.target.value, true, "location")
+                        handleEditField(
+                          "city",
+                          e.target.value,
+                          true,
+                          "location"
+                        )
                       }
                       className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                        errors.lat ? "border-red-500" : ""
+                        errors.city ? "border-red-500" : ""
                       }`}
                     />
 
-                    {errors.lat && (
+                    {errors.city && (
                       <div className="text-xs text-red-500 pt-1 pl-1">
-                        <span>{errors.lat}</span>
+                        <span>{errors.city}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium">Longitude</label>
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Price</label>
                   <div className="relative">
                     <Input
-                      value={selectedGame.location?.lng || ""}
+                      type="number"
+                      value={selectedGame.ground_details[0].hourly_price}
                       onChange={(e) =>
-                        handleEditField("lng", e.target.value, true, "location")
+                        handleEditField(
+                          "hourly_price",
+                          parseInt(e.target.value) || 0,
+                          true,
+                          "ground_details",
+                          0
+                        )
                       }
                       className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                        errors.lng ? "border-red-500" : ""
+                        errors.price ? "border-red-500" : ""
                       }`}
                     />
 
-                    {errors.lng && (
-                      <div className=" text-xs text-red-500 pt-1 pl-1">
-                        <span>{errors.lng}</span>
+                    {errors.price && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.price}</span>
                       </div>
                     )}
                   </div>
@@ -499,8 +511,11 @@ const VenueDetail = () => {
                       value={selectedGame?.ground_details?.[0]?.ground ?? 0}
                       onChange={(e) =>
                         handleEditField(
-                          "grounds",
-                          parseInt(e.target.value) || 0
+                          "ground",
+                          parseInt(e.target.value) || 0,
+                          true,
+                          "ground_details",
+                          0
                         )
                       }
                       className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
@@ -517,30 +532,85 @@ const VenueDetail = () => {
                 </div>
 
                 <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">Price</label>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      value={selectedGame.ground_details[0].hourly_price}
-                      onChange={(e) =>
-                        handleEditField(
-                          "hourly_price",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                        errors.hourly_price ? "border-red-500" : ""
-                      }`}
-                    />
+                  <label className="block text-sm font-medium">Capacity</label>
+                  <Input
+                    type="number"
+                    value={selectedGame?.ground_details?.[0]?.capacity ?? ""}
+                    onChange={(e) =>
+                      handleEditField(
+                        "capacity",
+                        parseInt(e.target.value) || 0,
+                        true,
+                        "ground_details",
+                        0
+                      )
+                    }
+                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.capacity ? "border-red-500" : ""
+                    }`}
+                  />
 
-                    {errors.ground && (
-                      <div className="text-xs text-red-500 pt-1 pl-1">
-                        <span>{errors.ground}</span>
-                      </div>
-                    )}
-                  </div>
+                  {errors.capacity && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.capacity}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Width</label>
+                  <Input
+                    type="number"
+                    value={selectedGame?.ground_details?.[0]?.width ?? ""}
+                    onChange={(e) =>
+                      handleEditField(
+                        "width",
+                        parseInt(e.target.value) || 0,
+                        true,
+                        "ground_details",
+                        0
+                      )
+                    }
+                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.width ? "border-red-500" : ""
+                    }`}
+                  />
+
+                  {errors.width && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.width}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Height</label>
+                  <Input
+                    type="number"
+                    value={selectedGame?.ground_details?.[0]?.height ?? ""}
+                    onChange={(e) =>
+                      handleEditField(
+                        "height",
+                        parseInt(e.target.value) || 0,
+                        true,
+                        "ground_details",
+                        0
+                      )
+                    }
+                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                      errors.height ? "border-red-500" : ""
+                    }`}
+                  />
+
+                  {errors.height && (
+                    <div className="text-xs text-red-500 pt-1 pl-1">
+                      <span>{errors.height}</span>
+                    </div>
+                  )}
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-3 "></div>
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={closeModal}>
