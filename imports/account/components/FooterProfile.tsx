@@ -107,7 +107,7 @@ const FooterProfile = () => {
             >
               <Avatar>
                 <AvatarImage
-                  src={user?.profile_pic || "/images/profile.jpg"}
+                  src={user?.profile || "/images/profile.jpg"}
                   alt="profile"
                   className="rounded-full"
                 />
@@ -163,7 +163,7 @@ const FooterProfile = () => {
               <div className="flex gap-4 items-center">
                 <img
                   className="w-12 h-12 rounded-full"
-                  src={user?.profile_pic || "/images/profile.jpg"}
+                  src={user?.profile || "/images/profile.jpg"}
                   alt="Profile"
                 />
                 <div>
