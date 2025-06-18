@@ -10,8 +10,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { rootUser } from "@/data/users";
-
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 

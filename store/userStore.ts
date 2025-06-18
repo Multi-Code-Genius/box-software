@@ -9,7 +9,7 @@ type User = {
   email: string;
   name: string;
   // mobileNumber: string;
-  profile_pic: string;
+  profile: string;
   id: string;
   role: string;
 };

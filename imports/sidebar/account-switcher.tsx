@@ -23,7 +23,7 @@ import { LogoutConfirmModal } from "../account/components/LogoutModel";
 import Edit from "../account/components/Edit";
 
 export default function AccountSwitcher() {
-  const { user, setUser } = useUserStore();
+  const { user } = useUserStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
   const { logout } = useAuthStore();
@@ -43,7 +43,10 @@ export default function AccountSwitcher() {
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Avatar className="size-9 rounded-lg">
-            <AvatarImage src={user?.profile_pic} alt={user?.name} />
+            <AvatarImage
+              src={user?.profile ?? "/avatars/jay.png"}
+              alt={user?.name}
+            />
 
             <AvatarFallback className="rounded-lg">
               {getInitials(user?.name ?? "")}
@@ -59,7 +62,10 @@ export default function AccountSwitcher() {
           <DropdownMenuItem>
             <div className="flex w-full items-center justify-between gap-2 px-1 py-1.5">
               <Avatar className="size-9 rounded-lg">
-                <AvatarImage src={user?.profile_pic} alt={user?.name} />
+                <AvatarImage
+                  src={user?.profile ?? "/avatars/jay.png"}
+                  alt={user?.name ?? ""}
+                />
 
                 <AvatarFallback className="rounded-lg">
                   {getInitials(user?.name ?? "")}

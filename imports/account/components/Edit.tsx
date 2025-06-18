@@ -37,7 +37,7 @@ const Edit: React.FC<FooterProfileProps> = ({
     email: "",
     name: "",
     phone: "",
-    profile_pic: "/images/profile.png",
+    profile_pic: "/avatars/jay.png",
     address: "",
     city: "",
     state: "",
@@ -65,13 +65,13 @@ const Edit: React.FC<FooterProfileProps> = ({
       email: user.email ?? "",
       name: user.name ?? "",
       phone: user.phone ?? "",
-      profile_pic: user.profile_pic ?? "/images/profile.png",
+      profile_pic: user.profile ?? "/avatars/jay.png",
       address: user.address ?? "",
       city: user.city ?? "",
       state: user.state ?? "",
       zip_code: user.zip_code ?? "",
     });
-    setLocalImage(user.profile_pic ?? null);
+    setLocalImage(user.profile ?? null);
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
