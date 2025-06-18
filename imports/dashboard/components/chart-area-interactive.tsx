@@ -56,21 +56,34 @@ export function ChartAreaInteractive() {
 
     let selectedData: any[] = [];
 
+    const processBookings = (bookings: any[], maxDays: number) => {
+      const grouped: Record<string, any[]> = {};
+
+      bookings.forEach((booking) => {
+        const dateKey = moment(booking.date).format("YYYY-MM-DD");
+        if (!grouped[dateKey]) {
+          grouped[dateKey] = [];
+        }
+        grouped[dateKey].push(booking);
+      });
+
+      const sortedUniqueDates = Object.keys(grouped)
+        .sort((a, b) => moment(b).valueOf() - moment(a).valueOf())
+        .slice(0, maxDays);
+
+      const result = sortedUniqueDates.flatMap((date) => grouped[date]);
+      return result;
+    };
+
     if (timeRange === "7d" && dashboardData.lastSevenDaysBookings) {
-      selectedData = dashboardData.lastSevenDaysBookings;
+      selectedData = processBookings(dashboardData.lastSevenDaysBookings, 7);
     } else if (timeRange === "30d" && dashboardData.lastThirtyDaysBookings) {
-      selectedData = dashboardData.lastThirtyDaysBookings;
+      selectedData = processBookings(dashboardData.lastThirtyDaysBookings, 30);
     } else if (timeRange === "90d" && dashboardData.lastThreeMonthBookings) {
-      selectedData = dashboardData.lastThreeMonthBookings;
+      selectedData = processBookings(dashboardData.lastThreeMonthBookings, 90);
     }
 
-    const today = moment();
-
-    const filteredData = selectedData.filter((item) =>
-      moment(item.date).isSameOrBefore(today, "day")
-    );
-
-    setChartData(filteredData ?? []);
+    setChartData(selectedData);
   }, [dashboardData, timeRange]);
 
   React.useEffect(() => {
@@ -93,8 +106,6 @@ export function ChartAreaInteractive() {
 
     return result;
   }, [chartData, timeRange]);
-
-  // console.log(dashboardData, "dashboardData");
 
   return (
     <Card className="@container/card">

@@ -42,6 +42,7 @@ const BookingPage = ({ venue }: { venue: Venue }) => {
           .format("YYYY-MM-DD HH:mm:ss"),
         mobile: item?.customer?.mobile,
         amount: item.total_amount,
+        ground: item.booked_grounds,
       })) ?? [];
 
     setEvents(formatted);

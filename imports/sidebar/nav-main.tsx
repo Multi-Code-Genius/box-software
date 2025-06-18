@@ -189,20 +189,28 @@ export function NavMain({ items }: NavMainProps) {
   const handleVenueClick = (venue: any) => {
     const storedVenueId = localStorage.getItem("venueId");
     const storedVenueName = localStorage.getItem("venueName");
+    const storedVenuePrice = localStorage.getItem("hourlyPrice");
+    const storedVenueGrounds = localStorage.getItem("grounds");
 
     if (venue?.id) {
+      const hourlyPrice = venue?.ground_details?.[0]?.hourly_price ?? 0;
+      const grounds = venue?.ground_details?.[0]?.ground ?? 0;
+
       localStorage.setItem("venueId", venue.id);
       localStorage.setItem("venueName", venue.name);
+      localStorage.setItem("hourlyPrice", hourlyPrice);
+      localStorage.setItem("hourlyPrice", grounds);
+
       router.push(
         `/schedule/${venue.id}?id=${venue.id}&name=${encodeURIComponent(
           venue.name
-        )}`
+        )}&price=${hourlyPrice}&grounds=${grounds}`
       );
     } else if (storedVenueId && storedVenueName) {
       router.push(
         `/schedule/${storedVenueId}?id=${storedVenueId}&name=${encodeURIComponent(
           storedVenueName
-        )}`
+        )}&price=${storedVenuePrice}&grounds=${storedVenueGrounds}`
       );
     } else {
       toast.error("Venue not found");
