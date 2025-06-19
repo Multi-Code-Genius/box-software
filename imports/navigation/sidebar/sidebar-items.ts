@@ -1,11 +1,5 @@
 import {
   Home,
-  ChartPie,
-  Grid2X2,
-  ChartLine,
-  ShoppingBag,
-  BookA,
-  Forklift,
   Mail,
   MessageSquare,
   Calendar,
@@ -16,7 +10,8 @@ import {
   Fingerprint,
   SquareArrowUpRight,
   type LucideIcon,
-  Map,
+  MapPinned,
+  MapPinPlus,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -63,7 +58,12 @@ export const sidebarItems: NavGroup[] = [
       {
         title: "Venues",
         url: `/venues`,
-        icon: Map,
+        icon: MapPinned,
+      },
+      {
+        title: "Add Venue",
+        url: `/addVenues`,
+        icon: MapPinPlus,
       },
     ],
   },

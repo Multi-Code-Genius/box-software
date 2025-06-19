@@ -98,18 +98,20 @@ const AllVenues = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {venues.map((venue) => (
-          <div key={venue.id} className="relative group cursor-pointer">
-            <Card className="gap-3 shadow-xl h-full">
+          <div key={venue.id} className="relative group">
+            <Card className="gap-3 shadow-xl h-full flex flex-col">
               <CardHeader className="gap-0">
                 <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
                 <CardDescription className="text-base">
                   {venue.category}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 flex-grow">
                 <p className="flex items-center gap-2">
                   <MapPinned size={18} />
-                  Address: {venue.address || ""}
+                  <span className="truncate">
+                    Address: {venue.address || ""}
+                  </span>
                 </p>
                 <p className="flex items-center gap-2">
                   <Users size={18} />
@@ -124,23 +126,23 @@ const AllVenues = () => {
                   {venue.location?.city || ""}
                 </p>
               </CardContent>
+
               {venue.ground_details?.length > 0 && (
-                <div className="absolute top-2 right-2 flex gap-2 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                  {venue.ground_details.map((_: any, index: number) => (
-                    <Button
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log(
-                          `Ground ${index + 1} clicked for venue:`,
-                          venue
-                        );
-                        handleVenueClick(venue, index);
-                      }}
-                    >
-                      Ground {index + 1}
-                    </Button>
-                  ))}
+                <div className="absolute bottom-0 left-0 right-0 h-0 group-hover:h-12 transition-all duration-300 overflow-hidden bg-gradient-to-t from-black/10 via-transparent to-transparent">
+                  <div className="flex justify-center gap-1 pt-2">
+                    {venue.ground_details.map((_: any, index: number) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVenueClick(venue, index);
+                        }}
+                        className="px-3 py-1 cursor-pointer text-sm text-white bg-primary/90 hover:bg-primary rounded-t-md transition-colors"
+                      >
+                        Ground {index + 1}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </Card>

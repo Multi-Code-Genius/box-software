@@ -1,5 +1,6 @@
 import React from "react";
 import { useGetCustomerByID } from "@/api/customer";
+import { useVenueStore } from "@/store/venueStore";
 
 const formatDate = (iso: string) => new Date(iso).toLocaleDateString();
 const formatTime = (iso: string) =>
@@ -7,6 +8,7 @@ const formatTime = (iso: string) =>
 
 const CustomerDetailsByID = ({ id }: { id: string }) => {
   const { data, isLoading } = useGetCustomerByID(id);
+  const { venues } = useVenueStore();
 
   if (isLoading)
     return <div className="text-center">Loading customer details...</div>;
@@ -29,7 +31,7 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
 
       <div>
         <h4 className="text-lg font-semibold mt-4 mb-2">Bookings</h4>
-        {!customer.bookings ? (
+        {!customer.bookings || customer.bookings.length === 0 ? (
           <p className="text-muted-foreground">No bookings available.</p>
         ) : (
           <div className="border rounded-lg overflow-hidden">
@@ -41,20 +43,26 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
                   <th className="p-2 text-left">Start</th>
                   <th className="p-2 text-left">End</th>
                   <th className="p-2 text-left">Amount</th>
-                  <th className="p-2 text-left">Status</th>
+                  <th className="p-2 text-left">Booking Status</th>
+                  <th className="p-2 text-left">cancel Bookings</th>
                 </tr>
               </thead>
               <tbody>
-                {customer.bookings.map((booking: any) => (
-                  <tr key={booking.id} className="border-t text-xs">
-                    <td className="p-2">{booking.game?.name || "N/A"}</td>
-                    <td className="p-2">{formatDate(booking.date)}</td>
-                    <td className="p-2">{formatTime(booking.start_time)}</td>
-                    <td className="p-2">{formatTime(booking.end_time)}</td>
-                    <td className="p-2">₹{booking.total_amount}</td>
-                    <td className="p-2">{booking.status}</td>
-                  </tr>
-                ))}
+                {customer.bookings.map((booking: any) => {
+                  const venue = venues.find((v) => v.id === booking.venue_id);
+                  const name = venue?.name || "N/A";
+
+                  return (
+                    <tr key={booking.id} className="border-t text-xs">
+                      <td className="p-2">{name || "N/A"}</td>
+                      <td className="p-2">{formatDate(booking.date)}</td>
+                      <td className="p-2">{formatTime(booking.start_time)}</td>
+                      <td className="p-2">{formatTime(booking.end_time)}</td>
+                      <td className="p-2">₹{booking.total_amount}</td>
+                      <td className="p-2">{booking.status}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
