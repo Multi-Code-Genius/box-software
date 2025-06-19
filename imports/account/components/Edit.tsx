@@ -130,7 +130,7 @@ const Edit: React.FC<FooterProfileProps> = ({
     try {
       await uploadImage(file);
       const updatedUser = await fetchUserData();
-      setUser(updatedUser.user);
+      // setUser(updatedUser.user);
       setLocalImage(updatedUser.user.profile);
       setUserImage(updatedUser.user.profile);
       setFormData((prev) => ({
