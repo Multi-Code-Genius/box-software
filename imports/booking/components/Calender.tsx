@@ -179,7 +179,7 @@ const Calender: FC<CalendarProps> = ({
     if (isOpen && isEdit && tempEvent?.amount && !hasSetInitialValues) {
       setAmount(String(tempEvent.amount));
       setTitle(tempEvent.title);
-      setGrounds(tempEvent.ground);
+      setGrounds(tempEvent.grounds);
       setHasSetInitialValues(true);
     }
   }, [isOpen, isEdit, tempEvent, hasSetInitialValues]);
@@ -639,7 +639,7 @@ const Calender: FC<CalendarProps> = ({
         date: utcMidnight,
         totalAmount: Number(amount),
         venueId: venueId,
-        bookedGrounds: Number(grounds),
+        bookedGrounds: popupEventGrounds,
       });
 
       setMyEvents([...myEvents, newEv]);
@@ -1100,7 +1100,7 @@ const Calender: FC<CalendarProps> = ({
           ? moment(tempEvent.start).utc().startOf("day").toISOString()
           : "2025-06-06T00:00:00Z",
         name: tempEvent?.title ?? "",
-        bookedGrounds: Number(tempEvent?.ground),
+        bookedGrounds: tempEvent.grounds,
         totalAmount: Number(tempEvent?.amount ?? 0),
         phone: tempEvent?.mobile ?? "",
       },
@@ -1197,7 +1197,7 @@ const Calender: FC<CalendarProps> = ({
             if (editFromPopup) {
               tempEvent!.title = popupEventTitle;
               tempEvent!.amount = popupEventAmount;
-              tempEvent!.ground = popupEventGrounds;
+              tempEvent!.grounds = popupEventGrounds;
               tempEvent!.description = popupEventDescription;
               tempEvent!.start = popupEventDate[0];
               tempEvent!.end = popupEventDate[1];
@@ -1387,11 +1387,13 @@ const Calender: FC<CalendarProps> = ({
               </span>
             )}
           </div>
+
           <div className="space-y-1">
             <Input
               label="Ground"
               type="number"
               value={String(popupEventGrounds)}
+              readOnly
             />
           </div>
 
