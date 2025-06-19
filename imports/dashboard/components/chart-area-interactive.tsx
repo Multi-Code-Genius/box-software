@@ -93,16 +93,32 @@ export function ChartAreaInteractive() {
   }, [isMobile]);
 
   const filteredData = React.useMemo(() => {
-    const bookings = new Map<string, number>();
+    const bookingsMap = new Map<string, number>();
 
     chartData.forEach((item) => {
-      const dateKey = new Date(item.date).toISOString().split("T")[0];
-      bookings.set(dateKey, (bookings.get(dateKey) || 0) + 1);
+      const dateKey = moment(item.date).format("YYYY-MM-DD");
+      bookingsMap.set(dateKey, (bookingsMap.get(dateKey) || 0) + 1);
     });
 
-    const result = Array.from(bookings.entries())
-      .map(([date, count]) => ({ date, bookings: count }))
-      .sort((a, b) => (a.date > b.date ? 1 : -1));
+    const lastBookingDate = chartData.length
+      ? moment.max(chartData.map((item) => moment(item.date)))
+      : moment();
+
+    let days = 90;
+    if (timeRange === "30d") days = 30;
+    if (timeRange === "7d") days = 7;
+
+    const fullDateRange = Array.from({ length: days }, (_, i) =>
+      lastBookingDate
+        .clone()
+        .subtract(days - 1 - i, "days")
+        .format("YYYY-MM-DD")
+    );
+
+    const result = fullDateRange.map((date) => ({
+      date,
+      bookings: bookingsMap.get(date) || 0,
+    }));
 
     return result;
   }, [chartData, timeRange]);

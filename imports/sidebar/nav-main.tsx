@@ -125,46 +125,76 @@ const NavItemCollapsed = ({
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
 }) => {
+  const hasSubItems = item.subItems && item.subItems.length > 0;
+
   return (
     <SidebarMenuItem key={item.title}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <SidebarMenuButton
-            disabled={item.comingSoon}
-            tooltip={item.title}
-            isActive={isActive(item.url, item.subItems)}
+      {hasSubItems ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              disabled={item.comingSoon}
+              tooltip={item.title}
+              isActive={isActive(item.url, item.subItems)}
+            >
+              {item.icon && <item.icon />}
+              <span>{item.title}</span>
+              <ChevronRight />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-50 space-y-1"
+            side="right"
+            align="start"
           >
+            {item?.subItems?.map((subItem) => (
+              <DropdownMenuItem key={subItem.title} asChild>
+                {subItem.comingSoon ? (
+                  <SidebarMenuSubButton
+                    className="cursor-not-allowed opacity-60"
+                    isActive={false}
+                    aria-disabled
+                  >
+                    {subItem.icon && (
+                      <subItem.icon className="[&>svg]:text-sidebar-foreground" />
+                    )}
+                    <span>{subItem.title}</span>
+                    <IsComingSoon />
+                  </SidebarMenuSubButton>
+                ) : (
+                  <SidebarMenuSubButton
+                    asChild
+                    className="focus-visible:ring-0"
+                    isActive={isActive(subItem.url)}
+                  >
+                    <Link href={subItem.url}>
+                      {subItem.icon && (
+                        <subItem.icon className="[&>svg]:text-sidebar-foreground" />
+                      )}
+                      <span>{subItem.title}</span>
+                    </Link>
+                  </SidebarMenuSubButton>
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : item.comingSoon ? (
+        <div className="opacity-60">
+          <SidebarMenuButton disabled tooltip={item.title} isActive={false}>
             {item.icon && <item.icon />}
             <span>{item.title}</span>
-            <ChevronRight />
+            <IsComingSoon />
           </SidebarMenuButton>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-50 space-y-1"
-          side="right"
-          align="start"
-        >
-          {item.subItems?.map((subItem) => (
-            <DropdownMenuItem key={subItem.title} asChild>
-              <SidebarMenuSubButton
-                key={subItem.title}
-                asChild
-                className="focus-visible:ring-0"
-                aria-disabled={subItem.comingSoon}
-                isActive={isActive(subItem.url)}
-              >
-                <Link href={subItem.url}>
-                  {subItem.icon && (
-                    <subItem.icon className="[&>svg]:text-sidebar-foreground" />
-                  )}
-                  <span>{subItem.title}</span>
-                  {subItem.comingSoon && <IsComingSoon />}
-                </Link>
-              </SidebarMenuSubButton>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </div>
+      ) : (
+        <Link href={item.url}>
+          <SidebarMenuButton tooltip={item.title} isActive={isActive(item.url)}>
+            {item.icon && <item.icon />}
+            <span>{item.title}</span>
+          </SidebarMenuButton>
+        </Link>
+      )}
     </SidebarMenuItem>
   );
 };
