@@ -38,14 +38,16 @@ const AllVenues = () => {
 
   if (!hasMounted) return null;
 
-
-  const handleGameClick = (venue: {
-    id: string;
-    name: string;
-    ground_details: { hourly_price: number; ground: number }[];
-  }) => {
-    const hourlyPrice = venue?.ground_details?.[0]?.hourly_price ?? 0;
-    const ground = venue?.ground_details?.[0]?.ground ?? 0;
+  const handleVenueClick = (
+    venue: {
+      id: string;
+      name: string;
+      ground_details: { hourly_price: number; ground: number }[];
+    },
+    groundIndex: number
+  ) => {
+    const hourlyPrice = venue?.ground_details?.[groundIndex]?.hourly_price ?? 0;
+    const ground = venue?.ground_details?.[groundIndex]?.ground ?? 0;
 
     localStorage.setItem("venueId", venue.id);
 
@@ -59,7 +61,7 @@ const AllVenues = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-         <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
+        <Mosaic color={["#3d4293", "#4e54b5", "#7277c4", "#2e326f"]} />
       </div>
     );
   }
@@ -90,43 +92,59 @@ const AllVenues = () => {
       </div>
     );
   }
-
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {venues.map((venue) => (
-          <Card
-            key={venue.id}
-            className="gap-3 shadow-xl cursor-pointer"
-            onClick={() => handleGameClick(venue)}
-          >
-            <CardHeader className="gap-0">
-              <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
-              <CardDescription className="text-base">
-                {venue.category}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="flex items-center gap-2">
-                <MapPinned size={18} />
-                Address: {venue.address || ""}
-              </p>
-              <p className="flex items-center gap-2">
-                <Users size={18} />
-                Capacity: {venue?.game_info.maxPlayers || ""}
-              </p>
-              <p className="flex items-center gap-2">
-                <IndianRupee size={18} />
-                Price: {venue?.ground_details[0]?.hourly_price || 0}
-              </p>
-              <p className="flex items-center gap-2">
-                <Map size={18} />
-                {venue.location.city || ""}
-              </p>
-            </CardContent>
-          </Card>
+          <div key={venue.id} className="relative group cursor-pointer">
+            <Card className="gap-3 shadow-xl h-full">
+              <CardHeader className="gap-0">
+                <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
+                <CardDescription className="text-base">
+                  {venue.category}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="flex items-center gap-2">
+                  <MapPinned size={18} />
+                  Address: {venue.address || ""}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Users size={18} />
+                  Capacity: {venue?.game_info?.maxPlayers || ""}
+                </p>
+                <p className="flex items-center gap-2">
+                  <IndianRupee size={18} />
+                  Price: {venue?.ground_details?.[0]?.hourly_price || 0}
+                </p>
+                <p className="flex items-center gap-2">
+                  <Map size={18} />
+                  {venue.location?.city || ""}
+                </p>
+              </CardContent>
+              {venue.ground_details?.length > 0 && (
+                <div className="absolute top-2 right-2 flex gap-2 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                  {venue.ground_details.map((_: any, index: number) => (
+                    <Button
+                      key={index}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log(
+                          `Ground ${index + 1} clicked for venue:`,
+                          venue
+                        );
+                        handleVenueClick(venue, index);
+                      }}
+                    >
+                      Ground {index + 1}
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </div>
         ))}
       </div>
     </div>

@@ -28,7 +28,7 @@ export const useGetCustomers = () => {
 
 const getCustomerByID = async (customerId: string) => {
   try {
-    const response = await api(`/api/booking/customer/${customerId}`, {
+    const response = await api(`/api/v2/customer/data/${customerId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",

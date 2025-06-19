@@ -10,6 +10,7 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
 
   if (isLoading)
     return <div className="text-center">Loading customer details...</div>;
+
   if (!data?.customer)
     return <div className="text-center">No customer data found.</div>;
 
@@ -22,18 +23,18 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
           <strong>Name:</strong> {customer.name}
         </div>
         <div>
-          <strong>Total Spent:</strong> ₹{customer.totalSpent.toLocaleString()}
+          <strong>Total Spent:</strong> ₹{customer.total_spent.toLocaleString()}
         </div>
       </div>
 
       <div>
         <h4 className="text-lg font-semibold mt-4 mb-2">Bookings</h4>
-        {customer.bookings.length === 0 ? (
+        {!customer.bookings ? (
           <p className="text-muted-foreground">No bookings available.</p>
         ) : (
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100">
+              <thead>
                 <tr>
                   <th className="p-2 text-left">Game</th>
                   <th className="p-2 text-left">Date</th>
@@ -45,12 +46,12 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
               </thead>
               <tbody>
                 {customer.bookings.map((booking: any) => (
-                  <tr key={booking.id} className="border-t">
+                  <tr key={booking.id} className="border-t text-xs">
                     <td className="p-2">{booking.game?.name || "N/A"}</td>
                     <td className="p-2">{formatDate(booking.date)}</td>
-                    <td className="p-2">{formatTime(booking.startTime)}</td>
-                    <td className="p-2">{formatTime(booking.endTime)}</td>
-                    <td className="p-2">₹{booking.totalAmount}</td>
+                    <td className="p-2">{formatTime(booking.start_time)}</td>
+                    <td className="p-2">{formatTime(booking.end_time)}</td>
+                    <td className="p-2">₹{booking.total_amount}</td>
                     <td className="p-2">{booking.status}</td>
                   </tr>
                 ))}

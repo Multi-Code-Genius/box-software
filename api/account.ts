@@ -66,16 +66,14 @@ export const uploadImage = async (file: File) => {
   try {
     const token = Cookies.get("accessToken");
 
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      throw new Error("User ID is not available");
+    if (!token) {
+      throw new Error("Access token missing");
     }
 
     const formData = new FormData();
-    formData.append("profile_pic", file);
+    formData.append("profile", file);
 
-    const response = await api(`/api/user/upload-profile/${userId}`, {
+    const response = await api(`/api/v2/user/picture`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -83,10 +81,9 @@ export const uploadImage = async (file: File) => {
       body: formData,
     });
 
-    const responseData = await response.json();
-
-    const data = responseData;
-    return data.user.profile_pic;
+    const responseData = await response;
+    console.log(responseData);
+    return responseData;
   } catch (error) {
     console.error("Image upload failed:", error);
     throw error;

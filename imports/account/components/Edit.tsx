@@ -45,21 +45,6 @@ const Edit: React.FC<FooterProfileProps> = ({
   });
 
   useEffect(() => {
-    if (!showEditModal) return;
-
-    const load = async () => {
-      try {
-        const data = await fetchUserData();
-        setUser(data.user);
-      } catch (err) {
-        console.error("Fetch user failed:", err);
-      }
-    };
-
-    load();
-  }, [showEditModal, setUser]);
-
-  useEffect(() => {
     if (!user) return;
     setFormData({
       email: user.email ?? "",
@@ -143,10 +128,15 @@ const Edit: React.FC<FooterProfileProps> = ({
 
     setUploading(true);
     try {
-      const url = await uploadImage(file);
-      setLocalImage(url);
-      setUserImage(url);
-      setFormData((prev) => ({ ...prev, profile_pic: url }));
+      await uploadImage(file);
+      const updatedUser = await fetchUserData();
+      setUser(updatedUser.user);
+      setLocalImage(updatedUser.user.profile);
+      setUserImage(updatedUser.user.profile);
+      setFormData((prev) => ({
+        ...prev,
+        profile_pic: updatedUser.user.profile,
+      }));
     } catch (err) {
       console.error("Upload failed:", err);
     } finally {
@@ -168,7 +158,7 @@ const Edit: React.FC<FooterProfileProps> = ({
               <img
                 src={localImage ?? formData.profile_pic}
                 alt="profile"
-                className="rounded-full w-full h-full object-cover bg-white border border-4 border-foreground "
+                className="rounded-full w-full h-full object-contain bg-white border border-4 border-foreground "
               />
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">

@@ -869,13 +869,6 @@ const Calender: FC<CalendarProps> = ({
     []
   );
 
-  const groundChange = useCallback(
-    (ev: React.ChangeEvent<HTMLInputElement>) => {
-      setGrounds(Number(ev.target.value));
-    },
-    []
-  );
-
   const descriptionChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
     setDescription(ev.target.value);
   }, []);
@@ -1399,7 +1392,6 @@ const Calender: FC<CalendarProps> = ({
               label="Ground"
               type="number"
               value={String(popupEventGrounds)}
-              onChange={groundChange}
             />
           </div>
 
