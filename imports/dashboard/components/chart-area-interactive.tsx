@@ -120,7 +120,10 @@ export function ChartAreaInteractive() {
       bookings: bookingsMap.get(date) || 0,
     }));
 
-    return result;
+    // Check if all bookings are 0
+    const hasBookings = result.some((item) => item.bookings > 0);
+
+    return hasBookings ? result : [];
   }, [chartData, timeRange]);
 
   return (

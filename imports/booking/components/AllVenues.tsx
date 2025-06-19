@@ -7,7 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { IndianRupee, Loader2, Map, MapPinned, Users } from "lucide-react";
+import {
+  IndianRupee,
+  Loader2,
+  Map,
+  MapPin,
+  MapPinned,
+  Users,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useVenueStore } from "@/store/venueStore";
@@ -108,7 +115,7 @@ const AllVenues = () => {
               </CardHeader>
               <CardContent className="space-y-2 flex-grow">
                 <p className="flex items-center gap-2">
-                  <MapPinned size={18} />
+                  <MapPin size={18} />
                   <span className="truncate">
                     Address: {venue.address || ""}
                   </span>

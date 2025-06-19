@@ -85,6 +85,7 @@ const Edit: React.FC<FooterProfileProps> = ({
     if (!formData.city.trim()) newErrors.city = "City is required";
     if (!formData.state.trim()) newErrors.state = "State is required";
     if (!formData.zip_code.trim()) newErrors.zip_code = "Zip code is required";
+    if (!formData.address.trim()) newErrors.address = "Address is required";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -252,6 +253,29 @@ const Edit: React.FC<FooterProfileProps> = ({
 
           <div className="flex w-full gap-3">
             <div className="space-y-2 w-full">
+              <Label className="text-[13px] font-normal">Address</Label>
+              <div className="relative">
+                <Input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  placeholder="Enter Address"
+                  className={`w-full border bg-card border-border focus:outline-none focus-visible:ring-0 ${
+                    errors.address ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.address && (
+                  <div className=" text-xs text-red-500 pt-1 pl-1">
+                    <span>{errors.address}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex w-full gap-3">
+            <div className="space-y-2 w-full">
               <Label className="text-[13px] font-normal">City</Label>
               <div className="relative">
                 <Input
@@ -271,7 +295,6 @@ const Edit: React.FC<FooterProfileProps> = ({
                 )}
               </div>
             </div>
-
             <div className="space-y-2 w-full">
               <Label className="text-[13px] font-normal">State</Label>
               <div>
@@ -294,7 +317,7 @@ const Edit: React.FC<FooterProfileProps> = ({
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Label className="text-[13px] font-normal">Zip code</Label>
             <div>
               <Input

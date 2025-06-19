@@ -44,7 +44,7 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
                   <th className="p-2 text-left">End</th>
                   <th className="p-2 text-left">Amount</th>
                   <th className="p-2 text-left">Booking Status</th>
-                  <th className="p-2 text-left">cancel Bookings</th>
+                  <th className="p-2 text-left">Cancel Bookings</th>
                 </tr>
               </thead>
               <tbody>
@@ -59,7 +59,10 @@ const CustomerDetailsByID = ({ id }: { id: string }) => {
                       <td className="p-2">{formatTime(booking.start_time)}</td>
                       <td className="p-2">{formatTime(booking.end_time)}</td>
                       <td className="p-2">₹{booking.total_amount}</td>
-                      <td className="p-2">{booking.status}</td>
+                      <td className="p-2">
+                        {booking.status.charAt(0).toUpperCase() +
+                          booking.status.slice(1).toLowerCase()}
+                      </td>
                     </tr>
                   );
                 })}

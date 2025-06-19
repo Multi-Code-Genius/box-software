@@ -29,6 +29,7 @@ import {
   CircleAlert,
   IndianRupee,
   Map,
+  MapPin,
   MapPinned,
   Trash2,
   Users,
@@ -236,7 +237,7 @@ const VenueDetail = () => {
                 onClick={(e) => handleDeleteClick(e, venue.id)}
                 className=" hover:text-muted-foreground transition p-1 cursor-pointer"
               >
-                <Trash2 size={18} />
+                <Trash2 size={16} />
               </button>
             </CardHeader>
 
@@ -245,7 +246,7 @@ const VenueDetail = () => {
                 {venue.category}
               </p>
               <p className="flex items-center gap-2">
-                <MapPinned size={18} />
+                <MapPin size={18} />
                 Address: {venue.address || ""}
               </p>
               <p className="flex items-center gap-2">
