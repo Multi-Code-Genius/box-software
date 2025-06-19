@@ -46,7 +46,6 @@ export default function AccountSwitcher() {
             <AvatarImage
               src={user?.profile ?? "/avatars/jay.png"}
               alt={user?.name}
-              className="object-contain"
             />
 
             <AvatarFallback className="rounded-lg">
@@ -66,7 +65,6 @@ export default function AccountSwitcher() {
                 <AvatarImage
                   src={user?.profile ?? "/avatars/jay.png"}
                   alt={user?.name ?? ""}
-                  className="object-contain"
                 />
 
                 <AvatarFallback className="rounded-lg">

@@ -655,7 +655,7 @@ const Form: React.FC = () => {
                     <img
                       src={src}
                       alt={`Preview ${index}`}
-                      className=" h-full object-contain  "
+                      className=" h-full  "
                     />
                     <button
                       type="button"

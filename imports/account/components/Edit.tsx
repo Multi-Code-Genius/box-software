@@ -158,7 +158,7 @@ const Edit: React.FC<FooterProfileProps> = ({
               <img
                 src={localImage ?? formData.profile_pic}
                 alt="profile"
-                className="rounded-full w-full h-full object-contain bg-white border border-4 border-foreground "
+                className="rounded-full w-full h-full    border-foreground "
               />
               {uploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-full">

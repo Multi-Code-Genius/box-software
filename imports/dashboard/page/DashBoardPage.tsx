@@ -7,7 +7,7 @@ import { DataTable } from "@/imports/dashboard/components/data-table";
 import { SectionCards } from "@/imports/dashboard/components/section-cards";
 import Venues from "@/imports/dashboard/components/Venues";
 import { useDashboardStore } from "@/store/dashboardStore";
-import {  Mosaic } from "react-loading-indicators";
+import { Mosaic } from "react-loading-indicators";
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -27,7 +27,7 @@ export default function DashBoardPage() {
 
   const {
     data: dashboardData,
-    isLoading : inPending,
+    isLoading: inPending,
     refetch,
   } = useDashboardData(selectedvenueId);
 
@@ -67,8 +67,7 @@ export default function DashBoardPage() {
   if (!mounted || isLoading || inPending) {
     return (
       <div className="flex justify-center items-center h-screen">
-      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
-
+        <Mosaic color={["#3d4293", "#4e54b5", "#7277c4", "#2e326f"]} />
       </div>
     );
   }

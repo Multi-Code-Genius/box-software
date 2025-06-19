@@ -73,7 +73,6 @@ export function NavUser() {
                   <AvatarImage
                     src={user?.profile ?? "/avatars/jay.png"}
                     alt={user?.name}
-                    className="object-contain"
                   />
                   <AvatarFallback className="rounded-lg">
                     {getInitials(user?.name ?? "")}
@@ -100,7 +99,6 @@ export function NavUser() {
                     <AvatarImage
                       src={user?.profile ?? "/avatars/jay.png"}
                       alt={user?.name}
-                      className="object-contain"
                     />
                     <AvatarFallback className="rounded-lg">
                       {getInitials(user?.name ?? "")}

@@ -50,11 +50,10 @@ const CustomerDetails = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-      <Mosaic color={["#3d4293","#4e54b5","#7277c4", "#2e326f",   ]} />
-   </div>
+        <Mosaic color={["#3d4293", "#4e54b5", "#7277c4", "#2e326f"]} />
+      </div>
     );
   }
-
 
   if (!customers.length) {
     return (
@@ -83,7 +82,6 @@ const CustomerDetails = () => {
       </div>
     );
   }
-
   return (
     <div className="flex justify-center items-center mt-20">
       <Card className="w-full max-w-7xl p-6 shadow-md rounded-xl flex flex-col max-h-[700px]">
