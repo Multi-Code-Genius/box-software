@@ -477,31 +477,10 @@ const Form: React.FC = () => {
         <div className="w-full">
           {formData.ground_details.map((ground, index) => (
             <div key={index} className="flex gap-4 mb-4">
-              <div className="space-y-1 w-full">
+              <div className=" space-y-1 w-full">
                 <Label>Ground</Label>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    placeholder="Enter ground "
-                    value={
-                      typeof ground.ground === "number" && !isNaN(ground.ground)
-                        ? ground.ground
-                        : ""
-                    }
-                    onChange={(e) => {
-                      clearError("ground");
-                      handleGroundFieldChange(index, "ground", e.target.value);
-                    }}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.ground ? "ring-0 ring-red-500 border-red-500" : ""
-                    }`}
-                  />
-
-                  {errors.ground && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.ground}</span>
-                    </div>
-                  )}
+                <div className="relative w-full border pr-3 bg-card border-border rounded-md px-3 py-2 text-sm ">
+                  {index + 1}
                 </div>
               </div>
 
@@ -510,10 +489,10 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Enter hourly Price"
+                    placeholder="Enter hourly price"
                     value={ground.hourly_price}
                     onChange={(e) => {
-                      clearError("hourly_price");
+                      clearError(`ground_details[${index}].hourly_price`);
                       handleGroundFieldChange(
                         index,
                         "hourly_price",
@@ -521,13 +500,17 @@ const Form: React.FC = () => {
                       );
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.hourly_price ? "border-red-500" : ""
+                      errors[`ground_details[${index}].hourly_price`]
+                        ? "border-red-500"
+                        : ""
                     }`}
                   />
 
-                  {errors.hourly_price && (
+                  {errors[`ground_details[${index}].hourly_price`] && (
                     <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.hourly_price}</span>
+                      <span>
+                        {errors[`ground_details[${index}].hourly_price`]}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -546,7 +529,7 @@ const Form: React.FC = () => {
                         : ""
                     }
                     onChange={(e) => {
-                      clearError("capacity");
+                      clearError(`ground_details[${index}].capacity`);
                       handleGroundFieldChange(
                         index,
                         "capacity",
@@ -554,18 +537,19 @@ const Form: React.FC = () => {
                       );
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.capacity ? "border-red-500" : ""
+                      errors[`ground_details[${index}].capacity`]
+                        ? "border-red-500"
+                        : ""
                     }`}
                   />
 
-                  {errors.capacity && (
+                  {errors[`ground_details[${index}].capacity`] && (
                     <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.capacity}</span>
+                      <span>{errors[`ground_details[${index}].capacity`]}</span>
                     </div>
                   )}
                 </div>
               </div>
-
               <div className="space-y-1 w-full">
                 <Label>Width</Label>
                 <div className="relative">
@@ -578,17 +562,19 @@ const Form: React.FC = () => {
                         : ""
                     }
                     onChange={(e) => {
-                      clearError("width");
+                      clearError(`ground_details[${index}].width`);
                       handleGroundFieldChange(index, "width", e.target.value);
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.width ? "border-red-500" : ""
+                      errors[`ground_details[${index}].width`]
+                        ? "border-red-500"
+                        : ""
                     }`}
                   />
 
-                  {errors.width && (
+                  {errors[`ground_details[${index}].width`] && (
                     <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.width}</span>
+                      <span>{errors[`ground_details[${index}].width`]}</span>
                     </div>
                   )}
                 </div>
@@ -599,29 +585,32 @@ const Form: React.FC = () => {
                 <div className="relative">
                   <Input
                     type="number"
-                    placeholder="Enter Height"
+                    placeholder="Enter height"
                     value={
                       typeof ground.height === "number" && !isNaN(ground.height)
                         ? ground.height
                         : ""
                     }
                     onChange={(e) => {
-                      clearError("height");
+                      clearError(`ground_details[${index}].height`);
                       handleGroundFieldChange(index, "height", e.target.value);
                     }}
                     className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
-                      errors.height ? "border-red-500" : ""
+                      errors[`ground_details[${index}].height`]
+                        ? "border-red-500"
+                        : ""
                     }`}
                   />
-                  {errors.height && (
+
+                  {errors[`ground_details[${index}].height`] && (
                     <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.height}</span>
+                      <span>{errors[`ground_details[${index}].height`]}</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-4">
                 <button
                   type="button"
                   className="bg-transparent my-auto  cursor-pointer"

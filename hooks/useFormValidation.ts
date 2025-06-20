@@ -16,51 +16,38 @@ export const useFormValidation = () => {
       newErrors.description = "Description is required";
     if (!formData.location.city.trim()) newErrors.city = "City is required";
     if (!formData.location.area.trim()) newErrors.area = "Area is required";
-
     if (!formData.address.trim()) newErrors.address = "Address is required";
     if (!formData.category) newErrors.category = "Category is required";
 
     if (!formData.game_info.maxPlayers || isNaN(formData.game_info.maxPlayers))
-      newErrors.maxPlayers = "Max players must be a valid number";
+      if (!formData.game_info.type) {
+        newErrors.type = "Turf type is required";
+      }
 
-    if (!formData.game_info.type) {
-      newErrors.type = "Turf type is required";
-    }
+    formData.ground_details.forEach((ground, index) => {
+      const prefix = `ground_details[${index}]`;
 
-    if (
-      !formData.ground_details[0].ground ||
-      isNaN(formData.ground_details[0].ground)
-    ) {
-      newErrors.ground = "Ground is required";
-    }
+      if (!ground.ground || isNaN(Number(ground.ground))) {
+        newErrors[`${prefix}.ground`] = "Ground is required";
+      }
 
-    if (
-      !formData.ground_details[0].hourly_price ||
-      isNaN(formData.ground_details[0].hourly_price)
-    ) {
-      newErrors.hourly_price = "Price is required";
-    }
+      if (!ground.hourly_price || isNaN(Number(ground.hourly_price))) {
+        newErrors[`${prefix}.hourly_price`] = "Price is required";
+      }
 
-    if (
-      !formData.ground_details[0].capacity ||
-      isNaN(formData.ground_details[0].capacity)
-    ) {
-      newErrors.capacity = "Capacity is required";
-    }
+      if (!ground.capacity || isNaN(Number(ground.capacity))) {
+        newErrors[`${prefix}.capacity`] = "Capacity is required";
+      }
 
-    if (
-      !formData.ground_details[0].width ||
-      isNaN(formData.ground_details[0].width)
-    ) {
-      newErrors.width = "Width is required";
-    }
+      if (!ground.width || isNaN(Number(ground.width))) {
+        newErrors[`${prefix}.width`] = "Width is required";
+      }
 
-    if (
-      !formData.ground_details[0].height ||
-      isNaN(formData.ground_details[0].height)
-    ) {
-      newErrors.height = "Height is required";
-    }
+      if (!ground.height || isNaN(Number(ground.height))) {
+        newErrors[`${prefix}.height`] = "Height is required";
+      }
+    });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -73,5 +60,5 @@ export const useFormValidation = () => {
     });
   };
 
-  return { validate, errors, clearError };
+  return { validate, errors, clearError, setErrors };
 };

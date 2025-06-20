@@ -99,6 +99,7 @@ const AllVenues = () => {
       </div>
     );
   }
+
   return (
     <div className="p-7">
       <h2 className="font-bold text-2xl pb-5">Venues Details</h2>

@@ -27,6 +27,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radioGroup";
 import { useVenueStore } from "@/store/venueStore";
 import {
   CircleAlert,
+  CircleMinus,
+  CirclePlus,
   IndianRupee,
   Map,
   MapPin,
@@ -39,6 +41,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Mosaic } from "react-loading-indicators";
+import { useFormValidation } from "@/hooks/useFormValidation";
 
 const VenueDetail = () => {
   const { venues, setVenues } = useVenueStore();
@@ -50,9 +53,42 @@ const VenueDetail = () => {
   const { mutate: editVenue } = useEditVenue();
   const { isLoading } = useVenues();
   const [hasMounted, setHasMounted] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  // const [errors, setErrors] = useState<Record<string, string>>({});
+  const { validate, errors, setErrors } = useFormValidation();
 
   const router = useRouter();
+
+  const handleAddGroundDetail = () => {
+    if (!selectedGame) return;
+
+    const updatedGroundDetails = [
+      ...selectedGame.ground_details,
+      {
+        ground: selectedGame.ground_details.length + 1,
+        capacity: 0,
+        width: 0,
+        height: 0,
+      },
+    ];
+
+    setSelectedGame({
+      ...selectedGame,
+      ground_details: updatedGroundDetails,
+    });
+  };
+
+  const handleRemoveGroundDetail = (index: number) => {
+    if (!selectedGame) return;
+
+    const updatedGroundDetails = selectedGame.ground_details.filter(
+      (_: any, i: any) => i !== index
+    );
+
+    setSelectedGame({
+      ...selectedGame,
+      ground_details: updatedGroundDetails,
+    });
+  };
 
   const handleEditField = (
     field: string,
@@ -126,41 +162,31 @@ const VenueDetail = () => {
   const saveVenueChanges = () => {
     if (!selectedGame || !selectedGame.id) return;
 
-    const newErrors: Record<string, string> = {};
-
-    if (!selectedGame.name) newErrors.name = "Name is required";
-    if (!selectedGame.description)
-      newErrors.description = "Description is required";
-    if (!selectedGame.address) newErrors.address = "Address is required";
-    if (!selectedGame.location?.city) newErrors.city = "City is required";
-
-    if (!selectedGame.game_info?.type) newErrors.type = "Game type is required";
-    if (!selectedGame.game_info?.maxPlayers)
-      newErrors.maxPlayers = "Max players is required";
-    if (!selectedGame.ground_details?.[0]?.ground)
-      newErrors.ground = "Grounds are required";
-    if (!selectedGame.ground_details?.[0]?.hourly_price)
-      newErrors.price = "Price are required";
-    if (!selectedGame.ground_details?.[0]?.width)
-      newErrors.width = "Width are required";
-    if (!selectedGame.ground_details?.[0]?.height)
-      newErrors.height = "Height are required";
-    if (!selectedGame.ground_details?.[0]?.capacity)
-      newErrors.capacity = "Capacity are required";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+    const isValid = validate(selectedGame);
+    if (!isValid) return;
 
     const { id, ...rest } = selectedGame;
 
-    editVenue({
-      venueId: id,
-      data: rest,
-    });
+    editVenue(
+      { venueId: id, data: rest },
+      {
+        onSuccess: () => {
+          setErrors({});
+          setShowModal(false);
+        },
+        onError: (error) => {
+          console.error("Edit failed", error);
+        },
+      }
+    );
+  };
 
-    setErrors({});
-    setShowModal(false);
+  const clearError = (field: string) => {
+    setErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      delete updatedErrors[field];
+      return updatedErrors;
+    });
   };
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -219,6 +245,19 @@ const VenueDetail = () => {
       </div>
     );
   }
+  const handleGroundFieldChange = (
+    index: number,
+    field: "capacity" | "height" | "width",
+    value: string
+  ) => {
+    handleEditField(
+      field,
+      value === "" ? "" : Number(value),
+      true,
+      "ground_details",
+      index
+    );
+  };
 
   return (
     <div className="p-7">
@@ -232,10 +271,9 @@ const VenueDetail = () => {
           >
             <CardHeader className="grid grid-cols-[1fr_auto] items-center">
               <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
-
               <button
                 onClick={(e) => handleDeleteClick(e, venue.id)}
-                className=" hover:text-muted-foreground transition p-1 cursor-pointer"
+                className=" hover:text-white hover:bg-red-500 transition-colors p-1.5 rounded-full"
               >
                 <Trash2 size={16} />
               </button>
@@ -502,110 +540,145 @@ const VenueDetail = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3">
-                <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">Grounds</label>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      value={selectedGame?.ground_details?.[0]?.ground ?? 0}
-                      onChange={(e) =>
-                        handleEditField(
-                          "ground",
-                          parseInt(e.target.value) || 0,
-                          true,
-                          "ground_details",
-                          0
-                        )
-                      }
-                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                        errors.ground ? "border-red-500" : ""
-                      }`}
-                    />
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4">
+                  {selectedGame?.ground_details?.map(
+                    (ground: any, index: any) => (
+                      <div key={index} className="flex gap-3">
+                        <div className="space-y-1 w-full">
+                          <label className="block text-sm font-medium">
+                            Ground
+                          </label>
+                          <div className="relative w-full border pr-3 bg-card border-border rounded-md px-3 py-2 text-sm ">
+                            {index + 1}
+                          </div>
+                        </div>
+                        <div className="space-y-1 w-full">
+                          <label className="block text-sm font-medium">
+                            Capacity
+                          </label>
+                          <Input
+                            type="number"
+                            value={
+                              ground.capacity === 0 || ground.capacity
+                                ? ground.capacity
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              handleGroundFieldChange(index, "capacity", value);
 
-                    {errors.ground && (
-                      <div className="text-xs text-red-500 pt-1 pl-1">
-                        <span>{errors.ground}</span>
+                              if (!isNaN(Number(value)) && Number(value) > 0) {
+                                clearError(`ground_details[${index}].capacity`);
+                              }
+                            }}
+                            className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                              errors[`ground_details[${index}].capacity`]
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                          />
+                          {errors[`ground_details[${index}].capacity`] && (
+                            <div className="text-xs text-red-500 pt-1 pl-1">
+                              <span>
+                                {errors[`ground_details[${index}].capacity`]}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="space-y-1 w-full">
+                          <label className="block text-sm font-medium">
+                            Width
+                          </label>
+                          <Input
+                            type="number"
+                            value={
+                              ground.width === 0 || ground.width
+                                ? ground.width
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              handleGroundFieldChange(index, "width", value);
+
+                              if (!isNaN(Number(value)) && Number(value) > 0) {
+                                clearError(`ground_details[${index}].width`);
+                              }
+                            }}
+                            className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                              errors[`ground_details[${index}].width`]
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                          />
+                          {errors[`ground_details[${index}].width`] && (
+                            <div className="text-xs text-red-500 pt-1 pl-1">
+                              <span>
+                                {errors[`ground_details[${index}].width`]}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="space-y-1 w-full">
+                          <label className="block text-sm font-medium">
+                            Height
+                          </label>
+                          <Input
+                            type="number"
+                            value={
+                              ground.height === 0 || ground.height
+                                ? ground.height
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              handleGroundFieldChange(index, "height", value);
+
+                              if (!isNaN(Number(value)) && Number(value) > 0) {
+                                clearError(`ground_details[${index}].height`);
+                              }
+                            }}
+                            className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
+                              errors[`ground_details[${index}].height`]
+                                ? "border-red-500"
+                                : ""
+                            }`}
+                          />
+                          {errors[`ground_details[${index}].height`] && (
+                            <div className="text-xs text-red-500 pt-1 pl-1">
+                              <span>
+                                {errors[`ground_details[${index}].height`]}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2 my-auto pt-4">
+                          <button
+                            type="button"
+                            onClick={handleAddGroundDetail}
+                            className="bg-transparent cursor-pointer"
+                          >
+                            <CirclePlus className="text-foreground" size={16} />
+                          </button>
+
+                          {selectedGame.ground_details.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveGroundDetail(index)}
+                              className="bg-transparent cursor-pointer"
+                            >
+                              <CircleMinus
+                                className="text-foreground"
+                                size={16}
+                              />
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">Capacity</label>
-                  <Input
-                    type="number"
-                    value={selectedGame?.ground_details?.[0]?.capacity ?? ""}
-                    onChange={(e) =>
-                      handleEditField(
-                        "capacity",
-                        parseInt(e.target.value) || 0,
-                        true,
-                        "ground_details",
-                        0
-                      )
-                    }
-                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.capacity ? "border-red-500" : ""
-                    }`}
-                  />
-
-                  {errors.capacity && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.capacity}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">Width</label>
-                  <Input
-                    type="number"
-                    value={selectedGame?.ground_details?.[0]?.width ?? ""}
-                    onChange={(e) =>
-                      handleEditField(
-                        "width",
-                        parseInt(e.target.value) || 0,
-                        true,
-                        "ground_details",
-                        0
-                      )
-                    }
-                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.width ? "border-red-500" : ""
-                    }`}
-                  />
-
-                  {errors.width && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.width}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">Height</label>
-                  <Input
-                    type="number"
-                    value={selectedGame?.ground_details?.[0]?.height ?? ""}
-                    onChange={(e) =>
-                      handleEditField(
-                        "height",
-                        parseInt(e.target.value) || 0,
-                        true,
-                        "ground_details",
-                        0
-                      )
-                    }
-                    className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.height ? "border-red-500" : ""
-                    }`}
-                  />
-
-                  {errors.height && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.height}</span>
-                    </div>
+                    )
                   )}
                 </div>
               </div>
