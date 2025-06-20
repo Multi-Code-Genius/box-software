@@ -15,9 +15,19 @@ import {
 
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { VenueFormData, GroundDetail } from "@/types/vanue";
-import { CircleAlert, CircleMinus, CirclePlus, ImageUp, X } from "lucide-react";
+import {
+  CircleAlert,
+  CircleMinus,
+  CirclePlus,
+  ImagePlus,
+  ImageUp,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useAddVenue, useVenues } from "@/api/vanue";
 import { useVenueStore } from "@/store/venueStore";
+import { Textarea } from "@/components/ui/textarea";
 
 const initialFormData: VenueFormData = {
   name: "",
@@ -57,7 +67,9 @@ const Form: React.FC = () => {
   const { refetch } = useVenues();
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
 
@@ -236,8 +248,12 @@ const Form: React.FC = () => {
     <div className="h-[calc(100vh-75px)] w-full flex justify-center items-center">
       <form
         onSubmit={handleSubmit}
-        className="w-[50%] flex flex-col gap-4 px-10 py-8 rounded-lg border"
+        className="max-w-3xl flex flex-col gap-3 px-10 py-8 rounded-lg border shadow-lg"
       >
+        <Label className="mx-auto text-2xl mb-4 block text-center font-semibold ">
+          Add venue
+        </Label>
+
         <div className="flex gap-5">
           <div className="space-y-2 w-full">
             <Label>Name</Label>
@@ -263,12 +279,12 @@ const Form: React.FC = () => {
           <div className="space-y-1 w-full">
             <Label className="block text-sm font-medium">Description</Label>
             <div className="relative">
-              <Input
+              <Textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Enter description"
-                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                className={` pr-3 py-2 w-full h-[36px] min-h-[unset] min-h-[36px]  text-sm leading-none  border bg-card border-border focus-visible:ring-0 focus:outline-none ${
                   errors.description ? "border-red-500" : ""
                 }`}
               />
@@ -279,6 +295,26 @@ const Form: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-1 w-full">
+          <Label className="block text-sm font-medium">Address</Label>
+          <div className="relative">
+            <Input
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter address"
+              className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                errors.address ? "border-red-500" : ""
+              }`}
+            />
+            {errors.address && (
+              <div className=" text-xs text-red-500 pt-1 pl-1">
+                <span>{errors.address}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -318,54 +354,6 @@ const Form: React.FC = () => {
               {errors.city && (
                 <div className=" text-xs text-red-500 pt-1 pl-1">
                   <span>{errors.city}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-5">
-          <div className="space-y-1 w-full">
-            <Label className="block text-sm font-medium">Address</Label>
-            <div className="relative">
-              <Input
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                placeholder="Enter address"
-                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                  errors.address ? "border-red-500" : ""
-                }`}
-              />
-              {errors.address && (
-                <div className=" text-xs text-red-500 pt-1 pl-1">
-                  <span>{errors.address}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-1 w-full">
-            <Label className="block text-sm font-medium">Max Players</Label>
-            <div className="relative">
-              <Input
-                name="maxPlayers"
-                type="number"
-                value={
-                  typeof formData.game_info.maxPlayers === "number" &&
-                  !isNaN(formData.game_info.maxPlayers)
-                    ? formData.game_info.maxPlayers
-                    : ""
-                }
-                onChange={handleChange}
-                placeholder="Enter max players"
-                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                  errors.maxPlayers ? "border-red-500" : ""
-                }`}
-              />
-              {errors.maxPlayers && (
-                <div className=" text-xs text-red-500 pt-1 pl-1">
-                  <span>{errors.maxPlayers}</span>
                 </div>
               )}
             </div>
@@ -444,52 +432,95 @@ const Form: React.FC = () => {
             )}
           </div>
         </div>
-
-        <div className="space-y-2 w-full">
-          <Label>Turf Type</Label>
-          <div className="relative">
-            <Select
-              value={formData.game_info.type}
-              onValueChange={handleTurfTypeChange}
-            >
-              <SelectTrigger
-                className={`w-full flex items-center justify-between bg-card ${
-                  errors.type ? "border-red-500 ring-0" : "border-border"
-                }`}
+        <div className="flex gap-3">
+          <div className="space-y-2 w-full">
+            <Label>Turf Type</Label>
+            <div className="relative">
+              <Select
+                value={formData.game_info.type}
+                onValueChange={handleTurfTypeChange}
               >
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Football">Football</SelectItem>
-                <SelectItem value="Cricket">Cricket</SelectItem>
-                <SelectItem value="Basketball">Basketball</SelectItem>
-              </SelectContent>
-            </Select>
+                <SelectTrigger
+                  className={`w-full flex items-center justify-between bg-card ${
+                    errors.type ? "border-red-500 ring-0" : "border-border"
+                  }`}
+                >
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Football">Football</SelectItem>
+                  <SelectItem value="Cricket">Cricket</SelectItem>
+                  <SelectItem value="Basketball">Basketball</SelectItem>
+                </SelectContent>
+              </Select>
 
-            {errors.type && (
-              <div className=" text-xs text-red-500 pt-1 pl-1">
-                <span>{errors.type}</span>
-              </div>
-            )}
+              {errors.type && (
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.type}</span>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="space-y-1 w-full">
+            <Label className="block text-sm font-medium">Max Players</Label>
+            <div className="relative">
+              <Input
+                name="maxPlayers"
+                type="number"
+                value={
+                  typeof formData.game_info.maxPlayers === "number" &&
+                  !isNaN(formData.game_info.maxPlayers)
+                    ? formData.game_info.maxPlayers
+                    : ""
+                }
+                onChange={handleChange}
+                placeholder="Enter max players"
+                className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                  errors.maxPlayers ? "border-red-500" : ""
+                }`}
+              />
+              {errors.maxPlayers && (
+                <div className=" text-xs text-red-500 pt-1 pl-1">
+                  <span>{errors.maxPlayers}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="w-full">
+        <div className="w-full space-y-3">
           {formData.ground_details.map((ground, index) => (
-            <div key={index} className="flex gap-4 mb-4">
-              <div className=" space-y-1 w-full">
-                <Label>Ground</Label>
-                <div className="relative w-full border pr-3 bg-card border-border rounded-md px-3 py-2 text-sm ">
-                  {index + 1}
-                </div>
+            <div
+              key={index}
+              className="relative p-4 border border-border  rounded-xl  shadow-xs hover:shadow-sm transition-all"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-base flex items-center gap-2">
+                  <span className="bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm">
+                    {index + 1}
+                  </span>
+                  Ground Details
+                </h3>
+                {formData.ground_details.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveGroundDetail(index)}
+                    className=" bg-sidebar-ring hover:bg-red-500 transition-colors p-1.5 rounded-full"
+                    title="Remove ground"
+                  >
+                    <Trash2 size={13} className="text-primary-foreground" />
+                  </button>
+                )}
               </div>
 
-              <div className="space-y-1 w-full">
-                <Label>Hourly Price</Label>
-                <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">
+                    Hourly Price ($)
+                  </Label>
                   <Input
                     type="number"
-                    placeholder="Enter hourly price"
+                    placeholder="50"
                     value={ground.hourly_price}
                     onChange={(e) => {
                       clearError(`ground_details[${index}].hourly_price`);
@@ -499,29 +530,24 @@ const Form: React.FC = () => {
                         e.target.value
                       );
                     }}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
                       errors[`ground_details[${index}].hourly_price`]
-                        ? "border-red-500"
-                        : ""
+                        ? "border-red-500 focus:ring-red-500"
+                        : "focus:ring-primary"
                     }`}
                   />
-
                   {errors[`ground_details[${index}].hourly_price`] && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>
-                        {errors[`ground_details[${index}].hourly_price`]}
-                      </span>
-                    </div>
+                    <p className="text-xs text-red-500">
+                      {errors[`ground_details[${index}].hourly_price`]}
+                    </p>
                   )}
                 </div>
-              </div>
 
-              <div className="space-y-1 w-full">
-                <Label>Capacity</Label>
-                <div className="relative">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">Capacity</Label>
                   <Input
                     type="number"
-                    placeholder="Enter capacity"
+                    placeholder="10"
                     value={
                       typeof ground.capacity === "number" &&
                       !isNaN(ground.capacity)
@@ -536,26 +562,24 @@ const Form: React.FC = () => {
                         e.target.value
                       );
                     }}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
                       errors[`ground_details[${index}].capacity`]
-                        ? "border-red-500"
-                        : ""
+                        ? "border-red-500 focus:ring-red-500"
+                        : "focus:ring-primary"
                     }`}
                   />
-
                   {errors[`ground_details[${index}].capacity`] && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors[`ground_details[${index}].capacity`]}</span>
-                    </div>
+                    <p className="text-xs text-red-500">
+                      {errors[`ground_details[${index}].capacity`]}
+                    </p>
                   )}
                 </div>
-              </div>
-              <div className="space-y-1 w-full">
-                <Label>Width</Label>
-                <div className="relative">
+
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">Width (m)</Label>
                   <Input
                     type="number"
-                    placeholder="Enter width"
+                    placeholder="20"
                     value={
                       typeof ground.width === "number" && !isNaN(ground.width)
                         ? ground.width
@@ -565,27 +589,24 @@ const Form: React.FC = () => {
                       clearError(`ground_details[${index}].width`);
                       handleGroundFieldChange(index, "width", e.target.value);
                     }}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
                       errors[`ground_details[${index}].width`]
-                        ? "border-red-500"
-                        : ""
+                        ? "border-red-500 focus:ring-red-500"
+                        : "focus:ring-primary"
                     }`}
                   />
-
                   {errors[`ground_details[${index}].width`] && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors[`ground_details[${index}].width`]}</span>
-                    </div>
+                    <p className="text-xs text-red-500">
+                      {errors[`ground_details[${index}].width`]}
+                    </p>
                   )}
                 </div>
-              </div>
 
-              <div className="space-y-1 w-full">
-                <Label>Height</Label>
-                <div className="relative">
+                <div className="space-y-1">
+                  <Label className="text-sm font-medium">Height (m)</Label>
                   <Input
                     type="number"
-                    placeholder="Enter height"
+                    placeholder="30"
                     value={
                       typeof ground.height === "number" && !isNaN(ground.height)
                         ? ground.height
@@ -595,79 +616,76 @@ const Form: React.FC = () => {
                       clearError(`ground_details[${index}].height`);
                       handleGroundFieldChange(index, "height", e.target.value);
                     }}
-                    className={`border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none w-full ${
+                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
                       errors[`ground_details[${index}].height`]
-                        ? "border-red-500"
-                        : ""
+                        ? "border-red-500 focus:ring-red-500"
+                        : "focus:ring-primary"
                     }`}
                   />
-
                   {errors[`ground_details[${index}].height`] && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors[`ground_details[${index}].height`]}</span>
-                    </div>
+                    <p className="text-xs text-red-500">
+                      {errors[`ground_details[${index}].height`]}
+                    </p>
                   )}
                 </div>
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <button
-                  type="button"
-                  className="bg-transparent my-auto  cursor-pointer"
-                  onClick={handleAddGroundDetail}
-                >
-                  <CirclePlus className="text-foreground" size={16} />
-                </button>
-
-                {formData.ground_details.length > 1 && (
-                  <button
-                    type="button"
-                    className="bg-transparent my-auto  cursor-pointer"
-                    onClick={() => handleRemoveGroundDetail(index)}
-                  >
-                    <CircleMinus className="text-foreground" size={16} />
-                  </button>
-                )}
               </div>
             </div>
           ))}
 
-          <div className="space-y-3 w-full ">
-            <Label>Upload Images</Label>
-            <div className="flex items-center space-x-4 flex-wrap ">
-              {preview.length > 0 &&
-                preview.map((src, index) => (
-                  <div
-                    key={index}
-                    className="relative  flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card overflow-hidden"
-                  >
-                    <img
-                      src={src}
-                      alt={`Preview ${index}`}
-                      className=" h-full  "
-                    />
+          <div>
+            <div className="flex justify-end items-center">
+              <button
+                type="button"
+                onClick={handleAddGroundDetail}
+                className="relative  inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary group"
+              >
+                <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/10 to-primary/20 group-hover:from-primary/20 group-hover:to-primary/30 transition-all"></span>
+                <span className="absolute inset-0.5 rounded-md bg-white dark:bg-gray-900"></span>
+                <Plus size={16} className="relative z-10 shrink-0" />
+                <span className="relative z-10">Add Another Ground</span>
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Add Ground Photos</Label>
+
+              <div className="flex flex-wrap gap-3">
+                {preview.map((src, index) => (
+                  <div key={index} className="relative">
+                    <div className="w-20 h-20 rounded-md border overflow-hidden">
+                      <img
+                        src={src}
+                        alt={`Preview ${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(index)}
-                      className="absolute top-[0] right-[0] cursor-pointer p-1 rounded-full bg-black text-white rounded-full  transition"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                     >
-                      <X size={10} />
+                      <X size={12} />
                     </button>
                   </div>
                 ))}
 
-              <label className="cursor-pointer">
-                <div className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed rounded-lg bg-card">
-                  <ImageUp />
-                </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageChange}
-                />
-              </label>
+                <label className="block">
+                  <div className="w-20 h-20 flex items-center justify-center border-2 border-dashed hover:border-sidebar-ring rounded-md cursor-pointer ">
+                    <ImagePlus size={20} className="text-sidebar-ring" />
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </label>
+              </div>
+
+              {preview.length === 0 && (
+                <p className="text-xs text-gray-500">No photos added yet</p>
+              )}
             </div>
           </div>
         </div>

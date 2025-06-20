@@ -37,8 +37,8 @@ const CustomerDetails = () => {
   };
 
   useEffect(() => {
-    if (data?.customer && Array.isArray(data.customer)) {
-      setCustomers(data.customer);
+    if (data?.customers && Array.isArray(data.customers)) {
+      setCustomers(data.customers);
     }
   }, [data]);
 

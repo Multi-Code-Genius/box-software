@@ -33,6 +33,8 @@ import {
   Map,
   MapPin,
   MapPinned,
+  Minus,
+  Plus,
   Trash2,
   Users,
 } from "lucide-react";
@@ -42,6 +44,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Mosaic } from "react-loading-indicators";
 import { useFormValidation } from "@/hooks/useFormValidation";
+import { Textarea } from "@/components/ui/textarea";
 
 const VenueDetail = () => {
   const { venues, setVenues } = useVenueStore();
@@ -68,6 +71,7 @@ const VenueDetail = () => {
         capacity: 0,
         width: 0,
         height: 0,
+        hourly_price: 0,
       },
     ];
 
@@ -273,7 +277,7 @@ const VenueDetail = () => {
               <CardTitle className="text-lg">{venue.name || ""}</CardTitle>
               <button
                 onClick={(e) => handleDeleteClick(e, venue.id)}
-                className=" hover:text-white hover:bg-red-500 transition-colors p-1.5 rounded-full"
+                className="p-2  rounded-full bg-sidebar-ring text-destructive-foreground shadow hover:bg-destructive/90 transition-colors"
               >
                 <Trash2 size={16} />
               </button>
@@ -311,7 +315,7 @@ const VenueDetail = () => {
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="max-w-md rounded-xl">
+        <DialogContent className="min-w-[600px] max-w-xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex justify-between items-center">
               Edit Venue
@@ -320,43 +324,95 @@ const VenueDetail = () => {
 
           {selectedGame && (
             <div className="space-y-4 pt-4">
-              <div className="space-y-1">
-                <label className="block text-sm font-medium">Name</label>
-                <div>
-                  <Input
-                    value={selectedGame.name}
-                    onChange={(e) => handleEditField("name", e.target.value)}
-                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.name ? "border-red-500" : ""
-                    }`}
-                  />
+              <div className="flex gap-3 ">
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Name</label>
+                  <div>
+                    <Input
+                      value={selectedGame.name}
+                      onChange={(e) => handleEditField("name", e.target.value)}
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.name ? "border-red-500" : ""
+                      }`}
+                    />
 
-                  {errors.name && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.name}</span>
-                    </div>
-                  )}
+                    {errors.name && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.name}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">
+                    Description
+                  </label>
+                  <div className="relative">
+                    <Textarea
+                      value={selectedGame.description}
+                      onChange={(e) =>
+                        handleEditField("description", e.target.value)
+                      }
+                      className={` pr-3 py-2 w-full h-[36px] min-h-[unset] min-h-[36px]  text-sm leading-none  border bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.description ? "border-red-500" : ""
+                      }`}
+                    />
+
+                    {errors.description && (
+                      <div className=" text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.description}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="block text-sm font-medium">Description</label>
-                <div className="relative">
-                  <Input
-                    value={selectedGame.description}
-                    onChange={(e) =>
-                      handleEditField("description", e.target.value)
-                    }
-                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.description ? "border-red-500" : ""
-                    }`}
-                  />
+              <div className="flex gap-4">
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">Address</label>
+                  <div className="relative">
+                    <Input
+                      value={selectedGame.address}
+                      onChange={(e) =>
+                        handleEditField("address", e.target.value)
+                      }
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.address ? "border-red-500" : ""
+                      }`}
+                    />
 
-                  {errors.description && (
-                    <div className=" text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.description}</span>
-                    </div>
-                  )}
+                    {errors.address && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.address}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-1 w-full">
+                  <label className="block text-sm font-medium">City</label>
+                  <div className="relative">
+                    <Input
+                      value={selectedGame.location?.city || ""}
+                      onChange={(e) =>
+                        handleEditField(
+                          "city",
+                          e.target.value,
+                          true,
+                          "location"
+                        )
+                      }
+                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                        errors.city ? "border-red-500" : ""
+                      }`}
+                    />
+
+                    {errors.city && (
+                      <div className="text-xs text-red-500 pt-1 pl-1">
+                        <span>{errors.city}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -399,81 +455,6 @@ const VenueDetail = () => {
                       <span>{errors.category}</span>
                     </div>
                   )}
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="block text-sm font-medium">Address</label>
-                <div className="relative">
-                  <Input
-                    value={selectedGame.address}
-                    onChange={(e) => handleEditField("address", e.target.value)}
-                    className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                      errors.address ? "border-red-500" : ""
-                    }`}
-                  />
-
-                  {errors.address && (
-                    <div className="text-xs text-red-500 pt-1 pl-1">
-                      <span>{errors.address}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">City</label>
-                  <div className="relative">
-                    <Input
-                      value={selectedGame.location?.city || ""}
-                      onChange={(e) =>
-                        handleEditField(
-                          "city",
-                          e.target.value,
-                          true,
-                          "location"
-                        )
-                      }
-                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                        errors.city ? "border-red-500" : ""
-                      }`}
-                    />
-
-                    {errors.city && (
-                      <div className="text-xs text-red-500 pt-1 pl-1">
-                        <span>{errors.city}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-1 w-full">
-                  <label className="block text-sm font-medium">Price</label>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      value={selectedGame.ground_details[0].hourly_price}
-                      onChange={(e) =>
-                        handleEditField(
-                          "hourly_price",
-                          parseInt(e.target.value) || 0,
-                          true,
-                          "ground_details",
-                          0
-                        )
-                      }
-                      className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
-                        errors.price ? "border-red-500" : ""
-                      }`}
-                    />
-
-                    {errors.price && (
-                      <div className="text-xs text-red-500 pt-1 pl-1">
-                        <span>{errors.price}</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
 
@@ -544,138 +525,190 @@ const VenueDetail = () => {
                 <div className="flex flex-col gap-4">
                   {selectedGame?.ground_details?.map(
                     (ground: any, index: any) => (
-                      <div key={index} className="flex gap-3">
-                        <div className="space-y-1 w-full">
-                          <label className="block text-sm font-medium">
-                            Ground
-                          </label>
-                          <div className="relative w-full border pr-3 bg-card border-border rounded-md px-3 py-2 text-sm ">
-                            {index + 1}
+                      <div
+                        key={index}
+                        className="relative p-4 border border-border  rounded-xl  shadow-xs hover:shadow-sm transition-all"
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-7 h-7 flex items-center justify-center bg-primary text-white text-sm font-medium rounded-full">
+                              {index + 1}
+                            </div>
+                            <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm">
+                              Ground Details
+                            </h4>
                           </div>
-                        </div>
-                        <div className="space-y-1 w-full">
-                          <label className="block text-sm font-medium">
-                            Capacity
-                          </label>
-                          <Input
-                            type="number"
-                            value={
-                              ground.capacity === 0 || ground.capacity
-                                ? ground.capacity
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              handleGroundFieldChange(index, "capacity", value);
 
-                              if (!isNaN(Number(value)) && Number(value) > 0) {
-                                clearError(`ground_details[${index}].capacity`);
-                              }
-                            }}
-                            className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
-                              errors[`ground_details[${index}].capacity`]
-                                ? "border-red-500"
-                                : ""
-                            }`}
-                          />
-                          {errors[`ground_details[${index}].capacity`] && (
-                            <div className="text-xs text-red-500 pt-1 pl-1">
-                              <span>
-                                {errors[`ground_details[${index}].capacity`]}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="space-y-1 w-full">
-                          <label className="block text-sm font-medium">
-                            Width
-                          </label>
-                          <Input
-                            type="number"
-                            value={
-                              ground.width === 0 || ground.width
-                                ? ground.width
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              handleGroundFieldChange(index, "width", value);
-
-                              if (!isNaN(Number(value)) && Number(value) > 0) {
-                                clearError(`ground_details[${index}].width`);
-                              }
-                            }}
-                            className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
-                              errors[`ground_details[${index}].width`]
-                                ? "border-red-500"
-                                : ""
-                            }`}
-                          />
-                          {errors[`ground_details[${index}].width`] && (
-                            <div className="text-xs text-red-500 pt-1 pl-1">
-                              <span>
-                                {errors[`ground_details[${index}].width`]}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="space-y-1 w-full">
-                          <label className="block text-sm font-medium">
-                            Height
-                          </label>
-                          <Input
-                            type="number"
-                            value={
-                              ground.height === 0 || ground.height
-                                ? ground.height
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              handleGroundFieldChange(index, "height", value);
-
-                              if (!isNaN(Number(value)) && Number(value) > 0) {
-                                clearError(`ground_details[${index}].height`);
-                              }
-                            }}
-                            className={`w-full border bg-card pr-3 border-border focus-visible:ring-0 focus:outline-none ${
-                              errors[`ground_details[${index}].height`]
-                                ? "border-red-500"
-                                : ""
-                            }`}
-                          />
-                          {errors[`ground_details[${index}].height`] && (
-                            <div className="text-xs text-red-500 pt-1 pl-1">
-                              <span>
-                                {errors[`ground_details[${index}].height`]}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex gap-2 my-auto pt-4">
-                          <button
-                            type="button"
-                            onClick={handleAddGroundDetail}
-                            className="bg-transparent cursor-pointer"
-                          >
-                            <CirclePlus className="text-foreground" size={16} />
-                          </button>
-
-                          {selectedGame.ground_details.length > 1 && (
+                          <div className="flex items-center gap-2">
                             <button
                               type="button"
-                              onClick={() => handleRemoveGroundDetail(index)}
-                              className="bg-transparent cursor-pointer"
+                              onClick={handleAddGroundDetail}
+                              className="flex items-center justify-center p-1 text-primary hover:bg-primary/10 rounded-lg border border-dashed border-primary/40 hover:border-primary/60 transition-colors"
+                              aria-label="Add ground"
                             >
-                              <CircleMinus
-                                className="text-foreground"
-                                size={16}
-                              />
+                              <Plus size={14} strokeWidth={2.5} />
                             </button>
-                          )}
+
+                            {selectedGame.ground_details.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveGroundDetail(index)}
+                                className="flex items-center justify-center p-1 text-primary hover:bg-primary/10 rounded-lg border border-dashed border-primary/40 hover:border-primary/60 transition-colors"
+                                aria-label="Remove ground"
+                              >
+                                <Minus size={14} strokeWidth={2.5} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="space-y-1">
+                            <label className="block text-xs font-medium ">
+                              Hourly Price (₹)
+                            </label>
+                            <Input
+                              type="number"
+                              value={
+                                ground.hourly_price === 0 || ground.hourly_price
+                                  ? ground.hourly_price
+                                  : ""
+                              }
+                              onChange={(e) =>
+                                handleEditField(
+                                  "hourly_price",
+                                  parseInt(e.target.value) || 0,
+                                  true,
+                                  "ground_details",
+                                  index
+                                )
+                              }
+                              className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                                errors[`ground_details[${index}].hourly_price`]
+                                  ? "ring ring-red-500"
+                                  : ""
+                              }`}
+                            />
+                            {errors[
+                              `ground_details[${index}].hourly_price`
+                            ] && (
+                              <p className="text-xs text-red-500 pt-1">
+                                {
+                                  errors[
+                                    `ground_details[${index}].hourly_price`
+                                  ]
+                                }
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-xs font-medium ">
+                              Capacity
+                            </label>
+                            <Input
+                              type="number"
+                              value={
+                                ground.capacity === 0 || ground.capacity
+                                  ? ground.capacity
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                handleGroundFieldChange(
+                                  index,
+                                  "capacity",
+                                  value
+                                );
+                                if (
+                                  !isNaN(Number(value)) &&
+                                  Number(value) > 0
+                                ) {
+                                  clearError(
+                                    `ground_details[${index}].capacity`
+                                  );
+                                }
+                              }}
+                              className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                                errors[`ground_details[${index}].capacity`]
+                                  ? "ring ring-red-500"
+                                  : ""
+                              }`}
+                            />
+                            {errors[`ground_details[${index}].capacity`] && (
+                              <p className="text-xs text-red-500 pt-1">
+                                {errors[`ground_details[${index}].capacity`]}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-xs font-medium ">
+                              Width (m)
+                            </label>
+                            <Input
+                              type="number"
+                              value={
+                                ground.width === 0 || ground.width
+                                  ? ground.width
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                handleGroundFieldChange(index, "width", value);
+                                if (
+                                  !isNaN(Number(value)) &&
+                                  Number(value) > 0
+                                ) {
+                                  clearError(`ground_details[${index}].width`);
+                                }
+                              }}
+                              className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none  ${
+                                errors[`ground_details[${index}].width`]
+                                  ? "ring ring-red-500"
+                                  : ""
+                              }`}
+                            />
+                            {errors[`ground_details[${index}].width`] && (
+                              <p className="text-xs text-red-500 pt-1">
+                                {errors[`ground_details[${index}].width`]}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="block text-xs font-medium ">
+                              Length (m)
+                            </label>
+                            <Input
+                              type="number"
+                              value={
+                                ground.height === 0 || ground.height
+                                  ? ground.height
+                                  : ""
+                              }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                handleGroundFieldChange(index, "height", value);
+                                if (
+                                  !isNaN(Number(value)) &&
+                                  Number(value) > 0
+                                ) {
+                                  clearError(`ground_details[${index}].height`);
+                                }
+                              }}
+                              className={`w-full border pr-3 bg-card border-border focus-visible:ring-0 focus:outline-none ${
+                                errors[`ground_details[${index}].height`]
+                                  ? "ring ring-red-500"
+                                  : ""
+                              }`}
+                            />
+                            {errors[`ground_details[${index}].height`] && (
+                              <p className="text-xs text-red-500 pt-1">
+                                {errors[`ground_details[${index}].height`]}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )
@@ -683,9 +716,7 @@ const VenueDetail = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 "></div>
-
-              <div className="flex justify-end gap-2 pt-4">
+              <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={closeModal}>
                   Cancel
                 </Button>
