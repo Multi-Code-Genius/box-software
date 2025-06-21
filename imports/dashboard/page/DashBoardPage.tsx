@@ -3,7 +3,6 @@
 import { useVenues } from "@/api/vanue";
 import { Button } from "@/components/ui/button";
 import { ChartAreaInteractive } from "@/imports/dashboard/components/chart-area-interactive";
-import { DataTable } from "@/imports/dashboard/components/data-table";
 import { SectionCards } from "@/imports/dashboard/components/section-cards";
 import Venues from "@/imports/dashboard/components/Venues";
 import { useDashboardStore } from "@/store/dashboardStore";
@@ -14,6 +13,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDashboardData } from "@/api/dashboard";
 import { useVenueStore } from "@/store/venueStore";
+import DataTable from "../components/data-table";
 
 export default function DashBoardPage() {
   const router = useRouter();

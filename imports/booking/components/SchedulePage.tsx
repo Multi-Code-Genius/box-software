@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Calendar, Loader2 } from "lucide-react";
 import BookingPage from "@/imports/booking/pages/BookingPage";
 import { useVenues } from "@/api/vanue";
 import { Venue } from "@/types/auth";
@@ -54,8 +54,20 @@ const SchedulePage = () => {
 
   return (
     <div className="p-[20px] overflow-hidden">
-      <p className="font-bold text-3xl pb-2">Bookings</p>
-      <p className="text-sm">Booking for: {venue.name}</p>
+      <div className="flex items-center gap-3 pb-3">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <Calendar className="h-6 w-6 text-primary" />
+        </div>
+        <h1 className="font-bold text-2xl md:text-3xl text-foreground">
+          Bookings
+        </h1>
+      </div>
+      <div className="relative pb-2">
+        <p className="text-sm pl-3 before:absolute before:left-0 before:top-1 before:h-4 before:w-1 before:bg-primary before:rounded-full">
+          Booking for:{" "}
+          <span className="font-semibold text-primary">{venue.name}</span>
+        </p>
+      </div>
       <BookingPage venue={venue} ground={ground} />
     </div>
   );

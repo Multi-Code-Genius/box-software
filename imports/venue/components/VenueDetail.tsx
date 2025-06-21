@@ -101,6 +101,28 @@ const VenueDetail = () => {
     nestedKey = "",
     index: number | null = null
   ) => {
+    const numericFields = [
+      "capacity",
+      "width",
+      "height",
+      "hourly_price",
+      "maxPlayers",
+    ];
+
+    if (typeof value === "string" && numericFields.includes(field)) {
+      if (value.length > 1) {
+        value = value.replace(/^0+(?!$)/, "");
+      }
+
+      if (/^\d+$/.test(value)) {
+        value = Number(value);
+      } else if (value === "") {
+        value = "";
+      } else {
+        return;
+      }
+    }
+
     setSelectedGame((prev: any) => {
       if (!prev) return prev;
 
@@ -568,7 +590,7 @@ const VenueDetail = () => {
                               Hourly Price (₹)
                             </label>
                             <Input
-                              type="number"
+                              type="text"
                               value={
                                 ground.hourly_price === 0 || ground.hourly_price
                                   ? ground.hourly_price
@@ -607,7 +629,7 @@ const VenueDetail = () => {
                               Capacity
                             </label>
                             <Input
-                              type="number"
+                              type="text"
                               value={
                                 ground.capacity === 0 || ground.capacity
                                   ? ground.capacity
@@ -647,7 +669,7 @@ const VenueDetail = () => {
                               Width (m)
                             </label>
                             <Input
-                              type="number"
+                              type="text"
                               value={
                                 ground.width === 0 || ground.width
                                   ? ground.width
@@ -681,7 +703,7 @@ const VenueDetail = () => {
                               Length (m)
                             </label>
                             <Input
-                              type="number"
+                              type="text"
                               value={
                                 ground.height === 0 || ground.height
                                   ? ground.height

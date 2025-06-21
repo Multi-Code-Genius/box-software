@@ -95,13 +95,13 @@ const CustomerDetails = () => {
   return (
     <div className="flex justify-center items-center  h-full">
       <Card className="w-full max-w-7xl p-6 shadow-lg rounded-xl flex flex-col max-h-[800px]  border border-border">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center ">
           <h2 className="text-2xl font-semibold">Customer List</h2>
           <div className="relative">
             <Input
               type="text"
               placeholder="Search customers..."
-              className="pl-8 w-64 bg-muted/50 border-border"
+              className="pl-8 w-64 bg-muted/50 border-border focus-visible:ring-0 focus:outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -160,7 +160,7 @@ const CustomerDetails = () => {
               {filteredCustomers.map((customer: CustomerData) => (
                 <TableRow
                   key={customer.id}
-                  className="group hover:bg-secondary/20 transition-colors border-b border-border/30 last:border-b-0"
+                  className="group hover:bg-secondary/20 transition-colors border-b border-border/30 last:border-b-0 cursor-pointer"
                   onClick={() => handleRowClick(customer.id)}
                 >
                   <TableCell className="text-center font-medium py-4">

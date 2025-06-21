@@ -21,6 +21,7 @@ export interface Booking {
 }
 
 export interface CustomerData {
+  start_time: any;
   booking_count: number;
   id: string;
   name: string;

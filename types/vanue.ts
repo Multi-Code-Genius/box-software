@@ -25,10 +25,10 @@ export type VenueFormData = {
   };
   ground_details: {
     ground: number;
-    hourly_price: number;
-    capacity: number;
-    width: number;
-    height: number;
+    hourly_price: number | string;
+    capacity: number | string;
+    width: number | string;
+    height: number | string;
   }[];
   images: File[];
 };

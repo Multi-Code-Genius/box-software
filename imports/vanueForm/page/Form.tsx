@@ -15,16 +15,7 @@ import {
 
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { VenueFormData, GroundDetail } from "@/types/vanue";
-import {
-  CircleAlert,
-  CircleMinus,
-  CirclePlus,
-  ImagePlus,
-  ImageUp,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ImagePlus, Plus, Trash2, X } from "lucide-react";
 import { useAddVenue, useVenues } from "@/api/vanue";
 import { useVenueStore } from "@/store/venueStore";
 import { Textarea } from "@/components/ui/textarea";
@@ -136,7 +127,6 @@ const Form: React.FC = () => {
       onSuccess: (response: any) => {
         const createdVenue = response?.venue;
 
-        console.log(createdVenue);
         if (createdVenue) {
           setVenue(createdVenue);
         }
@@ -215,6 +205,7 @@ const Form: React.FC = () => {
       ground_details: prev.ground_details.filter((_, i) => i !== indexToRemove),
     }));
   };
+
   const handleGroundFieldChange = (
     index: number,
     field: keyof GroundDetail,
@@ -222,11 +213,15 @@ const Form: React.FC = () => {
   ) => {
     const updated = [...formData.ground_details];
 
-    if (value === "") {
+    const cleanedValue = value.replace(/^0+(?!$)/, "");
+
+    if (cleanedValue === "") {
       updated[index][field] = "" as never;
     } else {
       const parsedValue =
-        field === "hourly_price" ? parseFloat(value) : parseInt(value, 10);
+        field === "hourly_price"
+          ? parseFloat(cleanedValue)
+          : parseInt(cleanedValue, 10);
 
       updated[index][field] = isNaN(parsedValue) ? 0 : parsedValue;
     }
@@ -236,10 +231,9 @@ const Form: React.FC = () => {
       ground_details: updated,
     }));
 
-    if (value !== "") {
-      clearError(`${field}_${index}`);
-    }
+    clearError(`ground_details[${index}].${field}`);
   };
+
   const handleRemoveImage = (index: number) => {
     setPreview((prev) => prev.filter((_, i) => i !== index));
   };
@@ -516,10 +510,10 @@ const Form: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">
-                    Hourly Price ($)
+                    Hourly Price (₹)
                   </Label>
                   <Input
-                    type="number"
+                    type="text"
                     placeholder="50"
                     value={ground.hourly_price}
                     onChange={(e) => {
@@ -546,7 +540,7 @@ const Form: React.FC = () => {
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">Capacity</Label>
                   <Input
-                    type="number"
+                    type="text"
                     placeholder="10"
                     value={
                       typeof ground.capacity === "number" &&
@@ -578,7 +572,7 @@ const Form: React.FC = () => {
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">Width (m)</Label>
                   <Input
-                    type="number"
+                    type="text"
                     placeholder="20"
                     value={
                       typeof ground.width === "number" && !isNaN(ground.width)
@@ -605,7 +599,7 @@ const Form: React.FC = () => {
                 <div className="space-y-1">
                   <Label className="text-sm font-medium">Height (m)</Label>
                   <Input
-                    type="number"
+                    type="text"
                     placeholder="30"
                     value={
                       typeof ground.height === "number" && !isNaN(ground.height)
