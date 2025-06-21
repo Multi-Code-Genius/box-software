@@ -21,6 +21,7 @@ export interface Booking {
 }
 
 export interface CustomerData {
+  booking_count: number;
   id: string;
   name: string;
   mobile: string;

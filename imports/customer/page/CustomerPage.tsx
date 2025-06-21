@@ -3,7 +3,7 @@ import CustomerDetails from "../components/CustomerDetails";
 
 const CustomerPage = () => {
   return (
-    <div>
+    <div className="h-[calc(100vh-3rem)]">
       <CustomerDetails />
     </div>
   );
